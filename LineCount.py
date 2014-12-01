@@ -1,0 +1,24 @@
+import os
+import xml.sax as sax
+cur_path = os.getcwd()
+ignore_set = set(["LineCount.py",  "test.py", "testLabelBus2.py", "testLabelBus.py"])
+
+loclist = []
+
+for pydir, _, pyfiles in os.walk(cur_path):
+    for pyfile in pyfiles:
+        if pyfile.endswith(".py") and pyfile not in ignore_set:
+            totalpath = os.path.join(pydir, pyfile)
+            loclist.append( ( len(open(totalpath, "r").read().splitlines()),
+                               totalpath.split(cur_path)[1]) )
+
+for linenumbercount, filename in loclist: 
+    print "%05d lines in %s" % (linenumbercount, filename)
+
+print "\nTotal: %s lines (%s)" %(sum([x[0] for x in loclist]), cur_path)
+
+'''
+Created on 05.04.2013
+
+@author: wplaum
+'''
