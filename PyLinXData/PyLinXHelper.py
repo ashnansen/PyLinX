@@ -22,8 +22,6 @@ def point_inside_polygon(x,y,polygons):
     for l in range(len(polygons)):
         inside = False
         poly = polygons[l]
-        #print "poly: ", poly
-        #print "l: ", l
         n = len(poly)
         p1x,p1y = poly[0]
         for i in range(n+1):

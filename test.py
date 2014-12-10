@@ -708,48 +708,29 @@ Bildbetrachter
 #     imageViewer.show()
 #     sys.exit(app.exec_())
 
-from PyQt4 import QtCore, QtGui
+'''
+Diamond example
+'''
 
-class Ui_MainWindow(QtGui.QWidget):
+class First(object):
     def __init__(self):
-        super(Ui_MainWindow, self).__init__()
+        print "first"
+        self.test = "test"
 
+class Second(First):
+    def __init__(self):
+        super(Second, self).__init__()
+        print "second"
 
-    def keyPressEvent(self, event):
-        print 'a'
+class Third(First):
+    def __init__(self):
+        super(Third,self).__init__()
+        print "third"
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName(("MainWindow"))
-        MainWindow.resize(371, 345)
-        MainWindow.setMaximumSize(QtCore.QSize(401, 600))
-        MainWindow.setWindowIcon(QtGui.QIcon('icons/icon.png'))
-        screen = QtGui.QDesktopWidget().screenGeometry()
-        mysize = MainWindow.geometry()
-        hpos = ( screen.width() - mysize.width() ) / 2
-        vpos = ( screen.height() - mysize.height() ) / 2
-        MainWindow.move(hpos, vpos)
-        #some GUI
-        MainWindow.setCentralWidget(self.centralwidget)
-        cd=MainWindow.centralWidget()
-        cd.setFocusPolicy(QtCore.Qt.StrongFocus)
-        cd.setFocus()
-        self.actionHardware = QtGui.QAction(MainWindow)
-        self.actionHardware.setObjectName(("actionHardware"))
-        self.retranslateUi(MainWindow)
-
-
-        #COnnect odes
-
-
-    def retranslateUi(self, MainWindow):
-        #sime button text codes
-        pass
-
-if __name__=="__main__" :
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
-
+class Fourth(Second, Third):
+    def __init__(self):
+        super(Fourth, self).__init__()
+        print "that's it"
+        
+fourth = Fourth()
+print "Ende!"

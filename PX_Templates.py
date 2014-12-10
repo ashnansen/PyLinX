@@ -1,3 +1,9 @@
+'''
+Created on 30.10.2014
+
+@author: Waetzold Plaum
+'''
+
 from PyQt4 import QtCore
 from PyQt4.QtGui import *
 
@@ -116,10 +122,25 @@ class Scalable:
     def px_CONNECTOR_line(self):
         return self.ratio * 1
 
+    ################################
+    ## plottable binary operator
+    ################################
+    
+    def px_PLOTABLEBINOPERATOR_size(self):
+        return self.ratio * 40
+    
+    def px_PLOTABLEBINOPERATOR_Border(self):
+        return self.ratio * 2.5
+    
+    def px_ELPLOTABLEBINOPERATOR_pinLength(self):
+        return self.ratio * 15
+#     
+#     def px_PLOTABLEBINOPERATOR_Heigth(self):
+#         return self.ratio * 2.5    
     
     #################################
     ## Highlight
-    ################################
+    #################################
 
     def px_HIGHLIGHT_border(self):
         return self.ratio * 2

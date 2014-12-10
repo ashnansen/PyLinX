@@ -1,7 +1,7 @@
 '''
 Created on 19.05.2014
 
-@author: wplaum
+@author: Waetzold Plaum
 '''
 from   PyQt4 import QtGui
 import inspect

@@ -1,7 +1,7 @@
 '''
 Created on 15.09.2014
 
-@author: wplaum
+@author: Waetzold Plaum
 
 '''
 

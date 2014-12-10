@@ -160,7 +160,8 @@ class DrawWidget (QtGui.QWidget):
         # Deleting Objects
         if qKeyEvent.key() == QtCore.Qt.Key_Delete:
             keys = self.activeGraphics.getChildKeys()
-            objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus"))
+            #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus"))
+            objectsInFocus = list(self.activeGraphics.get("objectsInFocus"))
             setDelete = set([])
             for key in keys:
                 element = self.activeGraphics.getb(key)
@@ -195,7 +196,8 @@ class DrawWidget (QtGui.QWidget):
         
         if toolSelected == helper.ToolSelected.none:
             
-            objInFocusOld = copy.copy(self.activeGraphics.get("objectsInFocus"))
+            #objInFocusOld = copy.copy(self.activeGraphics.get("objectsInFocus"))
+            objInFocusOld = list(self.activeGraphics.get("objectsInFocus"))
             objInFocus = self.activeGraphics.getObjectInFocus(X,Y)
             if len(set(objInFocus).intersection(set(objInFocusOld))) > 0:
                 pass
@@ -210,7 +212,8 @@ class DrawWidget (QtGui.QWidget):
             if len_objectsInFocus == 1:
                 activeObject = objInFocus[0]
                 if activeObject.isAttr("listPoints"):
-                    listPoints = copy.copy(activeObject.get("listPoints"))
+                    #listPoints = copy.copy(activeObject.get("listPoints"))
+                    listPoints = list(activeObject.get("listPoints"))
                     objectInFocus = objInFocus[0]
                     shape = objectInFocus.get("Shape")
                     elem0 = objectInFocus.get("elem0")
@@ -246,7 +249,8 @@ class DrawWidget (QtGui.QWidget):
                     ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
                     X0 = ConnectorPloting.get("X")
                     Y0 = ConnectorPloting.get("Y")
-                    listPoints = copy.copy(ConnectorPloting.get("listPoints"))
+                    #listPoints = copy.copy(ConnectorPloting.get("listPoints"))
+                    listPoints = list(ConnectorPloting.get("listPoints"))
                     len_listPoints = len(listPoints)
                     if len_listPoints > 1:
                         lastPoint_minus_1 = listPoints[-2]
@@ -327,8 +331,7 @@ class DrawWidget (QtGui.QWidget):
             self.repaint()
                          
         self.repaint()
-
-                 
+         
     def mouseMoveEvent(self,coord):
 
         x = coord.x()
@@ -339,7 +342,8 @@ class DrawWidget (QtGui.QWidget):
         
         if toolSelected == helper.ToolSelected.none:
 
-            objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
+            #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
+            objectsInFocus = list(self.activeGraphics.get("objectsInFocus") )
             if objectsInFocus != []:
                 px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
                 px_mousePressedAt_Y = self.rootContainer.get("px_mousePressedAt_Y")
@@ -361,7 +365,8 @@ class DrawWidget (QtGui.QWidget):
                         # move lines of connectors 
                         elif ConnectorToModify  != None:
                             idxPointModified = self.activeGraphics.get("idxPointModified")
-                            listPoints = copy.copy(ConnectorToModify.get("listPoints"))
+                            #listPoints = copy.copy(ConnectorToModify.get("listPoints"))
+                            listPoints = list(ConnectorToModify.get("listPoints"))
                             value = listPoints[idxPointModified]
                             if idxPointModified % 2 == 0:
                                 value = value + xOffset 
@@ -393,9 +398,8 @@ class DrawWidget (QtGui.QWidget):
                 proxyElem = self.activeGraphics.getb("PX_PlottableProxyElement")
                 proxyElem.set("X", X)
                 proxyElem.set("Y", Y)   
-                self.repaint() 
-
-        
+                self.repaint()     
+    
     def mouseReleaseEvent(self,coord):
         
         keys = self.activeGraphics.getChildKeys()
@@ -425,7 +429,8 @@ class DrawWidget (QtGui.QWidget):
                                 if len(idxCorner) == 0:
                                     bFocus = False
                     if bFocus:
-                        objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
+                        #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
+                        objectsInFocus = list(self.activeGraphics.get("objectsInFocus") )
                         objectsInFocus.append(element)
                         self.activeGraphics.set("objectsInFocus", objectsInFocus)
             self.activeGraphics.set("ConnectorToModify", None )
@@ -441,8 +446,7 @@ class DrawWidget (QtGui.QWidget):
         self.rootContainer.set("px_mousePressedAt_X", sys.maxint)
         self.rootContainer.set("px_mousePressedAt_Y", sys.maxint)       
         self.repaint()
-        
-        
+           
     def mouseDoubleClickEvent(self, coord):
             
         bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
@@ -468,7 +472,7 @@ def run():
     
 if __name__ == '__main__':
     
-    PROFILE = False
+    PROFILE = True
     
     if PROFILE:
         cProfile.run('run()')
