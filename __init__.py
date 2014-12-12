@@ -14,21 +14,18 @@ from PyQt4 import QtGui, QtCore, uic, Qt
 import sys
 
 # Project specific Libraries - alphabedic order
-#import BContainer
 from PyLinXData import * 
 import PX_Templates as PX_Templ
 import PyLinXData.PyLinXHelper as helper
 
-
-#import PyLinXDataObjects
 
 class PyLinXMain(QtGui.QMainWindow):
 
     def __init__(self):
  
         super(PyLinXMain, self).__init__()    
-
-        self.ui = uic.loadUi("PyLinX_v0_3.ui")
+        uiString = "PyLinX_v0_3.ui"
+        self.ui = uic.loadUi(uiString)
         self.ui.setWindowIcon(QtGui.QIcon('pylinx.png'))
         self.ui.setWindowTitle('PyLinX')
         # self.ui.layout().setSizeConstraint(QtGui.QLayout.SetFixedSize)
@@ -38,12 +35,14 @@ class PyLinXMain(QtGui.QMainWindow):
         # ExampleData
         self.rootContainer = PyLinX_DataObjectsInternal.RootContainer(self.ui)
         rootGraphics = PyLinXDataObjects.PX_PlotableObject("rootGraphics")
-        testvar  = PyLinXDataObjects.PX_PlotableVarElement(1, 200,100, 15 )
+        testvar  = PyLinXDataObjects.PX_PlotableVarElement(1, 150,100, 15 )
         rootGraphics.paste(testvar, bHashById=True)
         testvar2 = PyLinXDataObjects.PX_PlotableVarElement(2, 400,200, 15 )
-        rootGraphics.paste(testvar2, bHashById=True)
+        #rootGraphics.paste(testvar2, bHashById=True)
         connector1 = PyLinXDataObjects.PX_PlottableConnector(testvar, testvar2, [300]) 
-        rootGraphics.paste(connector1, bHashById = True)   
+        #rootGraphics.paste(connector1, bHashById = True)   
+        plusOperator = PyLinXDataObjects.PX_BasicOperator(300,200, "+")
+        rootGraphics.paste(plusOperator, bHashById = True) 
         rootGraphics.set("bConnectorPloting", False)     
         self.rootContainer.paste(rootGraphics)
         
@@ -55,6 +54,7 @@ class PyLinXMain(QtGui.QMainWindow):
         self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
         # ID of the connector which is actually drawn
         self.rootContainer.set("ID_activeConnector", -1)
+        rootGraphics.set("idxOutPinConnectorPloting", None)
         
         
         # Drawing GUI
@@ -68,6 +68,8 @@ class PyLinXMain(QtGui.QMainWindow):
         drawWidget.setPalette(pal)
         
         
+        
+        
         #drawWidget.setBaseSize(1500,480)
         horizongalLayout2.addWidget(drawWidget)
         scrollingArea.setLayout(horizongalLayout2)
@@ -78,6 +80,7 @@ class PyLinXMain(QtGui.QMainWindow):
         #scrollingArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         scrollingArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         scrollingArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+
         
         # Has effect
         #scrollingArea.setFixedWidth(1000)
@@ -86,7 +89,12 @@ class PyLinXMain(QtGui.QMainWindow):
         scrollingArea.setWidgetResizable(True)
         scrollingArea.setAutoFillBackground(False)
         #scrollingArea.setViewportMargins(0,0,0,0)
-        self.ui.splitter.setStretchFactor(0,0)
+        self.ui.splitter.setStretchFactor(1,1)
+
+        ## new UI
+        if uiString == "PyLinX_v0_4.ui":
+            self.ui.tabWidget.setTabText(0,"Elements")
+            self.ui.tabWidget.setTabText(1,"Libraries")
         
         #self.scene.addWidget(self.drawWidget)
         #self.ui.graphicsView.setScene(self.scene)
@@ -96,6 +104,8 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
         #self.ui.actionNewConnector.triggered.connect(self.on_actionNewConnector)
         self.ui.actionNewElement.setCheckable(True)
+        self.ui.actionNewPlus.triggered.connect(self.on_actionNewPlus)
+        self.ui.actionNewPlus.setCheckable(True)
         self.ui.resize(800,600)
         
         
@@ -120,13 +130,14 @@ class PyLinXMain(QtGui.QMainWindow):
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.newVarElement) 
         else:
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+            
+    def on_actionNewPlus(self):
         
-#     def on_actionNewConnector(self):
-#         
-#         if self.rootContainer.get("idxToolSelected") == helper.ToolSelected.none:
-#             self.rootContainer.set("idxToolSelected", helper.ToolSelected.newConnector) 
-#         else:
-#             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+        if self.rootContainer.get("idxToolSelected") == helper.ToolSelected.none:
+            self.rootContainer.set("idxToolSelected", helper.ToolSelected.newPlus) 
+        else:
+            self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+        
 
 class DrawWidget (QtGui.QWidget):
 
@@ -160,7 +171,6 @@ class DrawWidget (QtGui.QWidget):
         # Deleting Objects
         if qKeyEvent.key() == QtCore.Qt.Key_Delete:
             keys = self.activeGraphics.getChildKeys()
-            #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus"))
             objectsInFocus = list(self.activeGraphics.get("objectsInFocus"))
             setDelete = set([])
             for key in keys:
@@ -176,6 +186,31 @@ class DrawWidget (QtGui.QWidget):
                 # deleting all objects in focus
                 if element in objectsInFocus:
                     setDelete.add(element.get("ID"))
+                    
+            # removing the deleted connectors from the list of connected pins of the connected elements
+            for _id in setDelete:
+                element = self.activeGraphics.getb(_id)
+                types = inspect.getmro(type(element))
+                if PyLinXDataObjects.PX_PlottableConnector in types:
+                    idxInPin = element.get("idxInPin")
+                    idxOutPin = element.get("idxOutPin")
+                    elem0 = element.get("elem0")
+                    elem1 = element.get("elem1")
+                    print "elem0: ", elem0
+                    print "elem1: ", elem1
+                    setIdxConnectedOutPins = elem0.get("setIdxConnectedOutPins")
+                    setIdxConnectedInPins  = elem1.get("setIdxConnectedInPins")
+                    print "setIdxConnectedOutPins: ", setIdxConnectedOutPins 
+                    print "setIdxConnectedInPins: ", setIdxConnectedInPins
+                    print "idxOutPin: ", idxOutPin
+                    print "idxInPin: ", idxInPin
+                    setIdxConnectedOutPins.remove(idxOutPin)
+                    setIdxConnectedInPins.remove(idxInPin)
+                    print "setIdxConnectedOutPins (1): ", setIdxConnectedOutPins 
+                    print "setIdxConnectedInPins (1): ", setIdxConnectedInPins
+                    elem0.set("setIdxConnectedOutPins", setIdxConnectedOutPins)
+                    elem1.set("setIdxConnectedInPins", setIdxConnectedInPins)
+                    
             for element in setDelete:
                 self.activeGraphics.delete(element)
             self.repaint()
@@ -196,7 +231,6 @@ class DrawWidget (QtGui.QWidget):
         
         if toolSelected == helper.ToolSelected.none:
             
-            #objInFocusOld = copy.copy(self.activeGraphics.get("objectsInFocus"))
             objInFocusOld = list(self.activeGraphics.get("objectsInFocus"))
             objInFocus = self.activeGraphics.getObjectInFocus(X,Y)
             if len(set(objInFocus).intersection(set(objInFocusOld))) > 0:
@@ -212,7 +246,6 @@ class DrawWidget (QtGui.QWidget):
             if len_objectsInFocus == 1:
                 activeObject = objInFocus[0]
                 if activeObject.isAttr("listPoints"):
-                    #listPoints = copy.copy(activeObject.get("listPoints"))
                     listPoints = list(activeObject.get("listPoints"))
                     objectInFocus = objInFocus[0]
                     shape = objectInFocus.get("Shape")
@@ -237,10 +270,12 @@ class DrawWidget (QtGui.QWidget):
                 for key in keys:
                     element = self.activeGraphics.getb(key)
                     types = inspect.getmro(type(element))
-                    if PyLinXDataObjects.PX_PlotableVarElement in types: 
+                    if PyLinXDataObjects.PX_PlotableElement in types: 
                         objInFocus, idxPin = element.isPinInFocus(x,y)
                         if objInFocus != None:
-                            break
+                            if len(idxPin) == 1:
+                                idxPin = idxPin[0]
+                            break  
                 
                 if objInFocus == None:
                 
@@ -249,7 +284,6 @@ class DrawWidget (QtGui.QWidget):
                     ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
                     X0 = ConnectorPloting.get("X")
                     Y0 = ConnectorPloting.get("Y")
-                    #listPoints = copy.copy(ConnectorPloting.get("listPoints"))
                     listPoints = list(ConnectorPloting.get("listPoints"))
                     len_listPoints = len(listPoints)
                     if len_listPoints > 1:
@@ -257,7 +291,7 @@ class DrawWidget (QtGui.QWidget):
                     else:
                         lastPoint_minus_1 = sys.maxint
                     x_diff = X - X0
-                    y_diff = Y - Y0
+                    y_diff = Y - Y0 
                     if len_listPoints % 2 == 0:
                         if abs(x_diff - lastPoint_minus_1) < 12 and len_listPoints > 1:
                             listPoints[-1] = y_diff
@@ -273,21 +307,12 @@ class DrawWidget (QtGui.QWidget):
                     proxyElem.set("Y", y)
                     
                 else:
-                    
+                    # idxPin determined as the index of Pins in focus
                     setIdxConnectedInPins = objInFocus.get("setIdxConnectedInPins")
-                    len_setIdxConnectedInPins = len(setIdxConnectedInPins)
-                    bConnect = False 
-                    # no pin is connected
-                    if len_setIdxConnectedInPins == 0:
+                    if idxPin in setIdxConnectedInPins:
+                        bConnect = False
+                    else:
                         bConnect = True
-                    # there are connected pins
-                    if len_setIdxConnectedInPins > 1:
-                        # the clicked pin is connected
-                        if idxPin in setIdxConnectedInPins:
-                            bConnect = False
-                        # the clicked pin is not connected
-                        else:
-                            bConnect = True
                 
                     if bConnect:
                         # connecting the connector to the second element                
@@ -299,17 +324,26 @@ class DrawWidget (QtGui.QWidget):
                                 break
                         ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
                         ConnectorPloting.set("elem1",objInFocus)
+                        ConnectorPloting.set("idxInPin", idxPin)
+                        setIdxConnectedInPins.add(idxPin)
+                        objInFocus.set("setIdxConnectedInPins", setIdxConnectedInPins)
                         self.rootGraphics.set("bConnectorPloting", False)
-                        #self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
                         objInFocus.set("idxActiveInPins", [])
-                        self.repaint()
+                        
+                        elem0 = ConnectorPloting.get("elem0")
+                        setIdxConnectedOutPins = elem0.get("setIdxConnectedOutPins")
+                        idxOutPinConnectorPloting = self.rootGraphics.get("idxOutPinConnectorPloting")
+                        setIdxConnectedOutPins.add(idxOutPinConnectorPloting)
+                        elem0.set("setIdxConnectedOutPins", setIdxConnectedOutPins)
+                        self.rootGraphics.set("idxOutPinConnectorPloting", None)
+
             else:
                 # Starting connecting Elements
                 keys = self.activeGraphics.getChildKeys()
                 for key in keys:
                     element = self.activeGraphics.getb(key)
                     types = inspect.getmro(type(element))
-                    if PyLinXDataObjects.PX_PlotableVarElement in types: 
+                    if PyLinXDataObjects.PX_PlotableElement in types: 
                         objInFocus, idxPin = element.isPinInFocus(x,y)
                         if objInFocus != None:
                             proxyElem = PyLinXDataObjects.PX_PlottableProxyElement(x,y)
@@ -317,6 +351,10 @@ class DrawWidget (QtGui.QWidget):
                             newConnector = PyLinXDataObjects.PX_PlottableConnector(element, proxyElem)
                             self.activeGraphics.paste(newConnector,  bHashById=True)
                             self.rootGraphics.set("bConnectorPloting", True)
+                            if len(idxPin) > 0:
+                                idxPin = idxPin[0] 
+                                #print "--->idxPin: ", idxPin 
+                            self.rootGraphics.set("idxOutPinConnectorPloting", idxPin)
                             self.rootGraphics.set("ConnectorPloting", newConnector)
                         
 
@@ -328,8 +366,14 @@ class DrawWidget (QtGui.QWidget):
             self.activeGraphics.paste(var, bHashById=True)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
-            self.repaint()
-                         
+            
+        elif toolSelected == helper.ToolSelected.newPlus:
+            
+            plus = PyLinXDataObjects.PX_BasicOperator(X,Y,"+")
+            self.activeGraphics.paste(plus, bHashById=True)
+            self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+            self.mainWindow.ui.actionNewElement.setChecked(False)
+      
         self.repaint()
          
     def mouseMoveEvent(self,coord):
@@ -342,7 +386,6 @@ class DrawWidget (QtGui.QWidget):
         
         if toolSelected == helper.ToolSelected.none:
 
-            #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
             objectsInFocus = list(self.activeGraphics.get("objectsInFocus") )
             if objectsInFocus != []:
                 px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
@@ -350,7 +393,6 @@ class DrawWidget (QtGui.QWidget):
                 if px_mousePressedAt_X != sys.maxint:
                     xOffset = X - px_mousePressedAt_X 
                     yOffset = Y - px_mousePressedAt_Y 
-                    #len_objectsInFocus = len(objectsInFocus)
                     for activeObject in objectsInFocus:
                         ConnectorToModify = self.activeGraphics.get("ConnectorToModify")
                         # move objects that have coordinates
@@ -365,7 +407,6 @@ class DrawWidget (QtGui.QWidget):
                         # move lines of connectors 
                         elif ConnectorToModify  != None:
                             idxPointModified = self.activeGraphics.get("idxPointModified")
-                            #listPoints = copy.copy(ConnectorToModify.get("listPoints"))
                             listPoints = list(ConnectorToModify.get("listPoints"))
                             value = listPoints[idxPointModified]
                             if idxPointModified % 2 == 0:
@@ -390,7 +431,7 @@ class DrawWidget (QtGui.QWidget):
             for key in keys:
                 element = self.activeGraphics.getb(key)
                 types = inspect.getmro(type(element))
-                if  PyLinXDataObjects.PX_PlotableVarElement in types:
+                if  PyLinXDataObjects.PX_PlotableElement  in types:
                     element.isPinInFocus(x,y)   
                     self.repaint()
             bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
@@ -429,15 +470,11 @@ class DrawWidget (QtGui.QWidget):
                                 if len(idxCorner) == 0:
                                     bFocus = False
                     if bFocus:
-                        #objectsInFocus = copy.copy(self.activeGraphics.get("objectsInFocus") )
                         objectsInFocus = list(self.activeGraphics.get("objectsInFocus") )
                         objectsInFocus.append(element)
                         self.activeGraphics.set("objectsInFocus", objectsInFocus)
             self.activeGraphics.set("ConnectorToModify", None )
             self.activeGraphics.set("idxPointModified" , None )            
-        
-        elif toolSelected == helper.ToolSelected.newConnector:
-            pass
                         
         for key in keys:
             if self.activeGraphics.getb(key).get("bLatent") == True:
@@ -472,7 +509,7 @@ def run():
     
 if __name__ == '__main__':
     
-    PROFILE = True
+    PROFILE = False
     
     if PROFILE:
         cProfile.run('run()')

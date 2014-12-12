@@ -7,31 +7,116 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
      <widget class="QSplitter" name="splitter">
       <property name="lineWidth">
+       <number>2</number>
+      </property>
+      <property name="midLineWidth">
        <number>1</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeView" name="treeView"/>
       <widget class="QWidget" name="horizontalLayoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>0</number>
         </property>
         <property name="sizeConstraint">
-         <enum>QLayout::SetMaximumSize</enum>
+         <enum>QLayout::SetMinimumSize</enum>
         </property>
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>3</width>
+            <height>2</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <property name="minimumSize">
+            <size>
+             <width>774</width>
+             <height>0</height>
+            </size>
+           </property>
+           <attribute name="title">
+            <string>Tab 1</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QTreeView" name="treeView"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <property name="minimumSize">
+            <size>
+             <width>774</width>
+             <height>479</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>774</width>
+             <height>479</height>
+            </size>
+           </property>
+           <attribute name="title">
+            <string>Tab 2</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_2">
+            <property name="geometry">
+             <rect>
+              <x>9</x>
+              <y>9</y>
+              <width>751</width>
+              <height>461</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QTreeView" name="treeView_2"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -152,6 +237,7 @@
    </property>
   </action>
  </widget>
+ <layoutdefault spacing="6" margin="9"/>
  <resources/>
  <connections/>
 </ui>

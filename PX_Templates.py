@@ -13,7 +13,8 @@ class color():
     black           = QColor(0,0,0)
     transparent     = QColor(0,0,0,0)
     red             = QColor(206,0,0)
-    blue            = QColor(0,0,151)
+    blue            = QColor(0,0,100)
+    blueTransp      = QColor(0,0,100, 150)
     yellow          = QColor(255,255,0)
     orange          = QColor(255,127,0)
     blueLocalVar    = QColor(118,176,240)
@@ -66,6 +67,7 @@ class Scalable:
     # ratio 60 degree rectangle
     def r_60deg(self):
         return 0.886
+    
  
     ################################
     ## element
@@ -75,6 +77,9 @@ class Scalable:
     
     def px_ELEMENT_minWidth(self):
         return self.ratio * 90
+    
+    def px_ELEMENT_pinHeigth(self):
+        return self.ratio * 10
     
     def px_ELEMENT_Border(self):
         return self.ratio * 2.5
@@ -96,15 +101,14 @@ class Scalable:
     def px_ELEMENT_minWidthColorBar(self):
         return self.ratio * 10
     
-    #def px_ELEMENT_highlightSqare(self):
-    #    return self.ratio * 6
-    
-    
-    
     #  minimal heigth of an element 
     
     def px_EMELENT_minHeigth(self):
         return self.ratio * 20
+    
+    def px_ELEMENT_stdPinDistance(self):
+        return self.ratio * 20
+    
     
     #################################
     ## connector
@@ -121,22 +125,21 @@ class Scalable:
     
     def px_CONNECTOR_line(self):
         return self.ratio * 1
+    
 
     ################################
-    ## plottable binary operator
+    ## plottable elemtary operator
     ################################
     
-    def px_PLOTABLEBINOPERATOR_size(self):
-        return self.ratio * 40
+    def px_PLOTABLEELEMOPERATOR_size(self):
+        return self.ratio * 30
     
-    def px_PLOTABLEBINOPERATOR_Border(self):
-        return self.ratio * 2.5
+    def px_PLOTABLEELEMOPERATOR_innerDiameter(self):
+        return self.ratio * 1.7
+
+    def px_PLOTABLEELEMOPERATOR_outerDiameter(self):
+        return self.ratio * 10
     
-    def px_ELPLOTABLEBINOPERATOR_pinLength(self):
-        return self.ratio * 15
-#     
-#     def px_PLOTABLEBINOPERATOR_Heigth(self):
-#         return self.ratio * 2.5    
     
     #################################
     ## Highlight
@@ -144,6 +147,7 @@ class Scalable:
 
     def px_HIGHLIGHT_border(self):
         return self.ratio * 2
+    
 # Template
     
 class Template():
