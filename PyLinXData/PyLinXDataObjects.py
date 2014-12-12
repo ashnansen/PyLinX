@@ -65,11 +65,11 @@ class PX_PlotableObject (PX_Object):#, QtGui.QGraphicsItem):
         else:
             return  False
     
-    ## Method that gets an hulling polycon 
+    ## Method that gets an hulling polygon 
     
     def __getPolygon(self, x0,y0, x1, y1):
             delta = PX_Templ.Template.Gui.px_CONNECTOR_activeZone()
-            # verticalMusik12345
+            # vertical
             if x0 == x1:
                 if y0 < y1:
                     return [(x0, y0), (x0+delta,y0+delta), (x1+delta,y1-delta), (x1,y1), (x1 - delta,y1-delta), (x0-delta,y0+delta)]
@@ -139,6 +139,7 @@ class PX_PlotableObject (PX_Object):#, QtGui.QGraphicsItem):
             if element.isAttrTrue("bVisible"):
                 pass
 
+
 ## Meta-Class for all plotalble objects that can be connected
     
 class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
@@ -156,177 +157,147 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         super(PX_PlotableElement, self).__init__(name, X, Y, value)
         self.set("X", X)
         self.set("Y", Y)
-    
-    def plot(self, paint, templ): 
-        pass
-
-## Proxy class used as place holder of the target object of a connector during drawing the connection
-
-class PX_PlottableProxyElement(PX_PlotableElement):
-    
-    def __init__(self, X, Y):
-        
-        super(PX_PlottableProxyElement, self).__init__("PX_PlottableProxyElement", X, Y, None)
-        self.set("listInPins", [(0,0,0,0)])
-        #self.set("listPoints", [])
-    
-    def isInFocus(self, X, Y):
-        return []
-
-## Class for variable Elements
-
-class  PX_PlotableVarElement(PX_PlotableElement):
-    
-    def __init__(self, name, X, Y, value = None):
-        super(PX_PlotableVarElement, self).__init__(name, X, Y)
-        self.__Head = value
         
         #  Configuration
         self.set("bMethodIsInFocus", True)
         self.set("idxActiveInPins", [])
         self.set("idxActiveOutPins", [])
         self.set("setIdxConnectedInPins", set([]))
-        self.set("bVisible", True)
+        self.set("setIdxConnectedOutPins", set([]))
+        self.set("bVisible", True)        
+        self.calcDimensions()
+
+
+
+    def calcDimensions(self,width         = PX_Templ.Template.Gui.px_ELEMENT_minWidth(),\
+                              heigth        = PX_Templ.Template.Gui.px_EMELENT_minHeigth(),\
+                              tupleInPins   = ((0,""),),\
+                              tupleOutPins  = ((0,""),)):
         
-        self.__calcDimensions() 
-        
-    def __calcDimensions(self):
-        
+        self.elementWidth       = width
+        self.elementHeigth      = heigth
         self.border             = PX_Templ.Template.Gui.px_ELEMENT_Border()
-        self.elementWidth       = PX_Templ.Template.Gui.px_ELEMENT_minWidth()
-        self.elementHeigth      = PX_Templ.Template.Gui.px_EMELENT_minHeigth()
-        self.halfLine           = 0.5 * self.border
-        self.pinLength          = PX_Templ.Template.Gui.px_ELEMENT_pinLength() 
-        self.elementWidth_half  = 0.5 * self.elementWidth
-        self.elementHeigth_half = 0.5 * self.elementHeigth
-        self.triangleOffset     = 0.5 * self.elementHeigth * PX_Templ.Template.Gui.r_60deg()
-        self.pinHeigth          = 0.25 * self.elementHeigth 
-        self.lengthWholePin     = self.triangleOffset + self.pinLength
-        self.rightEndpoint_x    = self.lengthWholePin  + self.elementWidth_half
+        self.halfBorder           = 0.5 * self.border
+        pinLength               = PX_Templ.Template.Gui.px_ELEMENT_pinLength() 
+        elementWidth_half       = 0.5 * self.elementWidth
+        elementHeigth_half      = 0.5 * self.elementHeigth
+        px_ELEMENT_pinHeigth    = PX_Templ.Template.Gui.px_ELEMENT_pinHeigth()
+        self.triangleOffset     = px_ELEMENT_pinHeigth * PX_Templ.Template.Gui.r_60deg()
+        self.pinHalfHeigth      = 0.5 * px_ELEMENT_pinHeigth
+        lengthWholePin          = self.triangleOffset + pinLength
+        rightEndpoint_x         = lengthWholePin  + elementWidth_half
         self.X                  = self.get("X")
-        self.x                  = self.X - self.elementWidth_half
+        self.x                  = self.X - elementWidth_half
         self.Y                  = self.get("Y")
-        self.y                  = self.Y - self.elementHeigth_half 
+        self.y                  = self.Y - elementHeigth_half 
         self.x_end              = self.x + self.elementWidth
         self.y_end              = self.y + 0.5 * self.elementHeigth
-        self.bActive = self._PX_PlotableObject__isActive()
+        self.bActive            = self._PX_PlotableObject__isActive()
         
         # Shape
         
-        self.set("Shape",[[(- self.elementWidth_half, - self.elementHeigth_half),\
-                           (  self.elementWidth_half, - self.elementHeigth_half),\
-                           (  self.elementWidth_half,   self.elementHeigth_half),\
-                           (- self.elementWidth_half,   self.elementHeigth_half),\
+        self.set("Shape",[[(- elementWidth_half, - elementHeigth_half),\
+                           (  elementWidth_half, - elementHeigth_half),\
+                           (  elementWidth_half,   elementHeigth_half),\
+                           (- elementWidth_half,   elementHeigth_half),\
                            ]])
         
         # In- and Outpins
-        
-        
-        listInPins  =  [(- self.rightEndpoint_x, 0, - self.elementWidth_half, 0)]
-        listOutPins =  [(  self.rightEndpoint_x, 0,   self.elementWidth_half, 0)]
-        
-        ShapeInPins =  [self._PX_PlotableObject__getPolygon(*inPin)  for inPin  in listInPins]
-        ShapeOutPins = [self._PX_PlotableObject__getPolygon(*outPin) for outPin in listOutPins]
+        listInPins   = [(- rightEndpoint_x, inPin[0], - elementWidth_half, inPin[0],  inPin[1])  for inPin  in tupleInPins]
+        listOutPins  = [(  rightEndpoint_x, outPin[0],  elementWidth_half, outPin[0], outPin[1]) for outPin in tupleOutPins]       
+        ShapeInPins =  [self._PX_PlotableObject__getPolygon(*inPin[0:4])  for inPin  in listInPins]
+        ShapeOutPins = [self._PX_PlotableObject__getPolygon(*outPin[0:4]) for outPin in listOutPins]
                 
         self.set("listInPins",   listInPins  )
         self.set("listOutPins",  listOutPins )
         self.set("ShapeInPins",  ShapeInPins )
         self.set("ShapeOutPins", ShapeOutPins )
-
-        
-    def plot(self, paint, templ):
-
-        
-        ## Method to plot the main square of the Element
-        
-        def __plotElementSquare():
-        
-            if self.bActive:
-                paint.setPen(PX_PlotableElement.penHighlight)
-                paint.setBrush(PX_Templ.brush.Highlight)
-                paint.drawRect(self.x,self.y, self.elementWidth, self.elementHeigth)
-            else:
-                # background shadow
-                paint.setPen(PX_PlotableElement.penShadow)
-                paint.drawRect(self.x + self.border ,self.y + self.border, self.elementWidth, self.elementHeigth)
-                
-            # main square
-            paint.setPen(PX_PlotableElement.penBold)
-            paint.setBrush(PX_Templ.brush.white)
-            paint.drawRect(self.x,self.y, self.elementWidth, self.elementHeigth)
         
         
-        ## Method to plot the color bar of a variable element
+    ## Method to plot the main square of the Element
         
-        def __plotElementSpecifier():
-            
-            # color bar 
-            paint.setPen(PX_PlotableElement.penLight)
-            paint.setBrush(PX_Templ.brush.blueLocalVar)
-            paint.drawRect(self.x + self.halfLine,\
-                           self.y + self.halfLine,\
-                           PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar(),\
-                           PX_Templ.Template.Gui.px_EMELENT_minHeigth() - self.halfLine)
-        
-        
-        ## Method that plots Connoctor Inputs
-        
-        def __plotConnectorInputs():
-
-            paint.setPen(PX_PlotableElement.penNoBorder)
-            paint.setBrush(PX_Templ.brush.black)
-            path = QtGui.QPainterPath()
-            
-            x_begin = self.x - self.triangleOffset   
-            path.moveTo(    x_begin,    self.y + self.pinHeigth     )
-            path.lineTo(    self.x,     self.y + 2 * self.pinHeigth )
-            path.lineTo(    x_begin,    self.y + 3 * self.pinHeigth )
-            path.lineTo(    x_begin,    self.y + self.pinHeigth     )
-            paint.drawPath(path)
-            idxActiveInPins = self.get("idxActiveInPins")
-            if idxActiveInPins == []:
-                paint.setPen(PX_PlotableElement.penLight)
-            else:
-                paint.setPen(PX_PlotableElement.penBold)
-            paint.drawLine( x_begin - self.pinLength,self.y + 2 * self.pinHeigth,x_begin ,self.y + 2 * self.pinHeigth) 
-         
-        
-        ## Method that plots Connoctor Outputs
-        
-        def __plotConnectorOutputs():
-         
-            paint.setPen(PX_PlotableElement.penLight)
-            paint.setBrush(PX_Templ.brush.white)
-            path = QtGui.QPainterPath()
-            path.moveTo(self.x_end + self.border , self.y_end - self.pinHeigth)
-            x_endpoint = self.x_end + self.triangleOffset + self.border
-            path.lineTo(x_endpoint , self.y_end)
-            path.lineTo(self.x_end + self.border, self.y_end + self.pinHeigth)
-            paint.drawPath(path)
-            idxActiveOutPins = self.get("idxActiveOutPins")
-            if idxActiveOutPins == []:
-                paint.setPen(PX_PlotableElement.penLight)
-            else:
-                paint.setPen(PX_PlotableElement.penBold)
-            paint.drawLine(x_endpoint , self.y_end, x_endpoint + 0.4 * self.triangleOffset  + self.pinLength, self.y_end )
-
-        self.__calcDimensions()        
-        __plotElementSquare()
-        __plotElementSpecifier()
-        __plotConnectorInputs()
-        __plotConnectorOutputs()
-
-    # Method which determins if a point is inside the shape of the element
+    def plotBasicElement(self, paint, templ):
     
-    def isInFocus(self, X, Y):
         
-        x = self.get("X")
-        y = self.get("Y")
+        ## plot the main square of the Element
+                
+        if self.bActive:
+            paint.setPen(PX_PlotableElement.penHighlight)
+            paint.setBrush(PX_Templ.brush.Highlight)
+            paint.drawRect(self.x,self.y, self.elementWidth, self.elementHeigth)
+        else:
+            # background shadow
+            paint.setPen(PX_PlotableElement.penShadow)
+            paint.drawRect(self.x + self.border ,self.y + self.border, self.elementWidth, self.elementHeigth)
+            
+        # main square
+        paint.setPen(PX_PlotableElement.penBold)
+        paint.setBrush(PX_Templ.brush.white)
+        paint.drawRect(self.x,self.y, self.elementWidth, self.elementHeigth)
 
-        X = X - x
-        Y = Y - y
+
+        ## plots Connoctor Inputs
+    
+        paint.setPen(PX_PlotableElement.penNoBorder)
+        paint.setBrush(PX_Templ.brush.black)
+        listInPins = self.get("listInPins")
+        paint.setPen(PX_PlotableElement.penNoBorder)
+        paint.setBrush(PX_Templ.brush.black)
+        idxActiveInPins = self.get("idxActiveInPins")
         
-        return PyLinXHelper.point_inside_polygon(X, Y, self.get("Shape"))
+        for i in range(len(listInPins)):
+            inPin = listInPins[i]
+            path        = QtGui.QPainterPath()
+            x_pin       = inPin[0] + self.X
+            y_pin       = inPin[1] + self.Y
+            x_pinEnd    = inPin[2] + self.X
+            #y_pinEnd    = inPin[3] 
+            x_arrow = x_pinEnd - self.triangleOffset   
+
+            path.moveTo(    x_arrow,    y_pin - self.pinHalfHeigth)
+            path.lineTo(    x_pinEnd,   inPin[3] + self.Y)
+            path.lineTo(    x_arrow,    y_pin + self.pinHalfHeigth)
+            path.lineTo(    x_arrow,    y_pin - self.pinHalfHeigth)
+            
+            paint.drawPath(path)
+
+            if i in idxActiveInPins:
+                paint.setPen(PX_PlotableElement.penBold)
+            else:
+                paint.setPen(PX_PlotableElement.penLight)
+            paint.drawLine( x_pin,y_pin,x_arrow ,y_pin)                
+                
+    
+        ## plot Connoctor Outputs
+     
+        paint.setPen(PX_PlotableElement.penLight)
+        paint.setBrush(PX_Templ.brush.white)
+        listOutPins = self.get("listOutPins")
+        paint.setPen(PX_PlotableElement.penNoBorder)
+        paint.setBrush(PX_Templ.brush.white)
+        idxActiveOutPins = self.get("idxActiveOutPins")
+
+        for i in range(len(listOutPins)):
+            outPin = listOutPins[i]
+            path        = QtGui.QPainterPath()
+            x_pin       = outPin[0] + self.X
+            y_pin       = outPin[1] + self.Y
+            x_pinEnd    = outPin[2] + self.X + self.halfBorder
+            #y_pinEnd    = inPin[3] 
+            x_arrow = x_pinEnd + self.triangleOffset   
+
+            path.moveTo(    x_pinEnd,    y_pin - self.pinHalfHeigth)
+            path.lineTo(    x_arrow,     outPin[3] + self.Y)
+            path.lineTo(    x_pinEnd,    y_pin + self.pinHalfHeigth)
+            path.lineTo(    x_pinEnd,    y_pin - self.pinHalfHeigth)
+            
+            paint.drawPath(path)
+            
+            if i in idxActiveOutPins:
+                paint.setPen(PX_PlotableElement.penBold)
+            else:
+                paint.setPen(PX_PlotableElement.penLight)
+            paint.drawLine( x_pin,y_pin,x_arrow ,y_pin)
 
 
     # Method which determins if a point is inside the pin of the element 
@@ -343,12 +314,14 @@ class  PX_PlotableVarElement(PX_PlotableElement):
         ShapeOutPins = self.get("ShapeOutPins")
         
         idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins)
-        idxOutPins = PyLinXHelper.point_inside_polygon(X, Y, ShapeOutPins)
+        #print "idxInPins: ", idxInPins
         
         if idxInPins != []:
             idxInPins = [-idx for idx in idxInPins]
             self.set("idxActiveInPins", idxInPins)
             return self, idxInPins  
+        
+        idxOutPins = PyLinXHelper.point_inside_polygon(X, Y, ShapeOutPins)
         
         if idxOutPins != []:
             self.set("idxActiveOutPins", idxOutPins)
@@ -358,47 +331,127 @@ class  PX_PlotableVarElement(PX_PlotableElement):
         self.set("idxActiveOutPins", [])
         
         return None, []
+
+
+    # Method which determins if a point is inside the shape of the element
     
-    def get(self, attr):
+    def isInFocus(self, X, Y):
         
-        if attr == "setIdxConnectedInPins":
-            return self.__get_setIdxConnectedInPins()
-        else:
-            return PX_PlotableObject.get(self,attr)
+        x = self.get("X")
+        y = self.get("Y")
+
+        X = X - x
+        Y = Y - y
         
-    def __get_setIdxConnectedInPins(self):
+        return PyLinXHelper.point_inside_polygon(X, Y, self.get("Shape"))
+
+## Proxy class used as place holder of the target object of a connector during drawing the connection
+
+class PX_PlottableProxyElement(PX_PlotableElement):
+    
+    def __init__(self, X, Y):
         
-        ## TODO: for complex models this method has to be modified 
+        super(PX_PlottableProxyElement, self).__init__("PX_PlottableProxyElement", X, Y, None)
+        self.set("listInPins", [(0,0,0,0)])
+        #self.set("listPoints", [])
+    
+    def isInFocus(self, X, Y):
+        return []
+
+
+## Class for variable Elements
+
+class  PX_PlotableVarElement(PX_PlotableElement):
+    
+    def __init__(self, name, X, Y, value = None):
+        super(PX_PlotableVarElement, self).__init__(name, X, Y)
+        self.__Head = value 
+        PX_PlotableElement.calcDimensions(self)
         
-        parent = self.getParent()
-        keys = parent.getChildKeys()
+    def plot(self, paint, templ):
+
+        ## Method to plot the color bar of a variable element
         
-        listIDs = []
+        def __plotElementSpecifier():
+            
+            # color bar 
+            paint.setPen(PX_PlotableElement.penLight)
+            paint.setBrush(PX_Templ.brush.blueLocalVar)
+            paint.drawRect(self.x + self.halfBorder,\
+                           self.y + self.halfBorder,\
+                           PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar(),\
+                           PX_Templ.Template.Gui.px_EMELENT_minHeigth() - self.halfBorder)
         
-        for key in keys:
-            element = parent.getb(key)
-            if element.isAttr("ID_1"):
-                id_1 = element.get("ID_1")
-                if id_1 != None:
-                    listIDs.append(id_1)
-                    
-        if self.get("ID") in listIDs:
-            return set([0])
-        else:
-            return set([])
-       
+        PX_PlotableElement.calcDimensions(self)        
+        PX_PlotableElement.plotBasicElement(self, paint, templ)
+        __plotElementSpecifier()
+
+
+## Class for binary Operators
+
+class PX_BasicOperator(PX_PlotableElement):
+    
+    penSpecifier   = QtGui.QPen(PX_Templ.color.blue,PX_Templ.Template.Gui.px_ELEMENT_MediumLight(), QtCore.Qt.SolidLine)
+    brushSpecifier = QtGui.QBrush(PX_Templ.color.blueTransp)
+    
+    def __init__(self, X, Y, value = None):
+        super(PX_BasicOperator, self).__init__("<none>", X, Y)
+        self.__Head = value
+        PX_PlotableElement.calcDimensions(self)
+        
+    def plot(self,paint,templ):
+        
+        def __plotPlusSpecifier():
+            
+            paint.setPen(PX_BasicOperator.penSpecifier)
+            paint.setBrush(PX_BasicOperator.brushSpecifier)
+            
+            innerDiam = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_innerDiameter()
+            outerDiam = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_outerDiameter()
+            
+            #plotting the "+" 
+            path = QtGui.QPainterPath()
+            path.moveTo( self.X + innerDiam, self.Y + innerDiam)
+            path.lineTo( self.X + innerDiam, self.Y + outerDiam)
+            path.lineTo( self.X - innerDiam, self.Y + outerDiam)
+            path.lineTo( self.X - innerDiam, self.Y + innerDiam)
+            path.lineTo( self.X - outerDiam, self.Y + innerDiam)
+            path.lineTo( self.X - outerDiam, self.Y - innerDiam)
+            path.lineTo( self.X - innerDiam, self.Y - innerDiam)
+            path.lineTo( self.X - innerDiam, self.Y - outerDiam)
+            path.lineTo( self.X + innerDiam, self.Y - outerDiam)
+            path.lineTo( self.X + innerDiam, self.Y - innerDiam)
+            path.lineTo( self.X + outerDiam, self.Y - innerDiam)
+            path.lineTo( self.X + outerDiam, self.Y + innerDiam)
+            path.lineTo( self.X + innerDiam, self.Y + innerDiam)
+            paint.drawPath(path)        
+
+        size = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_size()
+        stdPinDistance =  PX_Templ.Template.Gui.px_ELEMENT_stdPinDistance()
+        stdPinDistance_half = 0.5 * stdPinDistance 
+        
+        PX_PlotableElement.calcDimensions(self, size, size,((-stdPinDistance_half, ""), (stdPinDistance_half, "")))
+        PX_PlotableElement.plotBasicElement(self, paint, templ)
+        
+        if self.__Head == "+":
+            __plotPlusSpecifier()
+        elif self.__Head == "-":
+            pass
+        
         
 ## Meta-Class for all connections of objects from the type PX_Variables
 
 class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
     
-    def __init__(self, elem0, elem1 = None, listPoints = []):
+    def __init__(self, elem0, elem1 = None, listPoints = [], idxOutPin = 0, idxInPin = 0):
         
         super(PX_PlottableConnector, self).__init__()
         id_0 = elem0.get("ID")
         self.set("ID_0", id_0)
         self.set("elem0", elem0)
         self.set("bVisible", True)
+        self.set("idxOutPin", idxOutPin)
+        self.set("idxInPin",  idxInPin)
         
         if elem1 != None:
             id_1 = elem1.get("ID")
@@ -428,6 +481,9 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
            
     def __calcDimensions(self):
 
+        # Getting data
+        ############################
+        
         elem0 = self.get("elem0")
         elem1 = self.get("elem1")
         self.X0 = elem0.get("X")
@@ -436,17 +492,22 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         self.Y1 = elem1.get("Y")
         self.listOutPins0 = elem0.get("listOutPins")
         self.listInPins1  = elem1.get("listInPins")
+        
 
-        self.listPoints = copy.copy(self.get("listPoints"))
+        #self.listPoints = copy.copy(self.get("listPoints"))
+        self.listPoints = list(self.get("listPoints"))
+                
+        idxOutPin = self.get("idxOutPin")
+        idxInPin = self.get("idxInPin")
        
-        self.outPin_x =  self.listOutPins0[0][0]
-        self.outPin_y =  self.listOutPins0[0][1]
-        self.inPin_x  =  self.listInPins1[0][0]
-        self.inPin_y  =  self.listInPins1[0][1]
+        self.outPin_x =  self.listOutPins0[ idxOutPin ][0]
+        self.outPin_y =  self.listOutPins0[ idxOutPin ][1]
+        self.inPin_x  =  self.listInPins1 [ idxInPin  ][0]
+        self.inPin_y  =  self.listInPins1 [ idxInPin  ][1]
         
         len_listPoints = len(self.listPoints)
         
-        # determine the shape polygons of the connector
+        # determine if the connector is finished or not
         
         types = inspect.getmro(type(elem1))
         if PX_PlottableProxyElement in types:
@@ -454,37 +515,58 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         else:
             self.bNoFinalConnection = False
         
+        # This code is quite complicated. It inserts extra points to listPoints
+        # to make drawing more convenient to the user. There is no abstract princoble
+        # applied but the conditions have grown by time. Maybe this could be done more
+        # elegant...
+        ###############################################################################
+        
+        #Case final connection
         if self.bNoFinalConnection == False:
         
             if len_listPoints > 0:
-                pass
                 # x-Values
                 if len_listPoints %2==0:
-                    self.listPoints[-1] = self.outPin_y + self.Y1 - self.Y0
+                    pass
+                    self.listPoints[-1] = self.inPin_y + self.Y1 - self.Y0 
                 # y-Values
                 else:
                     if len_listPoints > 1:
                         if self.listPoints[-2] != self.outPin_y:
-                            self.listPoints.append(self.inPin_y + self.Y1 - self.Y0)
+                            self.listPoints.append(self.inPin_y + self.Y1 - self.Y0 )
                     else:
                         if self.Y0 != self.Y1:
-                            self.listPoints.append(self.inPin_y + self.Y1 - self.Y0)
+                            self.listPoints.append(self.inPin_y + self.Y1 - self.Y0 )
                             
             else:
                 self.listPoints.append(self.inPin_x + self.X1 - self.X0 - self.rad )
-                self.listPoints.append(self.Y1 - self.Y0) 
+                #print "self.inPin_y: ", self.inPin_y
+                #self.listPoints.append(self.Y1 - self.Y0 ) 
+                self.listPoints.append(self.Y1 - self.Y0 +  self.inPin_y  )
                             
+        #Case no final connection
         else:
             if len_listPoints %2==0:
-                self.listPoints.append(self.X1 - self.X0)
+                self.listPoints.append(self.X1 - self.X0 )
             else:
-                self.listPoints.append(self.Y1 - self.Y0)
+                # self.listPoints.append(self.Y1 - self.Y0  )
+                self.listPoints.append(self.Y1 - self.Y0 + self.inPin_y )
         
         len_listPoints = len(self.listPoints)
         len_listPoints_minus_1 = len_listPoints - 1 
         
+        #Case final connection
         if self.bNoFinalConnection == False:
             self.set("listPoints", self.listPoints)
+        
+        # Determining the shape of the connector
+        # From the "Shape" the GUI knows where an object
+        # is located. The "Shape" has not be the real 
+        # visible shape of the graphical object.
+        # the "Shape" of the connector is composed by
+        # six point polygones and is  broader than the
+        # visible shape for convenience reasons
+        ##############################################
         
         shape = []
         
@@ -509,7 +591,8 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
                 x0 = x1_cache
                 y0 = y1_cache
                 x1 = self.inPin_x + self.X1 - self.X0
-                y1 = self.inPin_y + self.Y1 - self.Y0
+                #y1 = self.inPin_y + self.Y1 - self.Y0 
+                y1 = self.inPin_y + self.Y1 - self.Y0 
                 shape.append(self._PX_PlotableObject__getPolygon(x0,y0,x1,y1))
                 #print "x0: ", x0, "y0: ", y0, "x1: ", x1, "y1: ", y1 
    
@@ -518,19 +601,25 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
 
     def get(self, attr):
         
+        # coordinates are not held
+        # within the connector but
+        # are always taken from the
+        # first element "elem0". 
+        # As a consequence the connector
+        # moves with the first element
+        ##################################
+        
         if attr == "X":
             return self.X0
         elif attr == "Y":
             return self.Y0
         else:
-            #return BContainer.BContainer.get(self,attr)
             return PX_PlotableObject.get(self,attr)    
   
     def plot(self, paint, templ):
         
-        #print "=============================="
-        
-        # preparing painting
+        # preparing plotting
+        ####################
         
         self.__calcDimensions()
         bActive = self._PX_PlotableObject__isActive()
@@ -542,6 +631,14 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         listPoints = copy.copy(self.listPoints)
  
         
+        # transforming the relative coordinates to absolute coordinates
+        #
+        # Convention listPoints = [x_0,y_0, x_1, y_1, x_2, y_2...]
+        # The first  corner is always from horizontal line to vertical  line
+        # the second corner is always from vertical  line to horizontal line        
+        #
+        ###############################################################
+        
         for i in range(len(listPoints)):
 
             #x-value
@@ -551,11 +648,19 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
             else:
                 listPoints[i] = listPoints[i] + self.Y0
         
+        # Going through all corners of the connector
+        #####################################################################
+        
         len_listPoints = len(listPoints)
         
         for i in range(len_listPoints):
-            
-            # determining the last, the current and the next point
+
+            # Determining three points. 
+            #   (x0, y0) The point of the last corner
+            #   (x1, y1) the point of the current corner
+            #   (x2, y2) the point of the next corner 
+            ############################################
+
             if i == 0:
                 x0 = self.outPin_x + self.X0
                 y0 = self.outPin_y + self.Y0
@@ -593,6 +698,9 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
                 radOffset = 0
             else:
                 radOffset = self.rad    
+            
+            # Ploting of the rounded corners of the connector
+            #################################################
             
             # x-Values
             if i%2==0:
@@ -633,15 +741,21 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         y2 = self.inPin_y + self.Y1
         if self.bNoFinalConnection == False:
             path.lineTo(x2,y2)  
-
-        pen2 = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_CONNECTOR_highlight(), QtCore.Qt.SolidLine)     
-        pen = QtGui.QPen(PX_Templ.color.black,PX_Templ.Template.Gui.px_CONNECTOR_line(), QtCore.Qt.SolidLine)
-        pen.setJoinStyle(QtCore.Qt.MiterJoin)
+        
+        
+        # Ploting the final path
+        ########################       
+        
         paint.setBrush(PX_Templ.brush.transparent)
-       
+        
         if bActive:
+            # Connector is highlighted
+            pen2 = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_CONNECTOR_highlight(), QtCore.Qt.SolidLine) 
             paint.setPen(pen2)
             paint.drawPath(path) 
+        
+        pen  = QtGui.QPen(PX_Templ.color.black,PX_Templ.Template.Gui.px_CONNECTOR_line(), QtCore.Qt.SolidLine)    
+        pen.setJoinStyle(QtCore.Qt.MiterJoin)
         paint.setPen(pen)       
         paint.drawPath(path)   
         
@@ -663,8 +777,9 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
             BContainer.BContainer.set(self,"elem1", value)
             BContainer.BContainer.set(self,"ID_1", id_1)
         else:
-            #BContainer.BContainer.set(self,attr, value)
             PX_PlotableObject.set(self,attr, value)    
+
+
 
 ## Class for highlightning
 
@@ -698,138 +813,3 @@ class PX_LatentPlottable_HighlightRect(PX_PlotableObject):
         
     def isInFocus(self, X, Y):
         return []
-
-## Base ckass for operators, which have two inputs by default, but can have more inputs
-'''
-class PX_PlotableBinOperator(PX_PlotableObject):
-    
-    def __init__(self):
-        self.set("numPins", 2)              # Number pins
-        self.set("bInputsChanged", False)   # for not commuting operators the order of pins have to be 
-                                            # changeable.
-    
-    def __calcDimensions(self):
-        
-        self.border             = PX_Templ.Template.Gui.px_PLOTABLEBINOPERATOR_Border()
-        self.elementWidth       = PX_Templ.Template.Gui.px_PLOTABLEBINOPERATOR_size()
-        self.elementHeigth      = PX_Templ.Template.Gui.px_PLOTABLEBINOPERATOR_size()
-        self.halfLine           = 0.5 * self.border
-        self.pinLength          = PX_Templ.Template.Gui.px_ELEMENT_pinLength() 
-        self.elementWidth_half  = 0.5 * self.elementWidth
-        self.elementHeigth_half = 0.5 * self.elementHeigth
-        self.triangleOffset     = 0.5 * self.elementHeigth * PX_Templ.Template.Gui.r_60deg()
-        self.pinHeigth          = 0.25 * self.elementHeigth 
-        self.lengthWholePin     = self.triangleOffset + self.pinLength
-        self.rightEndpoint_x    = self.lengthWholePin  + self.elementWidth_half       
-
-        self.set("Shape",[[(- self.elementWidth_half, - self.elementHeigth_half),\
-                           (  self.elementWidth_half, - self.elementHeigth_half),\
-                           (  self.elementWidth_half,   self.elementHeigth_half),\
-                           (- self.elementWidth_half,   self.elementHeigth_half),\
-                           ]])
-        
-        listInPins  =  [(- self.rightEndpoint_x, 0, - self.elementWidth_half, 0)]
-        listOutPins =  [(  self.rightEndpoint_x, 0,   self.elementWidth_half, 0)]
-        
-        ShapeInPins =  [self._PX_PlotableObject__getPolygon(*inPin)  for inPin  in listInPins]
-        ShapeOutPins = [self._PX_PlotableObject__getPolygon(*outPin) for outPin in listOutPins]
-                
-        self.set("listInPins",   listInPins  )
-        self.set("listOutPins",  listOutPins )
-        self.set("ShapeInPins",  ShapeInPins )
-        self.set("ShapeOutPins", ShapeOutPins )
-    
-    def plot(self, paint, templ):
-        
-        ## claculate dimensions
-        
-        self.__calcDimensions()
-
-        ## preparing data
-        
-        x = self.get("X")
-        y = self.get("Y")
-        
-        #paint.setRenderHint(QtGui.QPainter.Antialiasing)
-        
-        x = x - self.elementWidth_half
-        y = y - self.elementHeigth_half
-        
-#         x_end        = x + self.elementWidth
-#         y_end        = y + 0.5 * self.elementHeigth
-#             
-#         bActive = self._PX_PlotableObject__isActive()
-# 
-#         self.pen.setJoinStyle(QtCore.Qt.MiterJoin)
-# 
-#         # The attribute Shape contains a list of x-y-coordinates forming a polygone of the chape of the plotte element 
-#         
-#         if bActive:
-#             penHighlight = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_ELEMENT_Highlight(), QtCore.Qt.SolidLine)
-#             penHighlight.setJoinStyle(QtCore.Qt.MiterJoin)
-#             paint.setPen(penHighlight)
-#             paint.setBrush(PX_Templ.brush.Highlight)
-#             paint.drawRect(x,y, self.elementWidth, self.elementHeigth)
-#         else:
-#             # background shadow
-#             paint.setPen(self.penShadow)
-#             paint.drawRect(x+ self.border ,y + self.border, self.elementWidth, self.elementHeigth)
-#             
-# 
-#         # connector input
-#         paint.setPen(self.pen3)
-#         paint.setBrush(PX_Templ.brush.black)
-#         path = QtGui.QPainterPath()
-#         
-#         x_begin = x - self.triangleOffset   
-#         path.moveTo(x_begin , y + self.pinHeigth)
-#         path.lineTo(x , y + 2 * self.pinHeigth)
-#         path.lineTo(x_begin ,y  + 3 * self.pinHeigth)
-#         path.lineTo(x_begin , y + self.pinHeigth)
-#         paint.drawPath(path)
-#         idxActiveInPins = self.get("idxActiveInPins")
-#         if idxActiveInPins == []:
-#             paint.setPen(self.pen2)
-#         else:
-#             paint.setPen(self.pen)
-#         paint.drawLine( x_begin - self.pinLength,y + 2 * self.pinHeigth,x_begin ,y + 2 * self.pinHeigth) 
-#          
-#         # connector output    
-#         paint.setPen(self.pen2)
-#         paint.setBrush(PX_Templ.brush.white)
-#         path = QtGui.QPainterPath()
-#         path.moveTo(x_end , y_end - self.pinHeigth)
-#         x_endpoint = x_end +  self.triangleOffset
-#         path.lineTo(x_endpoint , y_end)
-#         path.lineTo(x_end, y_end + self.pinHeigth)
-#         paint.drawPath(path)
-#         idxActiveOutPins = self.get("idxActiveOutPins")
-#         if idxActiveOutPins == []:
-#             paint.setPen(self.pen2)
-#         else:
-#             paint.setPen(self.pen)
-#         paint.drawLine(x_endpoint , y_end, x_endpoint + self.pinLength, y_end )
-# 
-#         # highlighting the Element
-#         
-#     
-#         # meon square
-#         paint.setPen(self.pen)
-#         paint.setBrush(PX_Templ.brush.white)
-#         paint.drawRect(x,y, self.elementWidth, self.elementHeigth)
-#         
-#         
-#         # color bar 
-#         paint.setPen(self.pen2)
-#         paint.setBrush(PX_Templ.brush.blueLocalVar)
-#         paint.drawRect(x + self.halfLine,\
-#                        y + self.halfLine,\
-#                        PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar(),\
-#                        PX_Templ.Template.Gui.px_EMELENT_minHeigth() - self.halfLine)
-#         
-#        
-#    def isInFocus(self, X, Y):
-#        pass
-#    
-#    def isPinInFocus(self, X, Y):
-#        pass'''

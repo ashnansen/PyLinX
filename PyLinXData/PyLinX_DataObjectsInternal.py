@@ -18,7 +18,7 @@ class RootContainer(BContainer.BContainer):
         '''
         super(RootContainer, self).__init__("root")
         self.__ui = ui
-        self.__listActions = [None, ui.actionNewElement, ui.actionNewConnector]
+        self.__listActions = [None, ui.actionNewElement, ui.actionNewPlus]
         
     def set(self, attr, value):
         
