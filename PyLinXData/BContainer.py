@@ -47,6 +47,7 @@ class BContainer(object):
     
     def get(self, attr):    
         if attr in self.__Attributes.keys():
+            print "> ", attr
             return self.__Attributes[attr]
         else:
             return None

@@ -1,0 +1,13 @@
+    14456    0.458    0.000    7.854    0.001 PyLinXDataObjects.py:186(calcDimensions)
+  6134725    3.953    0.000   11.032    0.000 utf_8.py:15(decode)
+  6134725    7.079    0.000    7.079    0.000 {_codecs.utf_8_decode}
+    52678    0.999    0.000    0.999    0.000 {built-in method drawPath}
+    51414    0.223    0.000    0.223    0.000 {built-in method moveTo}
+   149344    0.410    0.000    0.410    0.000 {built-in method setPen}
+   512907    0.312    0.000    0.312    0.000 {method 'keys' of 'dict' objects}
+    73772    0.270    0.000    0.307    0.000 PyLinXDataObjects.py:84(__getPolygon)
+    26892    0.064    0.000    0.258    0.000 PyLinXDataObjects.py:787(set)
+    13440    0.711    0.000   12.589    0.001 PyLinXDataObjects.py:633(plot)
+    13441    0.582    0.000    5.739    0.000 PyLinXDataObjects.py:496(__calcDimensions)
+   425850    7.749    0.000   17.425    0.000 BContainer.py:48(get)
+   101500    0.359    0.000    0.586    0.000 BContainer.py:152(set)

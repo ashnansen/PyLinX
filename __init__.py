@@ -9,6 +9,7 @@ import cProfile
 import ctypes
 import inspect
 import json
+import jsonpickle
 import os
 from PyQt4 import QtGui, QtCore, uic, Qt
 import sys
@@ -62,6 +63,7 @@ class PyLinXMain(QtGui.QMainWindow):
         scrollingArea = QtGui.QScrollArea()
         horizongalLayout2 = QtGui.QHBoxLayout()
         drawWidget = DrawWidget(self.rootContainer, self)
+        self.drawWidget = drawWidget
         pal = QtGui.QPalette()
         pal.setColor(QtGui.QPalette.Background,PX_Templ.color.background)
         drawWidget.setAutoFillBackground(True)
@@ -102,6 +104,9 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.show()
         self.ui.actionClose.triggered.connect(self.closeApplication)
         self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
+        self.ui.actionLoadProject.triggered.connect(self.on_actionLoadProject)
+        self.ui.actionSave.triggered.connect(self.on_actionSave)
+        self.ui.actionSave_As.triggered.connect(self.on_actionSave_As)
         #self.ui.actionNewConnector.triggered.connect(self.on_actionNewConnector)
         self.ui.actionNewElement.setCheckable(True)
         self.ui.actionNewPlus.triggered.connect(self.on_actionNewPlus)
@@ -137,7 +142,83 @@ class PyLinXMain(QtGui.QMainWindow):
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.newPlus) 
         else:
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+
+            
+    def on_actionSave(self):
+        rootGraphics = self.rootContainer.getb("rootGraphics")
+        if rootGraphics .isAttr("strSavePath"):
+            strSavePath = rootGraphics.get("strSavePath")
+            self.__saveProject(strSavePath)
+        else:
+            self.on_actionSave_As()
+
+    
+    def on_actionSave_As(self):
+        if self.rootContainer.isAttr("strSavePath"):
+            strSavePath_old = self.rootContainer.get("strSavePath")
+            (strPath, strSavePath_old_file) = os.path.split(strSavePath_old)
+        else:
+            strPath = os.getcwd()
+        strSavePath= self.__showFileSaveSelectionDialog(strPath, bDir = False, strExt = "pson", strHeader ="Select File to save Project...")
+        (strSavePath_base,strSavePath_ext) = os.path.splitext(strSavePath)
+        if not  strSavePath_ext == ".pson":
+            strSavePath = strSavePath_base + ".pson"
+        self.__saveProject(strSavePath)
+
+     
+    def __saveProject(self, strSavePath):    
         
+        _file = open(strSavePath, "w")
+        #project = copy.copy(self.rootContainer.getb("rootGraphics"))
+        project = self.rootContainer.getb("rootGraphics")
+        project._BContainer__parent = None
+        _file.write(jsonpickle.encode(project))
+        _file.close()
+        rootGraphics = self.rootContainer.getb("rootGraphics")
+        rootGraphics.set("strSavePath", strSavePath)  
+
+   
+    def on_actionLoadProject(self):
+        strPath = os.getcwd()
+        strSavePath= self.__showFileSelectionLoadDialog(strPath, bDir = False,strHeader ="Select File to load Project...")  
+        _file = open(strSavePath)
+        newProject = jsonpickle.decode(_file.read())
+        oldProject = self.rootContainer.getb("rootGraphics")
+        self.rootContainer.paste(newProject,"rootGraphics",  bForceOverwrite = True)
+        self.drawWidget.newProject(newProject)
+        del oldProject
+        maxID = newProject.getMaxID()
+        PyLinXDataObjects.PX_IdObject.__ID = maxID + 1
+        self.drawWidget.repaint()
+        
+
+    def __showFileSaveSelectionDialog(self,strPath = None, bDir = False, strExt= None, strHeader = None):
+        
+        if strPath == None:
+            strPath = os.getcwd()
+        if strHeader == None:
+            if bDir:
+                strHeader = "Select Directory..."
+            else:
+                strHeader = "Select File..."
+        if bDir:
+            strExt = strPath,QtGui.QFileDialog.ShowDirsOnly            
+        return unicode(QtGui.QFileDialog.getSaveFileName(self.ui,strHeader,strPath,strExt))
+    
+
+    def __showFileSelectionLoadDialog(self, strPath = None, bDir = False, strExt = "", strHeader = None):
+        if strPath == None:
+            strPath = os.getcwd()
+        if strHeader == None:
+            if bDir:
+                strHeader = "Select Directory..."
+            else:
+                strHeader = "Select File..."
+        if bDir:
+            strExt = strPath,QtGui.QFileDialog.ShowDirsOnly            
+        return unicode(QtGui.QFileDialog.getOpenFileName(self.ui,strHeader,strPath,strExt))
+        
+
 
 class DrawWidget (QtGui.QWidget):
 
@@ -162,8 +243,13 @@ class DrawWidget (QtGui.QWidget):
 
         self.setEnabled(True)
     
+    def newProject(self, rootGraphics):
+        self.rootGraphics   = rootGraphics
+        self.activeGraphics = rootGraphics
+    
     def paintEvent(self, event = None):
         self.activeGraphics.write(self,PX_Templ.Plot_Target.Gui)
+        #print "Max-ID: ", self.activeGraphics.getMaxID(0)
         
 
     def keyPressEvent(self, qKeyEvent):
@@ -196,18 +282,20 @@ class DrawWidget (QtGui.QWidget):
                     idxOutPin = element.get("idxOutPin")
                     elem0 = element.get("elem0")
                     elem1 = element.get("elem1")
-                    print "elem0: ", elem0
-                    print "elem1: ", elem1
+                    #print "elem0: ", elem0
+                    #print "elem1: ", elem1
                     setIdxConnectedOutPins = elem0.get("setIdxConnectedOutPins")
                     setIdxConnectedInPins  = elem1.get("setIdxConnectedInPins")
-                    print "setIdxConnectedOutPins: ", setIdxConnectedOutPins 
-                    print "setIdxConnectedInPins: ", setIdxConnectedInPins
-                    print "idxOutPin: ", idxOutPin
-                    print "idxInPin: ", idxInPin
-                    setIdxConnectedOutPins.remove(idxOutPin)
-                    setIdxConnectedInPins.remove(idxInPin)
-                    print "setIdxConnectedOutPins (1): ", setIdxConnectedOutPins 
-                    print "setIdxConnectedInPins (1): ", setIdxConnectedInPins
+                    #print "setIdxConnectedOutPins: ", setIdxConnectedOutPins 
+                    #print "setIdxConnectedInPins: ", setIdxConnectedInPins
+                    #print "idxOutPin: ", idxOutPin
+                    #print "idxInPin: ", idxInPin
+                    if idxOutPin in setIdxConnectedOutPins: 
+                        setIdxConnectedOutPins.remove(idxOutPin)
+                    if idxInPin in setIdxConnectedInPins: 
+                        setIdxConnectedInPins.remove(idxInPin)
+                    #print "setIdxConnectedOutPins (1): ", setIdxConnectedOutPins 
+                    #print "setIdxConnectedInPins (1): ", setIdxConnectedInPins
                     elem0.set("setIdxConnectedOutPins", setIdxConnectedOutPins)
                     elem1.set("setIdxConnectedInPins", setIdxConnectedInPins)
                     
@@ -509,7 +597,7 @@ def run():
     
 if __name__ == '__main__':
     
-    PROFILE = False
+    PROFILE = True
     
     if PROFILE:
         cProfile.run('run()')

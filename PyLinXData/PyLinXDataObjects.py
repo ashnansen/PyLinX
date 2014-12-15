@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 import inspect
 import sys
 import copy
+import json
 
 # project specific modules to import
 import BContainer
@@ -22,7 +23,20 @@ class PX_Object(BContainer.BContainer):
     def __init__(self, name, *args):
         
         super(PX_Object, self).__init__(name, *args)
-
+        
+    def getMaxID(self, _id = 0):
+        
+        keys = self._BContainer__Body.keys()
+        for key in keys:
+            element = self._BContainer__Body[key]
+            types = inspect.getmro(type(element))
+            if PX_IdObject in types:
+                element_id = element.get("ID")
+                if element_id > _id:
+                    _id = element_id
+            _id = element.getMaxID(_id)
+        return _id
+    
 
 ## Classes, which should have an ID should inherit from this class
 
@@ -813,3 +827,40 @@ class PX_LatentPlottable_HighlightRect(PX_PlotableObject):
         
     def isInFocus(self, X, Y):
         return []
+
+
+
+# TYPES = { 'PX_Object': PX_Object,
+#           'PX_IdObject': PX_IdObject,
+#           'PX_PlotableObject': PX_PlotableObject ,
+#           'PX_PlotableElement': PX_PlotableElement ,
+#           'PX_PlotableVarElement': PX_PlotableVarElement ,
+#           'PX_PlottableProxyElement': PX_PlottableProxyElement ,
+#           'PX_BasicOperator': PX_BasicOperator ,
+#           'PX_PlottableConnector': PX_PlottableConnector ,
+#           'PX_LatentPlottable_HighlightRect': PX_LatentPlottable_HighlightRect,}
+# 
+# 
+# class CustomTypeEncoder(json.JSONEncoder):
+#     """A custom JSONEncoder class that knows how to encode core custom
+#     objects.
+# 
+#     Custom objects are encoded as JSON object literals (ie, dicts) with
+#     one key, '__TypeName__' where 'TypeName' is the actual name of the
+#     type to which the object belongs.  That single key maps to another
+#     object literal which is just the __dict__ of the object encoded."""
+# 
+#     def default(self, obj):
+#         if isinstance(obj, TYPES.values()):
+#             key = '__%s__' % obj.__class__.__name__
+#             return { key: obj.__dict__ }
+#         return json.JSONEncoder.default(self, obj)
+# 
+# 
+# def CustomTypeDecoder(dct):
+#     if len(dct) == 1:
+#         type_name, value = dct.items()[0]
+#         type_name = type_name.strip('_')
+#         if type_name in TYPES:
+#             return TYPES[type_name].from_dict(value)
+#     return dct
