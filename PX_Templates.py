@@ -109,6 +109,12 @@ class Scalable:
     def px_ELEMENT_stdPinDistance(self):
         return self.ratio * 20
     
+    def px_ELEMENT_stdFontSize(self):
+        return self.ratio * 8
+    
+    def px_ELEMENT_whiteSpace(self):
+        return self.ratio * 4
+    
     
     #################################
     ## connector

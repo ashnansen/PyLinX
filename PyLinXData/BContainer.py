@@ -11,6 +11,10 @@ Created on 15.09.2014
 
 
 import inspect
+import PyLinXData
+
+
+#import PyLinXDataObjects
 
 ## Base class of the B object modell
 
@@ -47,7 +51,7 @@ class BContainer(object):
     
     def get(self, attr):    
         if attr in self.__Attributes.keys():
-            print "> ", attr
+            #print "> ", attr
             return self.__Attributes[attr]
         else:
             return None
@@ -116,10 +120,12 @@ class BContainer(object):
     def paste(self, obj, name = None, bForceOverwrite = False, pathkey = None, bHashById = False):
         
         types = inspect.getmro(type(obj))
+        #print "---> ", types
         if BContainer in types:
             if bHashById == True:
-                if "ID" in obj.__Attributes.keys():
-                    key = obj.get("ID")
+                 
+                if PyLinXData.PyLinXDataObjects.PX_PlotableObject in types:                    
+                    key = obj.ID
                 else:
                     key = obj.get("Name")
             else:
@@ -150,58 +156,6 @@ class BContainer(object):
 
     ##  Method to add or set an attribute
     
-    def set(self,  attr, setObj, path = None, bForceUpward = False):
+    def set(self,  attr, setObj):
         
-        if path == None:
-            self.__Attributes[attr] = setObj
-            return    
-        path = getListPath(path)      
-        if type(path) == list:
-            if len(path) > 0:
-                key = path[0]
-                if key in self.__Body.keys():
-                    self.__Body[key].set(attr, setObj, path[1:])
-                else:
-                    print "Error 1: container.py"
-            else:
-                print "Error 2: container.py"
-        else:
-            print "Error 3: BContainer.py"
-
-
-
-class BContainerDict(dict, BContainer):
-
-    def __init__(self,  *args):
-        
-        
-        dict.__init__(self,*args)
-        BContainer.__init__(self)
-                
-        self._BContainer__Head = self        
-        self._BContainer__Attributes = {}
-#        self._BContainer__Attributes['bVisibleInTree']           = False
-#        self._BContainer__Attributes['bVisibleInInspector']      = False
-        self._BContainer__Attributes['Name']                     = "<noname>"
-        self._BContainer__Attributes['DisplayName']              = "<noname>"
-        self._BContainer__Attributes['tupleConstrArgs']          = args   
-#        self._BContainer__Attributes['bHeadVisibleInInspector']  = True             
-        self._BContainer__parent                                 = None
-
-def getListPath(path):
-    types = inspect.getmro(type(path))
-    if list in types:
-        return path
-    elif (str in types) or (unicode in types):
-        path = path.split('/')
-        len_path = len(path) 
-        if len_path > 0:
-            if path[-1] == '':
-                del path[-1]
-                len_path -= 1
-            if len_path > 0:            
-                if path[0] == '':
-                    del path[0]
-        return path
-    else:
-        return None
+        self.__Attributes[attr] = setObj    

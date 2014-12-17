@@ -8,7 +8,8 @@ from PyQt4 import QtGui, QtCore
 import inspect
 import sys
 import copy
-import json
+import math
+
 
 # project specific modules to import
 import BContainer
@@ -31,7 +32,8 @@ class PX_Object(BContainer.BContainer):
             element = self._BContainer__Body[key]
             types = inspect.getmro(type(element))
             if PX_IdObject in types:
-                element_id = element.get("ID")
+                #element_id = element.get("ID")
+                element_id = element.ID
                 if element_id > _id:
                     _id = element_id
             _id = element.getMaxID(_id)
@@ -46,8 +48,17 @@ class PX_IdObject(PX_Object):
     
     def __init__(self, name, *args):
         super(PX_IdObject, self).__init__(name)
-        self.set("ID", PX_IdObject.__ID)
+        #self.set("ID", PX_IdObject.__ID)
+        self._ID = PX_IdObject.__ID
         PX_IdObject.__ID += 1
+        
+    def get_ID(self):
+        return self._ID
+    
+    def set_ID(self, _id):
+        self._ID = _id
+        
+    ID = property(get_ID, set_ID)
 
 
 ## Meta-Class for all objects that can be plotted in the main drawing area
@@ -62,19 +73,36 @@ class PX_PlotableObject (PX_Object):#, QtGui.QGraphicsItem):
         if type(self) == PX_PlotableObject:
             self.set("px_mousePressedAt_X", sys.maxint)
             self.set("px_mousePressedAt_Y", sys.maxint)
-            self.set("objectsInFocus", [])
+            self._objectsInFocus = []
+    
+    
+    ## Properties
+    ################
+            
+    def get_objectsInFocus(self):
+        return self._objectsInFocus
+    
+    def set_objectsInFocus(self, objectsInFocus):
+        self._objectsInFocus = objectsInFocus
+        
+    objectsInFocus = property(get_objectsInFocus, set_objectsInFocus)
+        
             
     def __isActive(self):
         
         parentElement = self.getParent()
         if parentElement  == None:
             return False
-        if parentElement.isAttr("objectsInFocus"):
-            objectsInFocus = copy.copy(parentElement.get("objectsInFocus"))
-        else:
-            return False
-        
-        if self.get("ID") in [ obj.get("ID") for obj in objectsInFocus]:
+#         types = inspect.getmro(type(element))
+#         if PX_PlotableObject in types:
+#             objectsInFocus = copy.copy(parentElement.get("objectsInFocus"))
+#         else:
+#             return False
+
+        objectsInFocus = copy.copy(parentElement.objectsInFocus)
+
+        #if self.get("ID") in [ obj.get("ID") for obj in objectsInFocus]:
+        if self.ID in [ obj.ID for obj in objectsInFocus]:
             return  True
         else:
             return  False
@@ -166,22 +194,82 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
     penShadow              = QtGui.QPen(PX_Templ.color.grayLight,PX_Templ.Template.Gui.px_ELEMENT_Border(), QtCore.Qt.SolidLine)
     penHighlight           = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_ELEMENT_Highlight(), QtCore.Qt.SolidLine)
     penHighlight.setJoinStyle(QtCore.Qt.MiterJoin)
+    fontStdVar             = QtGui.QFont("FreeSans", PX_Templ.Template.Gui.px_ELEMENT_stdFontSize())
+    fontStdVarMetrics      = QtGui.QFontMetrics(fontStdVar)
+
     
     def __init__(self, name, X, Y, value = None):
         super(PX_PlotableElement, self).__init__(name, X, Y, value)
-        self.set("X", X)
-        self.set("Y", Y)
+        #self.set("X", X)
+        self._X = X
+        #self.set("Y", Y)
+        self._Y = Y
         
         #  Configuration
+        #self.set("idxActiveInPins", [])
+        self._idxActiveInPins = []
+        #self.set("idxActiveOutPins", [])
+        self._idxActiveOutPins = []
+        self._listOutPins = []
+        self._listInPins  = []
+        
         self.set("bMethodIsInFocus", True)
-        self.set("idxActiveInPins", [])
-        self.set("idxActiveOutPins", [])
         self.set("setIdxConnectedInPins", set([]))
         self.set("setIdxConnectedOutPins", set([]))
         self.set("bVisible", True)        
         self.calcDimensions()
-
-
+        
+    ## Properties
+    #############
+    
+    def set_X(self, X):
+        self._X = X
+        
+    def get_X(self):
+        return self._X
+    
+    X = property(get_X, set_X)
+    
+    def set_Y(self,Y):
+        self._Y = Y
+        
+    def get_Y(self):
+        return self._Y
+    
+    Y = property(get_Y, set_Y)
+    
+    def set_idxActiveOutPins(self, idxActiveOutPins):
+        self._idxActiveOutPins = idxActiveOutPins
+        
+    def get_idxActiveOutPins(self):
+        return self._idxActiveOutPins
+    
+    idxActiveOutPins = property(get_idxActiveOutPins, set_idxActiveOutPins)
+    
+    def set_idxActiveInPins(self, idxActiveInPins):
+        self._idxActiveInPins = idxActiveInPins
+        
+    def get_idxActiveInPins(self):
+        return self._idxActiveInPins
+    
+    idxActiveInPins = property(get_idxActiveInPins, set_idxActiveInPins)
+    
+    def set_listOutPins(self, listOutPins):
+        self._listOutPins = listOutPins
+        
+    def get_listOutPins(self):
+        return self._listOutPins
+    
+    listOutPins = property(get_listOutPins, set_listOutPins)
+    
+    def set_listInPins(self, listInPins):
+        self._listInPins = listInPins
+        
+    def get_listInPins(self):
+        return self._listInPins
+    
+    listInPins = property(get_listInPins, set_listInPins)     
+    
 
     def calcDimensions(self,width         = PX_Templ.Template.Gui.px_ELEMENT_minWidth(),\
                               heigth        = PX_Templ.Template.Gui.px_EMELENT_minHeigth(),\
@@ -200,10 +288,10 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         self.pinHalfHeigth      = 0.5 * px_ELEMENT_pinHeigth
         lengthWholePin          = self.triangleOffset + pinLength
         rightEndpoint_x         = lengthWholePin  + elementWidth_half
-        self.X                  = self.get("X")
-        self.x                  = self.X - elementWidth_half
-        self.Y                  = self.get("Y")
-        self.y                  = self.Y - elementHeigth_half 
+        #self.X                  = self.get("X")
+        self.x                  = self._X - elementWidth_half
+        #self.Y                  = self.get("Y")
+        self.y                  = self._Y - elementHeigth_half 
         self.x_end              = self.x + self.elementWidth
         self.y_end              = self.y + 0.5 * self.elementHeigth
         self.bActive            = self._PX_PlotableObject__isActive()
@@ -222,8 +310,8 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         ShapeInPins =  [self._PX_PlotableObject__getPolygon(*inPin[0:4])  for inPin  in listInPins]
         ShapeOutPins = [self._PX_PlotableObject__getPolygon(*outPin[0:4]) for outPin in listOutPins]
                 
-        self.set("listInPins",   listInPins  )
-        self.set("listOutPins",  listOutPins )
+        self._listInPins = listInPins
+        self._listOutPins = listOutPins
         self.set("ShapeInPins",  ShapeInPins )
         self.set("ShapeOutPins", ShapeOutPins )
         
@@ -254,17 +342,17 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
     
         paint.setPen(PX_PlotableElement.penNoBorder)
         paint.setBrush(PX_Templ.brush.black)
-        listInPins = self.get("listInPins")
+        listInPins = self.listInPins
         paint.setPen(PX_PlotableElement.penNoBorder)
         paint.setBrush(PX_Templ.brush.black)
-        idxActiveInPins = self.get("idxActiveInPins")
+        idxActiveInPins = self.idxActiveInPins
         
         for i in range(len(listInPins)):
             inPin = listInPins[i]
             path        = QtGui.QPainterPath()
-            x_pin       = inPin[0] + self.X
-            y_pin       = inPin[1] + self.Y
-            x_pinEnd    = inPin[2] + self.X
+            x_pin       = inPin[0] + self._X
+            y_pin       = inPin[1] + self._Y
+            x_pinEnd    = inPin[2] + self._X
             #y_pinEnd    = inPin[3] 
             x_arrow = x_pinEnd - self.triangleOffset   
 
@@ -286,17 +374,17 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
      
         paint.setPen(PX_PlotableElement.penLight)
         paint.setBrush(PX_Templ.brush.white)
-        listOutPins = self.get("listOutPins")
+        listOutPins = self.listOutPins
         paint.setPen(PX_PlotableElement.penNoBorder)
         paint.setBrush(PX_Templ.brush.white)
-        idxActiveOutPins = self.get("idxActiveOutPins")
+        idxActiveOutPins = self.idxActiveOutPins
 
         for i in range(len(listOutPins)):
             outPin = listOutPins[i]
             path        = QtGui.QPainterPath()
-            x_pin       = outPin[0] + self.X
-            y_pin       = outPin[1] + self.Y
-            x_pinEnd    = outPin[2] + self.X + self.halfBorder
+            x_pin       = outPin[0] + self._X
+            y_pin       = outPin[1] + self._Y
+            x_pinEnd    = outPin[2] + self._X + self.halfBorder
             #y_pinEnd    = inPin[3] 
             x_arrow = x_pinEnd + self.triangleOffset   
 
@@ -318,8 +406,8 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
     
     def isPinInFocus(self, X, Y):
         
-        x = self.get("X")
-        y = self.get("Y")
+        x = self._X
+        y = self._Y
 
         X = X - x
         Y = Y - y  
@@ -327,22 +415,23 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         ShapeInPins  = self.get("ShapeInPins")
         ShapeOutPins = self.get("ShapeOutPins")
         
-        idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins)
+        #idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins)
+        idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins) 
         #print "idxInPins: ", idxInPins
         
         if idxInPins != []:
-            idxInPins = [-idx for idx in idxInPins]
-            self.set("idxActiveInPins", idxInPins)
+            idxInPins = [-idx -1 for idx in idxInPins]
+            self.idxActiveInPins = idxInPins
             return self, idxInPins  
         
         idxOutPins = PyLinXHelper.point_inside_polygon(X, Y, ShapeOutPins)
         
         if idxOutPins != []:
-            self.set("idxActiveOutPins", idxOutPins)
+            self.idxActiveOutPins = idxOutPins
             return self, idxOutPins
         
-        self.set("idxActiveInPins", [])
-        self.set("idxActiveOutPins", [])
+        self.idxActiveInPins = []
+        self.idxActiveOutPins = []
         
         return None, []
 
@@ -351,8 +440,8 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
     
     def isInFocus(self, X, Y):
         
-        x = self.get("X")
-        y = self.get("Y")
+        x = self._X
+        y = self._Y
 
         X = X - x
         Y = Y - y
@@ -366,7 +455,7 @@ class PX_PlottableProxyElement(PX_PlotableElement):
     def __init__(self, X, Y):
         
         super(PX_PlottableProxyElement, self).__init__("PX_PlottableProxyElement", X, Y, None)
-        self.set("listInPins", [(0,0,0,0)])
+        self.listInPins = [(0,0,0,0)]
         #self.set("listPoints", [])
     
     def isInFocus(self, X, Y):
@@ -378,6 +467,7 @@ class PX_PlottableProxyElement(PX_PlotableElement):
 class  PX_PlotableVarElement(PX_PlotableElement):
     
     def __init__(self, name, X, Y, value = None):
+        #print "name: ", name
         super(PX_PlotableVarElement, self).__init__(name, X, Y)
         self.__Head = value 
         PX_PlotableElement.calcDimensions(self)
@@ -395,8 +485,27 @@ class  PX_PlotableVarElement(PX_PlotableElement):
                            self.y + self.halfBorder,\
                            PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar(),\
                            PX_Templ.Template.Gui.px_EMELENT_minHeigth() - self.halfBorder)
+            #posText_x = self.x + PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar() + whiteSpace - self.border
+            posText_x = self.x + PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar() + whiteSpace
+            posText_y = self.y + 0.5 * (PX_PlotableElement.fontStdVarMetrics.ascent() + PX_Templ.Template.Gui.px_EMELENT_minHeigth()) 
+            paint.drawText(posText_x, posText_y, name)
+            
+            
+
+#         PX_PlotableElement.calcDimensions(self, size, size,((-stdPinDistance_half, ""), (stdPinDistance_half, "")))
+        paint.setFont(PX_PlotableElement.fontStdVar)
+        name = self.get("Name")
+        widthName  = PX_PlotableElement.fontStdVarMetrics.width(name)
+        whiteSpace = PX_Templ.Template.Gui.px_ELEMENT_whiteSpace()
+        width_raw = PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar() + 2 *  whiteSpace  + 4 *  self.border + widthName 
+        # round!
+        width  = 20 * math.ceil(0.05 * float(width_raw) )
+        heigth = PX_Templ.Template.Gui.px_EMELENT_minHeigth()
+        #width_half = 0.5 * width
         
-        PX_PlotableElement.calcDimensions(self)        
+        
+        #PX_PlotableElement.calcDimensions(self)        
+        PX_PlotableElement.calcDimensions(self,width, heigth)
         PX_PlotableElement.plotBasicElement(self, paint, templ)
         __plotElementSpecifier()
 
@@ -425,19 +534,19 @@ class PX_BasicOperator(PX_PlotableElement):
             
             #plotting the "+" 
             path = QtGui.QPainterPath()
-            path.moveTo( self.X + innerDiam, self.Y + innerDiam)
-            path.lineTo( self.X + innerDiam, self.Y + outerDiam)
-            path.lineTo( self.X - innerDiam, self.Y + outerDiam)
-            path.lineTo( self.X - innerDiam, self.Y + innerDiam)
-            path.lineTo( self.X - outerDiam, self.Y + innerDiam)
-            path.lineTo( self.X - outerDiam, self.Y - innerDiam)
-            path.lineTo( self.X - innerDiam, self.Y - innerDiam)
-            path.lineTo( self.X - innerDiam, self.Y - outerDiam)
-            path.lineTo( self.X + innerDiam, self.Y - outerDiam)
-            path.lineTo( self.X + innerDiam, self.Y - innerDiam)
-            path.lineTo( self.X + outerDiam, self.Y - innerDiam)
-            path.lineTo( self.X + outerDiam, self.Y + innerDiam)
-            path.lineTo( self.X + innerDiam, self.Y + innerDiam)
+            path.moveTo( self._X + innerDiam, self._Y + innerDiam)
+            path.lineTo( self._X + innerDiam, self._Y + outerDiam)
+            path.lineTo( self._X - innerDiam, self._Y + outerDiam)
+            path.lineTo( self._X - innerDiam, self._Y + innerDiam)
+            path.lineTo( self._X - outerDiam, self._Y + innerDiam)
+            path.lineTo( self._X - outerDiam, self._Y - innerDiam)
+            path.lineTo( self._X - innerDiam, self._Y - innerDiam)
+            path.lineTo( self._X - innerDiam, self._Y - outerDiam)
+            path.lineTo( self._X + innerDiam, self._Y - outerDiam)
+            path.lineTo( self._X + innerDiam, self._Y - innerDiam)
+            path.lineTo( self._X + outerDiam, self._Y - innerDiam)
+            path.lineTo( self._X + outerDiam, self._Y + innerDiam)
+            path.lineTo( self._X + innerDiam, self._Y + innerDiam)
             paint.drawPath(path)        
 
         size = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_size()
@@ -457,26 +566,28 @@ class PX_BasicOperator(PX_PlotableElement):
 
 class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
     
-    def __init__(self, elem0, elem1 = None, listPoints = [], idxOutPin = 0, idxInPin = 0):
+    #def __init__(self, elem0, elem1 = None, listPoints = [], idxOutPin = 0, idxInPin = 0):
+    def __init__(self, elem0, elem1 = None, listPoints = [], idxOutPin = 0, idxInPin = -1):
         
         super(PX_PlottableConnector, self).__init__()
-        id_0 = elem0.get("ID")
+        #id_0 = elem0.get("ID")
+        id_0 = elem0.ID
         self.set("ID_0", id_0)
-        self.set("elem0", elem0)
+        self._elem0 = elem0
         self.set("bVisible", True)
-        self.set("idxOutPin", idxOutPin)
-        self.set("idxInPin",  idxInPin)
+        self._idxOutPin = idxOutPin
+        self._idxInPin = idxInPin
         
         if elem1 != None:
-            id_1 = elem1.get("ID")
+            id_1 = elem1.ID
             self.set("ID_1", id_1)
-            self.set("elem1", elem1)
+            self._elem1 = elem1
         else:
             self.set("ID_1", None)
-            self.set("elem1", None)
+            self._elem1 = None
             
-        X = elem0.get("X")
-        Y = elem0.get("Y")
+        X = elem0.X
+        Y = elem0.Y
         
         # list points saves for odd indices x-values and for even indices y-values of the corresponding corners of the connector
         for i in range(len(listPoints)):
@@ -491,33 +602,104 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         self.rad = PX_Templ.Template.Gui.px_CONNECTOR_rad()
         self.diam = 2 * self.rad
         self.__calcDimensions()
+            
+    ## Properties
+    #######################
+    
+    @property
+    def X(self):
+        return self.X0
+    
+    @property
+    def Y(self):
+        return self.Y0 
+    
+    def get_elem0(self):
+        return self._elem0
+    
+    def set_elem0(self, elem0):
+        self._elem0 = elem0
         
+    elem0 = property(get_elem0, set_elem0)
+
+    def get_elem1(self):
+        return self._elem1
+    
+    def set_elem1(self, elem1):
+        id_1 = elem1.ID
+        self._elem1 = elem1
+        BContainer.BContainer.set(self,"ID_1", id_1)
+        
+    elem1 = property(get_elem1, set_elem1)
+    
+    def get_listOutPins(self):
+        return self._listOutPins
+    
+    def set_listOutPins(self, listOutPins):
+        self._listOutPins = listOutPins
+        
+    listOutPins = property(get_listOutPins, set_listOutPins)
+    
+    def get_listInPins(self):
+        return self._listInPins
+    
+    def set_listInPins(self, listInPins):
+
+        self._listInPins = listInPins
+
+        
+    listInPins = property(get_listInPins, set_listInPins)
+    
+    def get_idxOutPin(self):
+        return self._idxOutPin
+    
+    def set_idxOutPin(self, idxOutPin):
+        self._idxOutPin = idxOutPin
+        
+    idxOutPin = property(get_idxOutPin, set_idxOutPin)    
+
+
+    def get_idxInPin(self):
+        return self._idxInPin
+    
+    def set_idxInPin(self, idxInPin):
+        self._idxInPin = idxInPin
+        
+    idxInPin = property(get_idxInPin, set_idxInPin)
+    
+    
+    
            
     def __calcDimensions(self):
 
         # Getting data
         ############################
         
-        elem0 = self.get("elem0")
-        elem1 = self.get("elem1")
-        self.X0 = elem0.get("X")
-        self.Y0 = elem0.get("Y")
-        self.X1 = elem1.get("X")
-        self.Y1 = elem1.get("Y")
-        self.listOutPins0 = elem0.get("listOutPins")
-        self.listInPins1  = elem1.get("listInPins")
+        elem0 = self.elem0
+        elem1 = self.elem1
+        self.X0 = elem0._X
+        self.Y0 = elem0._Y
+        self.X1 = elem1._X
+        self.Y1 = elem1._Y
+        self.listOutPins0 = elem0.listOutPins
+        self.listInPins1  = elem1.listInPins
         
-
-        #self.listPoints = copy.copy(self.get("listPoints"))
         self.listPoints = list(self.get("listPoints"))
                 
-        idxOutPin = self.get("idxOutPin")
-        idxInPin = self.get("idxInPin")
-       
+        idxOutPin = self.idxOutPin
+        idxInPin = self.idxInPin
+        
+        #print ">idxInPin: ",   idxInPin
+        #print ">idxOutPin: ",  idxOutPin
+        
         self.outPin_x =  self.listOutPins0[ idxOutPin ][0]
-        self.outPin_y =  self.listOutPins0[ idxOutPin ][1]
-        self.inPin_x  =  self.listInPins1 [ idxInPin  ][0]
-        self.inPin_y  =  self.listInPins1 [ idxInPin  ][1]
+        self.outPin_y =  self.listOutPins0[ idxOutPin ][1] 
+        #self.inPin_x  =  self.listInPins1 [ idxInPin  ][0]
+        #self.inPin_y  =  self.listInPins1 [ idxInPin  ][1]
+        idxInPin_transformed =  - idxInPin - 1 
+        self.inPin_x  =  self.listInPins1 [ idxInPin_transformed  ][0]
+        self.inPin_y  =  self.listInPins1 [ idxInPin_transformed  ][1]
+
         
         len_listPoints = len(self.listPoints)
         
@@ -555,7 +737,6 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
             else:
                 self.listPoints.append(self.inPin_x + self.X1 - self.X0 - self.rad )
                 #print "self.inPin_y: ", self.inPin_y
-                #self.listPoints.append(self.Y1 - self.Y0 ) 
                 self.listPoints.append(self.Y1 - self.Y0 +  self.inPin_y  )
                             
         #Case no final connection
@@ -611,24 +792,6 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
                 #print "x0: ", x0, "y0: ", y0, "x1: ", x1, "y1: ", y1 
    
         self.set("Shape",shape )
-         
-
-    def get(self, attr):
-        
-        # coordinates are not held
-        # within the connector but
-        # are always taken from the
-        # first element "elem0". 
-        # As a consequence the connector
-        # moves with the first element
-        ##################################
-        
-        if attr == "X":
-            return self.X0
-        elif attr == "Y":
-            return self.Y0
-        else:
-            return PX_PlotableObject.get(self,attr)    
   
     def plot(self, paint, templ):
         
@@ -775,24 +938,13 @@ class PX_PlottableConnector(PX_PlotableObject, PX_IdObject):
         
     def isInFocus(self, X, Y):
         
-        x = self.get("X")
-        y = self.get("Y")
+        x = self.X
+        y = self.Y
 
         X = X - x
         Y = Y - y
         
         return PyLinXHelper.point_inside_polygon(X, Y, self.get("Shape"))
-    
-
-    def set(self, attr, value):
-        
-        if attr == "elem1":
-            id_1 = value.get("ID")
-            BContainer.BContainer.set(self,"elem1", value)
-            BContainer.BContainer.set(self,"ID_1", id_1)
-        else:
-            PX_PlotableObject.set(self,attr, value)    
-
 
 
 ## Class for highlightning
@@ -830,37 +982,3 @@ class PX_LatentPlottable_HighlightRect(PX_PlotableObject):
 
 
 
-# TYPES = { 'PX_Object': PX_Object,
-#           'PX_IdObject': PX_IdObject,
-#           'PX_PlotableObject': PX_PlotableObject ,
-#           'PX_PlotableElement': PX_PlotableElement ,
-#           'PX_PlotableVarElement': PX_PlotableVarElement ,
-#           'PX_PlottableProxyElement': PX_PlottableProxyElement ,
-#           'PX_BasicOperator': PX_BasicOperator ,
-#           'PX_PlottableConnector': PX_PlottableConnector ,
-#           'PX_LatentPlottable_HighlightRect': PX_LatentPlottable_HighlightRect,}
-# 
-# 
-# class CustomTypeEncoder(json.JSONEncoder):
-#     """A custom JSONEncoder class that knows how to encode core custom
-#     objects.
-# 
-#     Custom objects are encoded as JSON object literals (ie, dicts) with
-#     one key, '__TypeName__' where 'TypeName' is the actual name of the
-#     type to which the object belongs.  That single key maps to another
-#     object literal which is just the __dict__ of the object encoded."""
-# 
-#     def default(self, obj):
-#         if isinstance(obj, TYPES.values()):
-#             key = '__%s__' % obj.__class__.__name__
-#             return { key: obj.__dict__ }
-#         return json.JSONEncoder.default(self, obj)
-# 
-# 
-# def CustomTypeDecoder(dct):
-#     if len(dct) == 1:
-#         type_name, value = dct.items()[0]
-#         type_name = type_name.strip('_')
-#         if type_name in TYPES:
-#             return TYPES[type_name].from_dict(value)
-#     return dct
