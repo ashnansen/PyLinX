@@ -735,51 +735,73 @@ Diamond example
 # fourth = Fourth()
 # print "Ende!"
 
-from PyQt4 import QtGui, QtCore
+'''
+Font size
+'''
 
-class Window(QtGui.QWidget):
-    def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setAutoFillBackground(True)
-        self.setBackgroundRole(QtGui.QPalette.Mid)
-        self.setLayout(QtGui.QFormLayout(self))
-        self.fonts = QtGui.QFontComboBox(self)
-        self.fonts.currentFontChanged.connect(self.handleFontChanged)
-        self.layout().addRow('font:', self.fonts)
-        for text in (
-            u'H\u2082SO\u2084 + Be',
-            u'jib leaf jib leaf',
-            ):
-            for label in ('boundingRect', 'width', 'size'):
-                field = QtGui.QLabel(text, self)
-                field.setStyleSheet('background-color: yellow')
-                field.setAlignment(QtCore.Qt.AlignCenter)
-                self.layout().addRow(label, field)
-        self.handleFontChanged(self.font())
+# from PyQt4 import QtGui, QtCore
+# 
+# class Window(QtGui.QWidget):
+#     def __init__(self):
+#         QtGui.QWidget.__init__(self)
+#         self.setAutoFillBackground(True)
+#         self.setBackgroundRole(QtGui.QPalette.Mid)
+#         self.setLayout(QtGui.QFormLayout(self))
+#         self.fonts = QtGui.QFontComboBox(self)
+#         self.fonts.currentFontChanged.connect(self.handleFontChanged)
+#         self.layout().addRow('font:', self.fonts)
+#         for text in (
+#             u'H\u2082SO\u2084 + Be',
+#             u'jib leaf jib leaf',
+#             ):
+#             for label in ('boundingRect', 'width', 'size'):
+#                 field = QtGui.QLabel(text, self)
+#                 field.setStyleSheet('background-color: yellow')
+#                 field.setAlignment(QtCore.Qt.AlignCenter)
+#                 self.layout().addRow(label, field)
+#         self.handleFontChanged(self.font())
+# 
+#     def handleFontChanged(self, font):
+#         layout = self.layout()
+#         font.setPointSize(20)
+#         metrics = QtGui.QFontMetrics(font)
+#         for index in range(1, layout.rowCount()):
+#             field = layout.itemAt(index, QtGui.QFormLayout.FieldRole).widget()
+#             label = layout.itemAt(index, QtGui.QFormLayout.LabelRole).widget()
+#             method = label.text().split(' ')[0]
+#             text = field.text()
+#             if method == 'width':
+#                 width = metrics.width(text)
+#             elif method == 'size':
+#                 width = metrics.size(field.alignment(), text).width()
+#             else:
+#                 width = metrics.boundingRect(text).width()
+#             field.setFixedWidth(width)
+#             field.setFont(font)
+#             label.setText('%s (%d):' % (method, width))
+# 
+# if __name__ == '__main__':
+# 
+#     import sys
+#     app = QtGui.QApplication(sys.argv)
+#     window = Window()
+#     window.show()
+#     sys.exit(app.exec_())
 
-    def handleFontChanged(self, font):
-        layout = self.layout()
-        font.setPointSize(20)
-        metrics = QtGui.QFontMetrics(font)
-        for index in range(1, layout.rowCount()):
-            field = layout.itemAt(index, QtGui.QFormLayout.FieldRole).widget()
-            label = layout.itemAt(index, QtGui.QFormLayout.LabelRole).widget()
-            method = label.text().split(' ')[0]
-            text = field.text()
-            if method == 'width':
-                width = metrics.width(text)
-            elif method == 'size':
-                width = metrics.size(field.alignment(), text).width()
-            else:
-                width = metrics.boundingRect(text).width()
-            field.setFixedWidth(width)
-            field.setFont(font)
-            label.setText('%s (%d):' % (method, width))
 
-if __name__ == '__main__':
 
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    window = Window()
-    window.show()
-    sys.exit(app.exec_())
+def calcMain():
+    
+    global DataDictionary
+    
+    Variable_3 = DataDictionary["Variable_3"]
+    Variable_1 = DataDictionary["Variable_1"]
+    Variable_2 = DataDictionary["Variable_2"]
+    
+    Variable_3 = Variable_1 + Variable_2
+    
+    DataDictionary["Variable_3"] = Variable_3
+    DataDictionary["Variable_1"] = Variable_1
+    DataDictionary["Variable_2"] = Variable_2
+    
+

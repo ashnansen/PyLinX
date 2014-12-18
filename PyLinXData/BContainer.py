@@ -44,6 +44,8 @@ class BContainer(object):
         
         if name in self.__Body.keys():
             obj = self.__Body.pop(name)
+            for childKey in obj.__Body.keys():
+                obj.delete(childKey)
             del obj
 
 

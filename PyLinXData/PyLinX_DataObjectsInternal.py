@@ -35,5 +35,16 @@ class RootContainer(BContainer.BContainer):
                 return BContainer.BContainer.set(self,"idxToolSelected", value)
             elif value == 0:
                 return BContainer.BContainer.set(self,"idxToolSelected", 0)
+            
+        elif attr == "bSimulationMode":
+            if value == True:
+                self.__ui.actionRun.setEnabled(True)
+                self.__ui.actionActivate_Simulation_Mode.setChecked(True)
+                return BContainer.BContainer.set(self,"bSimulationMode", True)
+            elif value == False:
+                self.__ui.actionRun.setEnabled(False)
+                self.__ui.actionActivate_Simulation_Mode.setChecked(False)
+                return BContainer.BContainer.set(self,"bSimulationMode", False)
+                
         else:
             return BContainer.BContainer.set(self,attr, value)

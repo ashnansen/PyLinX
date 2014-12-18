@@ -348,6 +348,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         idxActiveInPins = self.idxActiveInPins
         
         for i in range(len(listInPins)):
+            paint.setPen(self.penNoBorder)
             inPin = listInPins[i]
             path        = QtGui.QPainterPath()
             x_pin       = inPin[0] + self._X
@@ -363,12 +364,12 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
             
             paint.drawPath(path)
 
-            if i in idxActiveInPins:
+            if -i-1 in idxActiveInPins:
                 paint.setPen(PX_PlotableElement.penBold)
             else:
                 paint.setPen(PX_PlotableElement.penLight)
             paint.drawLine( x_pin,y_pin,x_arrow ,y_pin)                
-                
+   
     
         ## plot Connoctor Outputs
      
@@ -380,6 +381,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         idxActiveOutPins = self.idxActiveOutPins
 
         for i in range(len(listOutPins)):
+            paint.setPen(self.penNoBorder)
             outPin = listOutPins[i]
             path        = QtGui.QPainterPath()
             x_pin       = outPin[0] + self._X
@@ -400,7 +402,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
             else:
                 paint.setPen(PX_PlotableElement.penLight)
             paint.drawLine( x_pin,y_pin,x_arrow ,y_pin)
-
+            
 
     # Method which determins if a point is inside the pin of the element 
     

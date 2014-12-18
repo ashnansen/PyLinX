@@ -16,6 +16,7 @@ import sys
 
 # Project specific Libraries - alphabedic order
 from PyLinXData import * 
+from PyLinXCodeGen import *
 import PX_Templates as PX_Templ
 import PyLinXData.PyLinXHelper as helper
 
@@ -48,7 +49,6 @@ class PyLinXMain(QtGui.QMainWindow):
         self.rootContainer.paste(rootGraphics)
         
 
-
         # Configuration
         
         # idx that indicates the selected tool
@@ -56,6 +56,7 @@ class PyLinXMain(QtGui.QMainWindow):
         # ID of the connector which is actually drawn
         self.rootContainer.set("ID_activeConnector", -1)
         rootGraphics.set("idxOutPinConnectorPloting", None)
+        self.rootContainer.set("bSimulationMode", False)
         
         
         # Drawing GUI
@@ -102,15 +103,32 @@ class PyLinXMain(QtGui.QMainWindow):
         #self.ui.graphicsView.setScene(self.scene)
 
         self.ui.show()
+        
+        # Connecting Actions
+        ####################
+        
+        # Menu-Bar
+            
+            # Programm
+        
         self.ui.actionClose.triggered.connect(self.closeApplication)
-        self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
+        
+            # Project
+        
+        self.ui.actionNewProject.triggered.connect(self.on_actionNewProject)
         self.ui.actionLoadProject.triggered.connect(self.on_actionLoadProject)
         self.ui.actionSave.triggered.connect(self.on_actionSave)
         self.ui.actionSave_As.triggered.connect(self.on_actionSave_As)
-        #self.ui.actionNewConnector.triggered.connect(self.on_actionNewConnector)
+        
+        # Tool-Bar
+        
+        self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
         self.ui.actionNewElement.setCheckable(True)
         self.ui.actionNewPlus.triggered.connect(self.on_actionNewPlus)
         self.ui.actionNewPlus.setCheckable(True)
+        self.ui.actionRun.setEnabled(False)
+        self.ui.actionActivate_Simulation_Mode.triggered.connect(self.on_Activate_Simulation_Mode)
+        
         self.ui.resize(800,600)
         
         
@@ -189,7 +207,12 @@ class PyLinXMain(QtGui.QMainWindow):
         maxID = newProject.getMaxID()
         PyLinXDataObjects.PX_IdObject._PX_IdObject__ID = maxID + 1
         self.drawWidget.repaint()
-        
+    
+    def on_actionNewProject(self):
+        rootGraphicsNew = PyLinXDataObjects.PX_PlotableObject("rootGraphics")
+        self.rootContainer.delete("rootGraphics")
+        self.rootContainer.paste(rootGraphicsNew)
+        self.drawWidget.repaint()
 
     def __showFileSaveSelectionDialog(self,strPath = None, bDir = False, strExt= None, strHeader = None):
         
@@ -217,6 +240,16 @@ class PyLinXMain(QtGui.QMainWindow):
             strExt = strPath,QtGui.QFileDialog.ShowDirsOnly            
         return unicode(QtGui.QFileDialog.getOpenFileName(self.ui,strHeader,strPath,strExt))
         
+        
+    def on_Activate_Simulation_Mode(self):
+        
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if bSimulationMode:
+            self.rootContainer.set("bSimulationMode", False)
+        else:
+            runEngine = PyLinXRunEngine.RunEngine(self.rootContainer)
+            self.rootContainer.paste(runEngine)
+            self.rootContainer.set("bSimulationMode", True)
 
 
 class DrawWidget (QtGui.QWidget):
@@ -520,7 +553,6 @@ class DrawWidget (QtGui.QWidget):
                                                        
                     self.rootContainer.set("px_mousePressedAt_X", X)
                     self.rootContainer.set("px_mousePressedAt_Y", Y)            
-                    #self.repaint()
                     
             # Ploting the selection frame
             if self.activeGraphics.isInBody("HighlightObject"):
@@ -556,25 +588,26 @@ class DrawWidget (QtGui.QWidget):
             Y = coord.y()
             px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
             px_mousePressedAt_Y = self.rootContainer.get("px_mousePressedAt_Y")
-            polygons = [[(X,Y), (X,px_mousePressedAt_Y ), (px_mousePressedAt_X,px_mousePressedAt_Y),(px_mousePressedAt_X,Y)]]
-            for key in keys:
-                element = self.activeGraphics.getb(key)
-                if element.isAttr("Shape"):
-                    bFocus = True
-                    shape = element.get("Shape")
-                    X_obj = element.X
-                    Y_obj = element.Y
-
-                    for polygon in shape:
-                        if polygon != None:
-                            for point in polygon:
-                                idxCorner = helper.point_inside_polygon(X_obj + point[0], Y_obj + point[1],polygons)
-                                if len(idxCorner) == 0:
-                                    bFocus = False
-                    if bFocus:
-                        objectsInFocus = list(self.activeGraphics.objectsInFocus )
-                        objectsInFocus.append(element)
-                        self.activeGraphics.objectsInFocus = objectsInFocus
+            if px_mousePressedAt_X != sys.maxint and px_mousePressedAt_Y != sys.maxint: 
+                polygons = [[(X,Y), (X,px_mousePressedAt_Y ), (px_mousePressedAt_X,px_mousePressedAt_Y),(px_mousePressedAt_X,Y)]]
+                for key in keys:
+                    element = self.activeGraphics.getb(key)
+                    if element.isAttr("Shape"):
+                        bFocus = True
+                        shape = element.get("Shape")
+                        X_obj = element.X
+                        Y_obj = element.Y
+    
+                        for polygon in shape:
+                            if polygon != None:
+                                for point in polygon:
+                                    idxCorner = helper.point_inside_polygon(X_obj + point[0], Y_obj + point[1],polygons)
+                                    if len(idxCorner) == 0:
+                                        bFocus = False
+                        if bFocus:
+                            objectsInFocus = list(self.activeGraphics.objectsInFocus )
+                            objectsInFocus.append(element)
+                            self.activeGraphics.objectsInFocus = objectsInFocus
             self.activeGraphics.set("ConnectorToModify", None )
             self.activeGraphics.set("idxPointModified" , None )            
                         
@@ -598,7 +631,6 @@ class DrawWidget (QtGui.QWidget):
                     self.activeGraphics.delete(key)
                     break
             ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
-            #self.activeGraphics.delete( ConnectorPloting.get("ID") )
             self.activeGraphics.delete( ConnectorPloting.ID )
             self.rootGraphics.set("bConnectorPloting", False)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
