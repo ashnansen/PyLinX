@@ -514,22 +514,24 @@ class  PX_PlotableVarElement(PX_PlotableElement):
 
 ## Class for binary Operators
 
-class PX_BasicOperator(PX_PlotableElement):
+class PX_PlotableBasicOperator(PX_PlotableElement):
     
     penSpecifier   = QtGui.QPen(PX_Templ.color.blue,PX_Templ.Template.Gui.px_ELEMENT_MediumLight(), QtCore.Qt.SolidLine)
     brushSpecifier = QtGui.QBrush(PX_Templ.color.blueTransp)
     
     def __init__(self, X, Y, value = None):
-        super(PX_BasicOperator, self).__init__("<none>", X, Y)
-        self.__Head = value
+        n = PX_IdObject._PX_IdObject__ID + 1
+        name = "Operator_" + value + "_id" + str(n)
+        super(PX_PlotableBasicOperator, self).__init__(name, X, Y)
+        self._BContainer__Head = value
         PX_PlotableElement.calcDimensions(self)
         
     def plot(self,paint,templ):
         
         def __plotPlusSpecifier():
             
-            paint.setPen(PX_BasicOperator.penSpecifier)
-            paint.setBrush(PX_BasicOperator.brushSpecifier)
+            paint.setPen(PX_PlotableBasicOperator.penSpecifier)
+            paint.setBrush(PX_PlotableBasicOperator.brushSpecifier)
             
             innerDiam = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_innerDiameter()
             outerDiam = PX_Templ.Template.Gui.px_PLOTABLEELEMOPERATOR_outerDiameter()
@@ -558,9 +560,9 @@ class PX_BasicOperator(PX_PlotableElement):
         PX_PlotableElement.calcDimensions(self, size, size,((-stdPinDistance_half, ""), (stdPinDistance_half, "")))
         PX_PlotableElement.plotBasicElement(self, paint, templ)
         
-        if self.__Head == "+":
+        if self._BContainer__Head == "+":
             __plotPlusSpecifier()
-        elif self.__Head == "-":
+        elif self._BContainer__Head == "-":
             pass
         
         

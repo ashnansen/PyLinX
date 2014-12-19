@@ -126,7 +126,7 @@ class BContainer(object):
         if BContainer in types:
             if bHashById == True:
                  
-                if PyLinXData.PyLinXDataObjects.PX_PlotableObject in types:                    
+                if PyLinXData.PyLinXDataObjects.PX_IdObject in types:                    
                     key = obj.ID
                 else:
                     key = obj.get("Name")

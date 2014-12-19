@@ -1,1 +1,1 @@
-__all__ = ['PyLinXRunEngine']
+__all__ = ['PyLinXRunEngine', 'CodeObj']

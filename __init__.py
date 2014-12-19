@@ -43,7 +43,7 @@ class PyLinXMain(QtGui.QMainWindow):
         #rootGraphics.paste(testvar2, bHashById=True)
         connector1 = PyLinXDataObjects.PX_PlottableConnector(testvar, testvar2, [300]) 
         #rootGraphics.paste(connector1, bHashById = True)   
-        plusOperator = PyLinXDataObjects.PX_BasicOperator(300,200, "+")
+        plusOperator = PyLinXDataObjects.PX_PlotableBasicOperator(300,200, "+")
         rootGraphics.paste(plusOperator, bHashById = True) 
         rootGraphics.set("bConnectorPloting", False)     
         self.rootContainer.paste(rootGraphics)
@@ -492,8 +492,8 @@ class DrawWidget (QtGui.QWidget):
         
         elif toolSelected == helper.ToolSelected.newVarElement:
         
-            n = len(self.activeGraphics ._BContainer__Body.keys()) + 1
-            var = PyLinXDataObjects.PX_PlotableVarElement("Variable_" + str(n),X,Y, 15 )
+            n = PyLinXDataObjects.PX_IdObject._PX_IdObject__ID + 1
+            var = PyLinXDataObjects.PX_PlotableVarElement("Variable_id" + str(n),X,Y, 15 )
             self.activeGraphics.paste(var, bHashById=True)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
@@ -501,7 +501,7 @@ class DrawWidget (QtGui.QWidget):
             
         elif toolSelected == helper.ToolSelected.newPlus:
             
-            plus = PyLinXDataObjects.PX_BasicOperator(X,Y,"+")
+            plus = PyLinXDataObjects.PX_PlotableBasicOperator(X,Y,"+")
             self.activeGraphics.paste(plus, bHashById=True)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
