@@ -17,7 +17,8 @@ class color():
     blueTransp      = QColor(0,0,100, 150)
     yellow          = QColor(255,255,0)
     orange          = QColor(255,127,0)
-    blueLocalVar    = QColor(118,176,240)
+    green           = QColor(0,128,0)
+    blueLocalVar    = QColor(18,176,240)
     grayLight       = QColor(196,196,196)
     Highlight       = QColor(200,200,255)
     HighlightTransp = QColor(200,200,255, 60)
@@ -29,6 +30,7 @@ class brush():
     grayLight       = QBrush(color.grayLight) 
     transparent     = QBrush(color.transparent) 
     blue            = QBrush(color.blue)
+    green           = QBrush(color.green)
     blueLocalVar    = QBrush(color.blueLocalVar)
     Highlight       = QBrush(color.Highlight)
     HighlightTransp = QBrush(color.HighlightTransp)
@@ -95,6 +97,19 @@ class Scalable:
     
     def px_ELEMENT_Highlight(self):
         return self.ratio * 8
+    
+    # Simulation stuff
+    def px_ELEMENT_PinSimulation(self):
+        return self.ratio * 12
+    
+    def px_ELEMENT_PinSimulationWidth(self):
+        return self.ratio * 4
+    
+    def px_ELEMENT_PinSimulation_x(self):
+        return self.ratio * (-56)
+    
+    def px_ELEMENT_PinSimulation_Arrow(self):
+        return self.ratio * 7
     
     # minimal wigth of color bar without element type
     

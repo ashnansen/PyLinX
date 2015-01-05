@@ -40,10 +40,20 @@ class RootContainer(BContainer.BContainer):
             if value == True:
                 self.__ui.actionRun.setEnabled(True)
                 self.__ui.actionActivate_Simulation_Mode.setChecked(True)
+                self.__ui.actionNewElement.setEnabled(False)
+                self.__ui.actionNewPlus.setEnabled(False)
+                self.__ui.actionNewMinus.setEnabled(False)
+                self.__ui.actionNewMultiplication.setEnabled(False)
+                self.__ui.actionNewDivision.setEnabled(False)                   
                 return BContainer.BContainer.set(self,"bSimulationMode", True)
             elif value == False:
                 self.__ui.actionRun.setEnabled(False)
                 self.__ui.actionActivate_Simulation_Mode.setChecked(False)
+                self.__ui.actionNewElement.setEnabled(True)
+                self.__ui.actionNewPlus.setEnabled(True)
+                self.__ui.actionNewMinus.setEnabled(True)
+                self.__ui.actionNewMultiplication.setEnabled(True)
+                self.__ui.actionNewDivision.setEnabled(True)                
                 return BContainer.BContainer.set(self,"bSimulationMode", False)
                 
         else:

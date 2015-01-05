@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="273.39404"
-     inkscape:cy="535.06299"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="77.271582"
+     inkscape:cy="215.19225"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4083,6 +4083,628 @@
          id="path4306"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccc" />
+    </g>
+    <rect
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       transform="scale(-1,1)"
+       y="749.72681"
+       x="-103.65859"
+       height="31.984089"
+       width="31.74317"
+       id="rect3488"
+       style="fill:#b3b3b3;fill-opacity:0;stroke:none" />
+    <rect
+       style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+       id="rect3496"
+       width="31.74317"
+       height="31.984089"
+       x="-104.01215"
+       y="783.31439"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3498"
+       width="19.724138"
+       height="19.724138"
+       x="-97.637428"
+       y="788.96851"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 82.525311,803.72232 93.119722,793.31057"
+       id="path3500"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:connector-curvature="0"
+       id="path3502"
+       d="M 93.119722,803.72232 82.525311,793.31057"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4335"
+       width="19.724138"
+       height="19.724138"
+       x="-293.59003"
+       y="767.33063"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 273.47789,784.2095 10.46941,-4.41784"
+       id="path4337"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:connector-curvature="0"
+       id="path4339"
+       d="m 288.9473,782.85939 -6.21941,-3.08371"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:connector-curvature="0"
+       id="path4341"
+       d="m 287.29039,783.03093 6.21941,-7.60816"
+       style="fill:none;stroke:#000000;stroke-width:3.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       transform="matrix(0.37587985,-0.07056433,0.10508983,0.25239083,176.9955,595.60825)"
+       inkscape:transform-center-y="-0.0040766444"
+       inkscape:transform-center-x="-4.2581849"
+       d="M 95.192307,726.72114 81.662353,722.9942 68.1324,719.26726 l 9.992599,-9.85381 9.992601,-9.85382 3.537354,13.58076 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="false"
+       sodipodi:arg2="1.8395886"
+       sodipodi:arg1="0.79239106"
+       sodipodi:r2="8.1024637"
+       sodipodi:r1="16.204926"
+       sodipodi:cy="715.18268"
+       sodipodi:cx="83.814102"
+       sodipodi:sides="3"
+       id="path4343"
+       style="fill:#003b00;fill-opacity:1;stroke:none"
+       sodipodi:type="star"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+       inkscape:export-xdpi="67"
+       inkscape:export-ydpi="67" />
+    <path
+       style="fill:#00dc00;fill-opacity:1;stroke:none"
+       inkscape:transform-center-x="-3.1689573"
+       inkscape:transform-center-y="-0.023184963"
+       d="m 288.41353,771.45924 -4.09883,0.002 -4.09882,0.002 2.04707,-2.39902 1.99659,-2.37886 2.10223,2.37705 z"
+       id="path4345"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:#008000;fill-opacity:1;stroke:none"
+       inkscape:transform-center-x="-2.7518817"
+       inkscape:transform-center-y="-0.030851593"
+       d="m 287.29312,771.46433 -3.57097,-0.003 -3.57098,-0.003 1.78921,-2.07511 1.7725,-2.07858 1.79847,2.08147 z"
+       id="path4347"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:#00dc00;fill-opacity:1;stroke:none"
+       d="m 283.71722,767.33378 -0.0914,-1.38376 0.68873,0.78477 z"
+       id="path4349"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+       inkscape:export-xdpi="67"
+       inkscape:export-ydpi="67" />
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path4351"
+       d="m 289.14557,772.30928 -1.85543,-0.85724 0.99397,-0.14299 z"
+       style="fill:#00dc00;fill-opacity:1;stroke:none"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+       inkscape:export-xdpi="67"
+       inkscape:export-ydpi="67" />
+    <rect
+       y="771.49939"
+       x="282.99365"
+       height="4.8125"
+       width="1.71875"
+       id="rect4353"
+       style="fill:#b3b3b3;fill-opacity:0;stroke:none" />
+    <rect
+       style="fill:#003b00;fill-opacity:1;stroke:none"
+       id="rect4355"
+       width="5.3125"
+       height="6"
+       x="281.36865"
+       y="771.74939" />
+    <rect
+       y="771.37439"
+       x="282.30615"
+       height="5.375"
+       width="3.46875"
+       id="rect4357"
+       style="fill:#008000;fill-opacity:1;stroke:none" />
+    <path
+       inkscape:export-ydpi="67"
+       inkscape:export-xdpi="67"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+       style="fill:#00dc00;fill-opacity:1;stroke:none"
+       d="m 286.72305,772.35295 -0.94946,-0.85724 0.0106,5.2929 0.90633,0.93839 z"
+       id="path4359"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <g
+       id="g21565">
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect4381"
+         width="19.724138"
+         height="19.724138"
+         x="-172.3212"
+         y="762.02734"
+         transform="scale(-1,1)"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:connector-curvature="0"
+         id="path4369"
+         d="m 152.20908,778.90621 10.46941,-4.41784"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:3.00000023999999990;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 166.02158,777.72764 6.21941,-7.60816"
+         id="path4373"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <rect
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         transform="scale(-1,1)"
+         y="762.02734"
+         x="-172.3212"
+         height="19.724138"
+         width="19.724138"
+         id="rect4367"
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 167.67849,777.5561 -6.21941,-3.08371"
+         id="path4371"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         sodipodi:nodetypes="cccccccc"
+         inkscape:connector-curvature="0"
+         id="path4375"
+         d="m 168.97485,768.10322 -4.31092,-10e-4 0.005,-3.02258 -4.40477,-0.0302 -0.005,3.051 -4.20206,-0.001 6.52074,3.92614 z"
+         inkscape:transform-center-y="0.035105893"
+         inkscape:transform-center-x="-4.9936077"
+         style="fill:#00dc00;fill-opacity:1;stroke:none" />
+      <rect
+         transform="scale(1,-1)"
+         style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+         id="rect4377"
+         width="1.71875"
+         height="4.8125"
+         x="161.91232"
+         y="-766.06274" />
+    </g>
+    <g
+       id="g21574">
+      <rect
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         transform="scale(-1,1)"
+         y="762.38092"
+         x="-133.78387"
+         height="19.724138"
+         width="19.724138"
+         id="rect4379"
+         style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 113.67176,779.25976 10.46941,-4.41784"
+         id="path3492"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:connector-curvature="0"
+         id="path3504"
+         d="m 127.48426,778.08119 6.21941,-7.60816"
+         style="fill:none;stroke:#0000ff;stroke-width:3.00000023999999990;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect3490"
+         width="19.724138"
+         height="19.724138"
+         x="-133.78387"
+         y="762.38092"
+         transform="scale(-1,1)"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:connector-curvature="0"
+         id="path3494"
+         d="m 129.14117,777.90965 -6.21941,-3.08371"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <rect
+         y="763.79968"
+         x="123.4375"
+         height="4.8125"
+         width="1.71875"
+         id="rect3523"
+         style="fill:#b3b3b3;fill-opacity:0;stroke:none" />
+      <path
+         style="fill:#00dc00;fill-opacity:1;stroke:none"
+         inkscape:transform-center-x="-4.9936077"
+         inkscape:transform-center-y="-0.035105893"
+         d="m 130.27663,768.91971 -4.31092,10e-4 0.005,3.02258 -4.40477,0.0302 -0.005,-3.051 -4.20206,10e-4 6.52074,-3.92614 z"
+         id="path4383"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccccc" />
+    </g>
+    <rect
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       transform="scale(-1,1)"
+       y="848.71539"
+       x="-104.57246"
+       height="19.724138"
+       width="19.724138"
+       id="rect4391"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       transform="scale(-1,1)"
+       y="848.88092"
+       x="-172.85495"
+       height="19.724138"
+       width="19.724138"
+       id="rect4393"
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4399"
+       width="19.724138"
+       height="19.724138"
+       x="-132.32677"
+       y="848.88092"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <g
+       id="g21597"
+       transform="translate(2.8366598e-7,-0.70710683)">
+      <rect
+         style="fill:none;stroke:none"
+         id="rect4471"
+         width="22.700741"
+         height="22.700741"
+         x="-173.54779"
+         y="789.77734"
+         transform="scale(-1,1)"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\measure24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 151.70908,808.90621 10.46941,-4.41784"
+         id="path4387"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-ydpi="67.533554" />
+      <path
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\measure24.png"
+         inkscape:connector-curvature="0"
+         id="path4389"
+         d="m 165.52158,807.72764 6.21941,-7.60816"
+         style="fill:none;stroke:#0000ff;stroke-width:3.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <path
+         inkscape:export-ydpi="67.533554"
+         inkscape:export-xdpi="67.533554"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\measure24.png"
+         inkscape:connector-curvature="0"
+         id="path4405"
+         d="m 167.17849,807.5561 -6.21941,-3.08371"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <rect
+         inkscape:export-ydpi="67"
+         inkscape:export-xdpi="67"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\measure24.png"
+         y="-796.06274"
+         x="161.41232"
+         height="4.8125"
+         width="1.71875"
+         id="rect4409"
+         style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+         transform="scale(1,-1)" />
+      <g
+         inkscape:export-ydpi="67"
+         inkscape:export-xdpi="67"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\measure24.png"
+         transform="translate(-33.25,-1)"
+         id="g4431">
+        <path
+           inkscape:export-ydpi="67"
+           inkscape:export-xdpi="67"
+           inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+           sodipodi:type="star"
+           style="fill:#003b00;fill-opacity:1;stroke:none"
+           id="path4413"
+           sodipodi:sides="3"
+           sodipodi:cx="83.814102"
+           sodipodi:cy="715.18268"
+           sodipodi:r1="16.204926"
+           sodipodi:r2="8.1024637"
+           sodipodi:arg1="0.79239106"
+           sodipodi:arg2="1.8395886"
+           inkscape:flatsided="false"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="M 95.192307,726.72114 81.662353,722.9942 68.1324,719.26726 l 9.992599,-9.85381 9.992601,-9.85382 3.537354,13.58076 z"
+           inkscape:transform-center-x="-4.2581849"
+           inkscape:transform-center-y="-0.0040766444"
+           transform="matrix(0.37587985,-0.07056433,0.10508983,0.25239083,88.2455,621.35825)" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path4415"
+           d="m 199.66353,797.20924 -4.09883,0.002 -4.09882,0.002 2.04707,-2.39902 1.99659,-2.37886 2.10223,2.37705 z"
+           inkscape:transform-center-y="-0.023184963"
+           inkscape:transform-center-x="-3.1689573"
+           style="fill:#00dc00;fill-opacity:1;stroke:none" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path4417"
+           d="m 198.54312,797.21433 -3.57097,-0.003 -3.57098,-0.003 1.78921,-2.07511 1.7725,-2.07858 1.79847,2.08147 z"
+           inkscape:transform-center-y="-0.030851593"
+           inkscape:transform-center-x="-2.7518817"
+           style="fill:#008000;fill-opacity:1;stroke:none" />
+        <path
+           inkscape:export-ydpi="67"
+           inkscape:export-xdpi="67"
+           inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+           sodipodi:nodetypes="cccc"
+           inkscape:connector-curvature="0"
+           id="path4419"
+           d="m 194.96722,793.08378 -0.0914,-1.38376 0.68873,0.78477 z"
+           style="fill:#00dc00;fill-opacity:1;stroke:none" />
+        <path
+           inkscape:export-ydpi="67"
+           inkscape:export-xdpi="67"
+           inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+           style="fill:#00dc00;fill-opacity:1;stroke:none"
+           d="m 200.39557,798.05928 -1.85543,-0.85724 0.99397,-0.14299 z"
+           id="path4421"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccc" />
+        <rect
+           style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+           id="rect4423"
+           width="1.71875"
+           height="4.8125"
+           x="194.24365"
+           y="797.24939" />
+        <rect
+           y="797.49939"
+           x="192.61865"
+           height="6"
+           width="5.3125"
+           id="rect4425"
+           style="fill:#003b00;fill-opacity:1;stroke:none" />
+        <rect
+           style="fill:#008000;fill-opacity:1;stroke:none"
+           id="rect4427"
+           width="3.46875"
+           height="5.375"
+           x="193.55615"
+           y="797.12439" />
+        <path
+           sodipodi:nodetypes="ccccc"
+           inkscape:connector-curvature="0"
+           id="path4429"
+           d="m 197.97305,798.10295 -0.94946,-0.85724 0.0106,5.2929 0.90633,0.93839 z"
+           style="fill:#00dc00;fill-opacity:1;stroke:none"
+           inkscape:export-filename="D:\Projekte\PyLinX\icons\play24.png"
+           inkscape:export-xdpi="67"
+           inkscape:export-ydpi="67" />
+      </g>
+    </g>
+    <g
+       id="g21583"
+       transform="translate(2.8284271,0.70710678)">
+      <rect
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         transform="scale(-1,1)"
+         y="790.08984"
+         x="-134.98529"
+         height="22.700741"
+         width="22.700741"
+         id="rect4473"
+         style="fill:none;stroke:none" />
+      <path
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         inkscape:connector-curvature="0"
+         id="path4395"
+         d="m 113.17176,809.25976 10.46941,-4.41784"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:nodetypes="cc" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:3.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 126.98426,808.08119 6.21941,-7.60816"
+         id="path4397"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-ydpi="95.151062" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#0000ff;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 128.64117,807.90965 -6.21941,-3.08371"
+         id="path4401"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-ydpi="95.151062" />
+      <rect
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+         id="rect4403"
+         width="1.71875"
+         height="4.8125"
+         x="122.9375"
+         y="793.79968" />
+      <path
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         sodipodi:type="star"
+         style="fill:#003b00;fill-opacity:1;stroke:none"
+         id="path4444"
+         sodipodi:sides="3"
+         sodipodi:cx="83.814102"
+         sodipodi:cy="715.18268"
+         sodipodi:r1="16.204926"
+         sodipodi:r2="8.1024637"
+         sodipodi:arg1="0.79239106"
+         sodipodi:arg2="1.8395886"
+         inkscape:flatsided="false"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="M 95.192307,726.72114 81.662353,722.9942 68.1324,719.26726 l 9.992599,-9.85381 9.992601,-9.85382 3.537354,13.58076 z"
+         inkscape:transform-center-x="-4.2581849"
+         inkscape:transform-center-y="-0.0040766444"
+         transform="matrix(0.37587985,0.07056433,0.10508983,-0.25239083,16.2455,973.96615)" />
+      <path
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         sodipodi:nodetypes="ccccccc"
+         inkscape:connector-curvature="0"
+         id="path4448"
+         d="m 126.54312,798.11007 -3.57097,0.003 -3.57098,0.003 1.78921,2.07511 1.7725,2.07858 1.79847,-2.08147 z"
+         inkscape:transform-center-y="-0.030851593"
+         inkscape:transform-center-x="-2.7518817"
+         style="fill:#008000;fill-opacity:1;stroke:none" />
+      <rect
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         transform="scale(1,-1)"
+         style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+         id="rect4454"
+         width="1.71875"
+         height="4.8125"
+         x="122.24365"
+         y="-798.07501" />
+      <rect
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         transform="scale(1,-1)"
+         y="-797.82501"
+         x="120.61865"
+         height="6"
+         width="5.3125"
+         id="rect4456"
+         style="fill:#003b00;fill-opacity:1;stroke:none" />
+      <rect
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         transform="scale(1,-1)"
+         style="fill:#008000;fill-opacity:1;stroke:none"
+         id="rect4458"
+         width="3.46875"
+         height="5.375"
+         x="121.55615"
+         y="-798.20001" />
+      <path
+         inkscape:export-ydpi="95.151062"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         style="fill:#00dc00;fill-opacity:1;stroke:none"
+         d="m 128.39557,797.26512 -1.85543,0.85724 -1.53338,-0.0172 0.93686,-0.86699 z"
+         id="path4452"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         sodipodi:nodetypes="ccccccc"
+         inkscape:connector-curvature="0"
+         id="path4460"
+         d="m 125.97305,797.22145 -0.95727,0.8924 0.0129,-5.29491 -3.46844,0.017 -0.92213,-1.00812 5.30242,0.0196 z"
+         style="fill:#00dc00;fill-opacity:1;stroke:none"
+         inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\stimulate24.png"
+         inkscape:export-xdpi="95.151062"
+         inkscape:export-ydpi="95.151062" />
     </g>
   </g>
 </svg>

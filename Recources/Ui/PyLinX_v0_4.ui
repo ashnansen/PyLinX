@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>601</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="lineWidth">
+       <number>2</number>
+      </property>
+      <property name="midLineWidth">
+       <number>1</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="horizontalLayoutWidget">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
+        </property>
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>3</width>
+            <height>2</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <property name="minimumSize">
+            <size>
+             <width>774</width>
+             <height>0</height>
+            </size>
+           </property>
+           <attribute name="title">
+            <string>Tab 1</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QTreeView" name="treeView"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <property name="minimumSize">
+            <size>
+             <width>774</width>
+             <height>479</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>774</width>
+             <height>479</height>
+            </size>
+           </property>
+           <attribute name="title">
+            <string>Tab 2</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_2">
+            <property name="geometry">
+             <rect>
+              <x>9</x>
+              <y>9</y>
+              <width>751</width>
+              <height>461</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QTreeView" name="treeView_2"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuProgramm">
+    <property name="title">
+     <string>Programm</string>
+    </property>
+    <addaction name="actionClose"/>
+   </widget>
+   <addaction name="menuProgramm"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNewElement"/>
+   <addaction name="actionNewPlus"/>
+   <addaction name="actionNewMinus"/>
+   <addaction name="actionNew_Multiplication"/>
+   <addaction name="actionNewDivision"/>
+   <addaction name="separator"/>
+   <addaction name="actionPlay"/>
+  </widget>
+  <action name="actionClose">
+   <property name="text">
+    <string>Beenden</string>
+   </property>
+   <property name="toolTip">
+    <string>PxLinX beenden</string>
+   </property>
+  </action>
+  <action name="actionNewElement">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/element32.png</normaloff>Icons/element32.png</iconset>
+   </property>
+   <property name="text">
+    <string>neues Element</string>
+   </property>
+   <property name="toolTip">
+    <string>neues Element einfügen</string>
+   </property>
+  </action>
+  <action name="actionNewConnector">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../icons/conector32.png</normaloff>../../icons/conector32.png</iconset>
+   </property>
+   <property name="text">
+    <string>neuer Konnector</string>
+   </property>
+   <property name="toolTip">
+    <string>neuer Konnector</string>
+   </property>
+  </action>
+  <action name="actionNewPlus">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/plus24.png</normaloff>Icons/plus24.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Plus</string>
+   </property>
+  </action>
+  <action name="actionNewMinus">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/minus24.png</normaloff>Icons/minus24.png</iconset>
+   </property>
+   <property name="text">
+    <string>new Minus</string>
+   </property>
+  </action>
+  <action name="actionNewDivision">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/divide24.png</normaloff>Icons/divide24.png</iconset>
+   </property>
+   <property name="text">
+    <string>new Division</string>
+   </property>
+  </action>
+  <action name="actionNew_Multiplication">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/multiply24.png</normaloff>Icons/multiply24.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Multiplication</string>
+   </property>
+  </action>
+  <action name="actionPlay">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icons/play24.png</normaloff>Icons/play24.png</iconset>
+   </property>
+   <property name="text">
+    <string>play</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="9"/>
+ <resources/>
+ <connections/>
+</ui>

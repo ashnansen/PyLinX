@@ -77,6 +77,12 @@ class BContainer(object):
     def getParent(self):
         return self.__parent
     
+    def getRoot(self):
+        if self.__parent == None:
+            return self
+        else:
+            return self.__parent.getRoot()
+    
     ## Method that returns True if the attribute exists
     
     def isAttr(self, attr):

@@ -11,10 +11,10 @@ from PyLinXData import *
 import CodeObj
 
 
-class RunEngine(BContainer.BContainer):
+class PX_CodeGeerator(BContainer.BContainer):
  
     def __init__(self, parent):
-        super(RunEngine, self).__init__("PX_RunEngine")
+        super(PX_CodeGeerator, self).__init__("PX_CodeGeerator")
         
         # Object Data
         ###############
@@ -64,7 +64,7 @@ class RunEngine(BContainer.BContainer):
             Constructor
             '''
             name = refObj.get("Name") + "_REF"
-            super(RunEngine.PX_CodeRefObject, self).__init__(name)
+            super(PX_CodeGeerator.PX_CodeRefObject, self).__init__(name)
             self._BContainer__Head = refObj
             
             
@@ -78,13 +78,13 @@ class RunEngine(BContainer.BContainer):
     class PX_CodableObject(PX_CodeRefObject):
         
         def __init__(self,*param):
-            super(RunEngine.PX_CodableObject, self).__init__(*param)
+            super(PX_CodeGeerator.PX_CodableObject, self).__init__(*param)
             
     
     class PX_CodableBasicOperator(PX_CodableObject):
         
         def __init__(self,*param):
-            super(RunEngine.PX_CodableBasicOperator, self).__init__(*param)
+            super(PX_CodeGeerator.PX_CodableBasicOperator, self).__init__(*param)
             
         def getCode(self,):
             lenBody = len(self._BContainer__Body)
@@ -92,28 +92,26 @@ class RunEngine(BContainer.BContainer):
                 print "TODO: Error-Handling (2)"
             else:
                 keys = self.getChildKeys()
+                keys.sort()
                 operator = self.ref._BContainer__Head
                 var0 = self.getb(keys[0]).getCode()
                 var1 = self.getb(keys[1]).getCode() 
-                return " ( " + var0 + " " + operator + " " + var1 + " ) "
+                return "( " + var0 + " " + operator + " " + var1 + " ) "
 
 
     class PX_CodableVarElement(PX_CodableObject):
             
         def __init__(self,*param):
-            super(RunEngine.PX_CodableVarElement, self).__init__(*param)
+            super(PX_CodeGeerator.PX_CodableVarElement, self).__init__(*param)
             
         def getCode(self):
-            #print "getCode varElement"
             global Code
             lenBody = len(self._BContainer__Body)
             name = self.ref.get("Name") 
             if lenBody == 1:
-                #print "getCode varElement (2)"
                 input = self.getb(self.getChildKeys()[0])
-                code_to_add = "\n" + name + " = " + input.getCode() 
-                #print "code_to_add: ", code_to_add
-                Code += code_to_add
+                code_to_add =  name + " = " + input.getCode() 
+                Code.append(code_to_add)
             return name
     
         
@@ -161,14 +159,14 @@ class RunEngine(BContainer.BContainer):
 
             types = inspect.getmro(type(knot))
             if PyLinXDataObjects.PX_PlotableVarElement in types:
-                knotRefObj = RunEngine.PX_CodableVarElement(knot)
+                knotRefObj = PX_CodeGeerator.PX_CodableVarElement(knot)
             if PyLinXDataObjects.PX_PlotableBasicOperator in types:
-                knotRefObj = RunEngine.PX_CodableBasicOperator(knot)
+                knotRefObj = PX_CodeGeerator.PX_CodableBasicOperator(knot)
                       
             for connector in self.__listConnectors:
                 if connector.elem1 == knot:
                     childRef = __createSingleBranch(connector.elem0)
-                    knotRefObj.paste(childRef,bHashById = True)
+                    knotRefObj.paste(childRef,connector.idxInPin)
             return knotRefObj
                     
         
@@ -203,8 +201,8 @@ class RunEngine(BContainer.BContainer):
 
         # Creating the Syntax Tree
         
-        rootRef = RunEngine.PX_CodeRefObject(self.__rootGraphics)
-        for notConnectedOutElement in  self.__listNotConnectedOutVarElements:
+        rootRef = PX_CodeGeerator.PX_CodeRefObject(self.__rootGraphics)
+        for notConnectedOutElement in self.__listNotConnectedOutVarElements:
             rootRef.paste(__createSingleBranch(notConnectedOutElement), bHashById = True )
         self.__syntaxTree = rootRef
 
@@ -212,20 +210,19 @@ class RunEngine(BContainer.BContainer):
     def __writeCode(self):
         
         global Code
-        Code = ""
-        
-        def __writeCodeKnot(knot):
-            global Code
-            knot.getCode()
+        Code = []
         
         keys = self.__syntaxTree.getChildKeys()
-        strCode = ""
         for key in keys:
             child = self.__syntaxTree.getb(key)
-            strCode = __writeCodeKnot(child)
+            child.getCode()
+        
+        self.__Code = Code
         
         print "BEGIN---------------"
-        print Code+ "\nEND--------------"
+        for line in Code:
+            print line
+        print "END--------------"
         
         
         

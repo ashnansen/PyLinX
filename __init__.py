@@ -26,7 +26,7 @@ class PyLinXMain(QtGui.QMainWindow):
     def __init__(self):
  
         super(PyLinXMain, self).__init__()    
-        uiString = "PyLinX_v0_3.ui"
+        uiString = ".//Recources//Ui//PyLinX_v0_3.ui"
         self.ui = uic.loadUi(uiString)
         self.ui.setWindowIcon(QtGui.QIcon('pylinx.png'))
         self.ui.setWindowTitle('PyLinX')
@@ -37,6 +37,7 @@ class PyLinXMain(QtGui.QMainWindow):
         # ExampleData
         self.rootContainer = PyLinX_DataObjectsInternal.RootContainer(self.ui)
         rootGraphics = PyLinXDataObjects.PX_PlotableObject("rootGraphics")
+        self.rootContainer.paste(rootGraphics)
         testvar  = PyLinXDataObjects.PX_PlotableVarElement("TestVar_0", 150,100, 15 )
         rootGraphics.paste(testvar, bHashById=True)
         testvar2 = PyLinXDataObjects.PX_PlotableVarElement("TestVar_1", 400,200, 15 )
@@ -247,9 +248,11 @@ class PyLinXMain(QtGui.QMainWindow):
         if bSimulationMode:
             self.rootContainer.set("bSimulationMode", False)
         else:
-            runEngine = PyLinXRunEngine.RunEngine(self.rootContainer)
+            runEngine = PyLinXRunEngine.PX_CodeGeerator(self.rootContainer)
             self.rootContainer.paste(runEngine)
             self.rootContainer.set("bSimulationMode", True)
+            
+        self.drawWidget.repaint()
 
 
 class DrawWidget (QtGui.QWidget):
@@ -273,21 +276,54 @@ class DrawWidget (QtGui.QWidget):
         self.setFocus( QtCore.Qt.PopupFocusReason)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
+        # set button context menu policy
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.connect(self, QtCore.SIGNAL('customContextMenuRequested(const QPoint&)'), self.on_context_menu)
+
+        # create context menu
+        self.popMenu_SimulationMode = QtGui.QMenu(self)
+        iconMeasure   = QtGui.QIcon(".//Recources//Icons//measure24.png")
+        iconStimulate = QtGui.QIcon(".//Recources//Icons//stimulate24.png")
+        self.actionMeasure   = QtGui.QAction(iconMeasure,    'Measure', self)
+        self.actionStimulate = QtGui.QAction(iconStimulate , 'Stimulate', self)
+        self.actionMeasure.setCheckable(True)
+        self.actionStimulate.setCheckable(True)
+        self.popMenu_SimulationMode.addAction(self.actionMeasure)
+        self.popMenu_SimulationMode.addAction(self.actionStimulate)
+
         self.setEnabled(True)
     
+    def on_context_menu(self, coord):
+        # show context menu
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if bSimulationMode:
+            objInFocus = self.activeGraphics.getObjectInFocus(coord)
+            if len(objInFocus) > 0:
+                var = objInFocus[0] 
+                types = inspect.getmro(type(var))
+                if PyLinXDataObjects.PX_PlotableVarElement in types:
+                    bStimulate  = var.get("bStimulate")
+                    bMeasure    = var.get("bMeasure")
+                    self.actionMeasure.setChecked(bMeasure)
+                    self.actionStimulate.setChecked(bStimulate)
+                    self.popMenu_SimulationMode.exec_(self.mapToGlobal(coord))
+                    var.set("bMeasure", self.actionMeasure.isChecked())
+                    var.set("bStimulate", self.actionStimulate.isChecked())    
+                    
+                    self.repaint() 
+
+
     def newProject(self, rootGraphics):
         self.rootGraphics   = rootGraphics
         self.activeGraphics = rootGraphics
     
     def paintEvent(self, event = None):
         self.activeGraphics.write(self,PX_Templ.Plot_Target.Gui)
-        #print "Max-ID: ", self.activeGraphics.getMaxID(0)
         
-
     def keyPressEvent(self, qKeyEvent):
+
+        def __keyPressEvent_delete():
         
-        # Deleting Objects
-        if qKeyEvent.key() == QtCore.Qt.Key_Delete:
             keys = self.activeGraphics.getChildKeys()
             objectsInFocus = list(self.activeGraphics.objectsInFocus)
             setDelete = set([])
@@ -335,25 +371,31 @@ class DrawWidget (QtGui.QWidget):
             for element in setDelete:
                 self.activeGraphics.delete(element)
             self.repaint()
-        else:
-            super(DrawWidget, self).keyPressEvent(qKeyEvent)
-    
+
+       
+        #################
+        # Main Method
+        #################
+        
+        # Deleting Objects
+
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if not bSimulationMode:
+               
+            if qKeyEvent.key() == QtCore.Qt.Key_Delete:
+                __keyPressEvent_delete()
+            else:
+                super(DrawWidget, self).keyPressEvent(qKeyEvent)
+            
+        else: 
+            pass 
     
     def mousePressEvent(self, coord):
-        
-        x = coord.x()
-        y = coord.y()
-        X = 10 * round( 0.1 * float(x))
-        Y = 10 * round( 0.1 * float(y))
-        toolSelected = self.rootContainer.get("idxToolSelected")
-        
-        self.rootContainer.set("px_mousePressedAt_X", X)
-        self.rootContainer.set("px_mousePressedAt_Y", Y)
-        
-        if toolSelected == helper.ToolSelected.none:
-            
+
+        def mousePressEvent_tool_none():
             objInFocusOld = list(self.activeGraphics.objectsInFocus)
-            objInFocus = self.activeGraphics.getObjectInFocus(X,Y)
+            #objInFocus = self.activeGraphics.getObjectInFocus(X,Y)
+            objInFocus = self.activeGraphics.getObjectInFocus(coord)
             if len(set(objInFocus).intersection(set(objInFocusOld))) > 0:
                 pass
             else:      
@@ -487,28 +529,50 @@ class DrawWidget (QtGui.QWidget):
                             self.rootGraphics.set("bConnectorPloting", True)
                             self.rootGraphics.set("idxOutPinConnectorPloting", idxPin)
                             self.rootGraphics.set("ConnectorPloting", newConnector)
-                        
-
-        
-        elif toolSelected == helper.ToolSelected.newVarElement:
-        
+                            
+        def mousePressEvent_tool_newVarElement():     
             n = PyLinXDataObjects.PX_IdObject._PX_IdObject__ID + 1
             var = PyLinXDataObjects.PX_PlotableVarElement("Variable_id" + str(n),X,Y, 15 )
             self.activeGraphics.paste(var, bHashById=True)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
             
-            
-        elif toolSelected == helper.ToolSelected.newPlus:
-            
+        def mousePressEvent_tool_newPlus():  
             plus = PyLinXDataObjects.PX_PlotableBasicOperator(X,Y,"+")
             self.activeGraphics.paste(plus, bHashById=True)
             self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
+        
+        #################
+        # Main Method
+        #################
+        
+        x = coord.x()
+        y = coord.y()
+        X = 10 * round( 0.1 * float(x))
+        Y = 10 * round( 0.1 * float(y))
+        toolSelected = self.rootContainer.get("idxToolSelected")
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        
+        if not bSimulationMode:
+        
+            self.rootContainer.set("px_mousePressedAt_X", X)
+            self.rootContainer.set("px_mousePressedAt_Y", Y)
+    
+            if toolSelected == helper.ToolSelected.none:
+                mousePressEvent_tool_none()
+                
+            elif toolSelected == helper.ToolSelected.newVarElement:
+                mousePressEvent_tool_newVarElement()
+    
+            elif toolSelected == helper.ToolSelected.newPlus:
+                mousePressEvent_tool_newPlus()
+
+        else:
+            pass
             
-      
         self.repaint()
-         
+                   
     def mouseMoveEvent(self,coord):
 
         x = coord.x()
@@ -516,74 +580,74 @@ class DrawWidget (QtGui.QWidget):
         X = 10 * round( 0.1 * float(x))
         Y = 10 * round( 0.1 * float(y))
         toolSelected = self.rootContainer.get("idxToolSelected")
+
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if not bSimulationMode:
         
-        if toolSelected == helper.ToolSelected.none:
-
-            # Moving objects
-            objectsInFocus = list(self.activeGraphics.objectsInFocus)
-            if objectsInFocus != []:
-                px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
-                px_mousePressedAt_Y = self.rootContainer.get("px_mousePressedAt_Y")
-                if px_mousePressedAt_X != sys.maxint:
-                    xOffset = X - px_mousePressedAt_X 
-                    yOffset = Y - px_mousePressedAt_Y 
-                    for activeObject in objectsInFocus:
-                        ConnectorToModify = self.activeGraphics.get("ConnectorToModify")
-                        # move objects that have coordinates
-                        types = inspect.getmro(type(activeObject))
-                        if (PyLinXDataObjects.PX_PlotableElement in types):
-                            X_obj = activeObject.X
-                            Y_obj = activeObject.Y
-                            newX = X_obj + xOffset 
-                            newY = Y_obj + yOffset 
-                            activeObject.X = newX
-                            activeObject.Y = newY
+            if toolSelected == helper.ToolSelected.none:
+    
+                # Moving objects
+                objectsInFocus = list(self.activeGraphics.objectsInFocus)
+                if objectsInFocus != []:
+                    px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
+                    px_mousePressedAt_Y = self.rootContainer.get("px_mousePressedAt_Y")
+                    if px_mousePressedAt_X != sys.maxint:
+                        xOffset = X - px_mousePressedAt_X 
+                        yOffset = Y - px_mousePressedAt_Y 
+                        for activeObject in objectsInFocus:
+                            ConnectorToModify = self.activeGraphics.get("ConnectorToModify")
+                            # move objects that have coordinates
+                            types = inspect.getmro(type(activeObject))
+                            if (PyLinXDataObjects.PX_PlotableElement in types):
+                                X_obj = activeObject.X
+                                Y_obj = activeObject.Y
+                                newX = X_obj + xOffset 
+                                newY = Y_obj + yOffset 
+                                activeObject.X = newX
+                                activeObject.Y = newY
+                            
+                            # move lines of connectors 
+                            elif ConnectorToModify  != None:
+                                idxPointModified = self.activeGraphics.get("idxPointModified")
+                                listPoints = list(ConnectorToModify.get("listPoints"))
+                                value = listPoints[idxPointModified]
+                                if idxPointModified % 2 == 0:
+                                    value = value + xOffset 
+                                else:
+                                    value = value + yOffset
+                                listPoints[idxPointModified] = 10 * round( 0.1 * float(value))
+                                activeObject.set("listPoints", listPoints)
+                                                           
+                        self.rootContainer.set("px_mousePressedAt_X", X)
+                        self.rootContainer.set("px_mousePressedAt_Y", Y)            
                         
-                        # move lines of connectors 
-                        elif ConnectorToModify  != None:
-                            idxPointModified = self.activeGraphics.get("idxPointModified")
-                            listPoints = list(ConnectorToModify.get("listPoints"))
-                            value = listPoints[idxPointModified]
-                            if idxPointModified % 2 == 0:
-                                value = value + xOffset 
-                            else:
-                                value = value + yOffset
-                            listPoints[idxPointModified] = 10 * round( 0.1 * float(value))
-                            activeObject.set("listPoints", listPoints)
-                                                       
-                    self.rootContainer.set("px_mousePressedAt_X", X)
-                    self.rootContainer.set("px_mousePressedAt_Y", Y)            
-                    
-            # Ploting the selection frame
-            if self.activeGraphics.isInBody("HighlightObject"):
-                highlightObject = self.activeGraphics.getb("HighlightObject")
-                highlightObject.set("X1", coord.x())
-                highlightObject.set("Y1", coord.y())
-
-            keys = self.activeGraphics.getChildKeys()
-            for key in keys:
-                element = self.activeGraphics.getb(key)
-                types = inspect.getmro(type(element))
-                if PyLinXDataObjects.PX_PlotableElement  in types:
-                    element.isPinInFocus(x,y)
-                    
-            # change coordinates of the proxyElement, that is a placeholder for the finally connected element
-            bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
-            if bConnectorPloting:
-                proxyElem = self.activeGraphics.getb("PX_PlottableProxyElement")
-                proxyElem.X = X
-                proxyElem.Y = Y   
-            self.repaint()      
+                # Ploting the selection frame
+                if self.activeGraphics.isInBody("HighlightObject"):
+                    highlightObject = self.activeGraphics.getb("HighlightObject")
+                    highlightObject.set("X1", coord.x())
+                    highlightObject.set("Y1", coord.y())
+    
+                keys = self.activeGraphics.getChildKeys()
+                for key in keys:
+                    element = self.activeGraphics.getb(key)
+                    types = inspect.getmro(type(element))
+                    if PyLinXDataObjects.PX_PlotableElement  in types:
+                        element.isPinInFocus(x,y)
+                        
+                # change coordinates of the proxyElement, that is a placeholder for the finally connected element
+                bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
+                if bConnectorPloting:
+                    proxyElem = self.activeGraphics.getb("PX_PlottableProxyElement")
+                    proxyElem.X = X
+                    proxyElem.Y = Y   
+                self.repaint()
+        else:
+            pass     
     
     def mouseReleaseEvent(self,coord):
         
-        keys = self.activeGraphics.getChildKeys()
-                
-        toolSelected = self.rootContainer.get("idxToolSelected")        
-        
-        # selecting Elements
-        
-        if toolSelected == helper.ToolSelected.none:
+        def __mouseReleaseEvent_ToolSelNone():
+            
             X = coord.x()
             Y = coord.y()
             px_mousePressedAt_X = self.rootContainer.get("px_mousePressedAt_X")
@@ -609,32 +673,52 @@ class DrawWidget (QtGui.QWidget):
                             objectsInFocus.append(element)
                             self.activeGraphics.objectsInFocus = objectsInFocus
             self.activeGraphics.set("ConnectorToModify", None )
-            self.activeGraphics.set("idxPointModified" , None )            
-                        
-        for key in keys:
-            if self.activeGraphics.getb(key).get("bLatent") == True:
-                self.activeGraphics.delete(key)
-             
-        self.rootContainer.set("px_mousePressedAt_X", sys.maxint)
-        self.rootContainer.set("px_mousePressedAt_Y", sys.maxint)       
+            self.activeGraphics.set("idxPointModified" , None )              
+        
+        ####################
+        # Main method
+        ####################
+        
+        keys = self.activeGraphics.getChildKeys()       
+        toolSelected = self.rootContainer.get("idxToolSelected")        
+
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if not bSimulationMode:
+       
+            # selecting Elements
+            
+            if toolSelected == helper.ToolSelected.none:
+                __mouseReleaseEvent_ToolSelNone()
+                            
+            for key in keys:
+                if self.activeGraphics.getb(key).get("bLatent") == True:
+                    self.activeGraphics.delete(key)
+                 
+            self.rootContainer.set("px_mousePressedAt_X", sys.maxint)
+            self.rootContainer.set("px_mousePressedAt_Y", sys.maxint)  
+            
+        else:
+            pass     
         self.repaint()
            
     def mouseDoubleClickEvent(self, coord):
-            
-        bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
-        if bConnectorPloting: 
-            keys = self.activeGraphics.getChildKeys()
-            for key in keys:        
-                element = self.activeGraphics.getb(key)
-                types = inspect.getmro(type(element))
-                if PyLinXDataObjects.PX_PlottableProxyElement in types:
-                    self.activeGraphics.delete(key)
-                    break
-            ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
-            self.activeGraphics.delete( ConnectorPloting.ID )
-            self.rootGraphics.set("bConnectorPloting", False)
-            self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
-            self.repaint()           
+        
+        bSimulationMode = self.rootContainer.get("bSimulationMode")
+        if not bSimulationMode:
+            bConnectorPloting = self.rootGraphics.get("bConnectorPloting")
+            if bConnectorPloting: 
+                keys = self.activeGraphics.getChildKeys()
+                for key in keys:        
+                    element = self.activeGraphics.getb(key)
+                    types = inspect.getmro(type(element))
+                    if PyLinXDataObjects.PX_PlottableProxyElement in types:
+                        self.activeGraphics.delete(key)
+                        break
+                ConnectorPloting = self.rootGraphics.get("ConnectorPloting")
+                self.activeGraphics.delete( ConnectorPloting.ID )
+                self.rootGraphics.set("bConnectorPloting", False)
+                self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
+                self.repaint()           
                         
 def run():
     app = QtGui.QApplication(sys.argv)
