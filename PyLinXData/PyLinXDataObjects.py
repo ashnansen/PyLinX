@@ -214,7 +214,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         self.set("setIdxConnectedInPins", set([]))
         self.set("setIdxConnectedOutPins", set([]))
         self.set("bVisible", True)        
-        self.calcDimensions()
+        PX_PlotableElement.calcDimensions(self)
         
     ## Properties
     #############
@@ -467,12 +467,95 @@ class  PX_PlotableVarElement(PX_PlotableElement):
         super(PX_PlotableVarElement, self).__init__(name, X, Y)
         self.__Head = value 
         PX_PlotableElement.calcDimensions(self)
-        #self.set("bMeasure", False)
-        #self.set("bSimulation", False)
         self.set("bStimulate", False)
         self.set("bMeasure", False)
         
+#         self.set("StimulationFunction", "Constant")
+#         self.set("stim_const_val", 0.)
+#         self.set("stim_sine_frequency", 0.)  
+#         self.set("stim_sine_frequency", 0.)  
+#         self.set("stim_sine_offset", 0.)     
+#         self.set("stim_sine_amplitude", 0.)  
+#         self.set("stim_ramp_frequency", 0.)  
+#         self.set("stim_ramp_phase", 0.)      
+#         self.set("stim_ramp_offset", 0.)     
+#         self.set("stim_ramp_amplitude", 0.)   
+#         self.set("stim_pulse_frequency", 0.) 
+#         self.set("stim_pulse_phase", 0.)     
+#         self.set("stim_pulse_offset", 0.)    
+#         self.set("stim_pulse_amplitude", 0.)   
+#         self.set("stim_step_phase", 0.)      
+#         self.set("stim_step_offset", 0.)     
+#         self.set("stim_step_amplitude", 0.)    
+#         self.set("stim_random_phase", 0.)    
+#         self.set("stim_random_offset", 0.)   
+#         self.set("stim_random_amplitude", 0.)
         
+        
+        
+
+    def calcDimensions(self,bStimulate,bMeasure):
+        
+        if bStimulate:
+            self.x0_stim = self._X + PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x() 
+            self.y0_stim = self._Y - 0.5 * PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            x1_offset = PX_Templ.Template.Gui.r_60deg() * PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() 
+            self.x1_stim = self.x0_stim - x1_offset 
+            self.y1_stim = self._Y - 0.5 * PX_Templ.Template.Gui.px_ELEMENT_MediumLight() - \
+                        PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() * PX_Templ.Template.Gui.r_60deg()         
+            
+            self.x2_stim = self.x0_stim - PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            self.y2_stim = self.y1_stim
+            self.x3_stim = self.x2_stim
+            self.y3_stim = self._Y - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation()
+            self.x4_stim = self.x0_stim + PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            self.y4_stim = self.y3_stim
+            self.x5_stim = self.x4_stim
+            self.y5_stim = self.y1_stim
+            self.x6_stim = self.x0_stim + x1_offset
+            self.y6_stim = self.y1_stim
+            
+            self.set("Shape_stim", [[(self.x0_stim,self.y0_stim),\
+                                     (self.x1_stim,self.y1_stim),\
+                                     (self.x2_stim,self.y2_stim),\
+                                     (self.x3_stim,self.y3_stim),\
+                                     (self.x4_stim,self.y4_stim),\
+                                     (self.x5_stim,self.y5_stim),\
+                                     (self.x6_stim,self.y6_stim),\
+                                     ]])
+        else:
+            self.set("Shape_stim", [])
+        
+        if bMeasure:
+            self.x0_meas = self._X - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x() 
+            self.y0_meas = self._Y - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation() - 0.5 * PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            x1_offset = PX_Templ.Template.Gui.r_60deg() * PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() 
+            self.x1_meas = self.x0_meas - x1_offset 
+            self.y1_meas = self._Y - 0.5 * PX_Templ.Template.Gui.px_ELEMENT_MediumLight() - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation() + \
+                         PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() * PX_Templ.Template.Gui.r_60deg() 
+            self.x2_meas = self.x0_meas - PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            self.y2_meas = self.y1_meas
+            self.x3_meas = self.x2_meas
+            self.y3_meas = self._Y - 0.5 * PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            self.x4_meas = self.x0_meas + PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
+            self.y4_meas = self.y3_meas
+            self.x5_meas = self.x4_meas
+            self.y5_meas = self.y1_meas
+            self.x6_meas = self.x0_meas + x1_offset
+            self.y6_meas = self.y1_meas 
+        
+            self.set("Shape_meas", [[(self.x0_meas,self.y0_meas),\
+                                     (self.x1_meas,self.y1_meas),\
+                                     (self.x2_meas,self.y2_meas),\
+                                     (self.x3_meas,self.y3_meas),\
+                                     (self.x4_meas,self.y4_meas),\
+                                     (self.x5_meas,self.y5_meas),\
+                                     (self.x6_meas,self.y6_meas),\
+                                     ]])
+        else:
+            self.set("Shape_meas", [])
+            
+                  
     def plot(self, paint, templ):
 
         ## Method to plot the color bar of a variable element
@@ -489,32 +572,23 @@ class  PX_PlotableVarElement(PX_PlotableElement):
             posText_x = self.x + PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar() + whiteSpace
             posText_y = self.y + 0.5 * (PX_PlotableElement.fontStdVarMetrics.ascent() + PX_Templ.Template.Gui.px_EMELENT_minHeigth()) 
             paint.drawText(posText_x, posText_y, name)
+
             
         def __drawStimulationPoint():
             
             paint.setPen(PX_PlotableElement.penSimulationModeBold)
-            paint.setBrush(PX_Templ.brush.green)
-
-            x0 = self._X + PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x()
-            y0 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation()
-            x1 = x0
-            y1 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_MediumLight() - \
-                        PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() * PX_Templ.Template.Gui.r_60deg()            
-            paint.drawLine( x0,y0,x1 ,y1)
-                        
+            paint.setBrush(PX_Templ.brush.green)                        
             paint.setPen(PX_PlotableElement.penSimulationModeNone)
-            x0 = self._X + PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x() 
-            y0 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
-            x1_offset = PX_Templ.Template.Gui.r_60deg() * PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() 
-            x1 = x0 - x1_offset 
-            x2 = x0 + x1_offset
-            y2 = y1
 
-            path        = QtGui.QPainterPath()
-            path.moveTo( x0,y0)
-            path.lineTo(x1,y1)
-            path.lineTo(x2,y2)
-            path.lineTo(x0,y0)
+            path = QtGui.QPainterPath()
+            path.moveTo(self.x0_stim,self.y0_stim)
+            path.lineTo(self.x1_stim,self.y1_stim) 
+            path.lineTo(self.x2_stim,self.y2_stim)
+            path.lineTo(self.x3_stim,self.y3_stim)
+            path.lineTo(self.x4_stim,self.y4_stim)
+            path.lineTo(self.x5_stim,self.y5_stim)
+            path.lineTo(self.x6_stim,self.y6_stim)
+            path.lineTo(self.x0_stim,self.y0_stim)
             paint.drawPath(path)     
 
 
@@ -522,27 +596,18 @@ class  PX_PlotableVarElement(PX_PlotableElement):
             
             paint.setPen(PX_PlotableElement.penSimulationModeBold)
             paint.setBrush(PX_Templ.brush.green)
-
-            x0 = self._X - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x()
-            y0 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_MediumLight()
-            x1 = x0
-            y1 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_MediumLight() - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation() + \
-                        PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() * PX_Templ.Template.Gui.r_60deg()            
-            paint.drawLine( x0,y0,x1 ,y1)
                         
             paint.setPen(PX_PlotableElement.penSimulationModeNone)
-            x0 = self._X - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x() 
-            y0 = self._Y - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation()
-            x1_offset = PX_Templ.Template.Gui.r_60deg() * PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_Arrow() 
-            x1 = x0 - x1_offset 
-            x2 = x0 + x1_offset
-            y2 = y1
 
-            path  = QtGui.QPainterPath()
-            path.moveTo( x0,y0)
-            path.lineTo(x1,y1)
-            path.lineTo(x2,y2)
-            path.lineTo(x0,y0)
+            path = QtGui.QPainterPath()
+            path.moveTo(self.x0_meas,self.y0_meas)
+            path.lineTo(self.x1_meas,self.y1_meas)
+            path.lineTo(self.x2_meas,self.y2_meas)            
+            path.lineTo(self.x3_meas,self.y3_meas)
+            path.lineTo(self.x4_meas,self.y4_meas)
+            path.lineTo(self.x5_meas,self.y5_meas)
+            path.lineTo(self.x6_meas,self.y6_meas)
+            path.lineTo(self.x0_meas,self.y0_meas)
             paint.drawPath(path)       
             
         paint.setFont(PX_PlotableElement.fontStdVar)
@@ -560,12 +625,16 @@ class  PX_PlotableVarElement(PX_PlotableElement):
         
         rootContainer = self.getRoot()
         bSimulationMode = rootContainer.get("bSimulationMode")
-                
+                        
         if bSimulationMode:
+
+            bStimulate = self.get("bStimulate")
+            bMeasure = self.get("bMeasure")
+            self.calcDimensions(bStimulate,bMeasure)
         
-            if self.get("bStimulate"):
+            if bStimulate:
                 __drawStimulationPoint()
-            if self.get("bMeasure"):
+            if bMeasure:
                 __drawMeasurePoint()
 
 

@@ -84,6 +84,7 @@
    <addaction name="actionNewDivision"/>
    <addaction name="separator"/>
    <addaction name="actionActivate_Simulation_Mode"/>
+   <addaction name="actionOsci"/>
    <addaction name="actionRun"/>
   </widget>
   <action name="actionClose">
@@ -193,6 +194,42 @@
    </property>
    <property name="text">
     <string>Activate Simulation Mode</string>
+   </property>
+  </action>
+  <action name="actionMeasure">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../Icons/measure24.png</normaloff>../Icons/measure24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Measure</string>
+   </property>
+  </action>
+  <action name="actionStimulate">
+   <property name="icon">
+    <iconset>
+     <normaloff>../Icons/stimulate24.png</normaloff>../Icons/stimulate24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stimulate</string>
+   </property>
+  </action>
+  <action name="actionOsci">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../Icons/oszi24.png</normaloff>../Icons/oszi24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Oscilloscope</string>
+   </property>
+   <property name="toolTip">
+    <string>Oscilloscope</string>
    </property>
   </action>
  </widget>

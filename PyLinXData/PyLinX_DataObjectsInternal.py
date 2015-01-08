@@ -6,7 +6,9 @@ Created on 26.11.2014
 
 import BContainer
 import PyLinXHelper
+from PyQt4 import QtGui, QtCore, uic, Qt
 
+import PX_Templates as PX_Templ
 
 
 
@@ -15,13 +17,13 @@ class RootContainer(BContainer.BContainer):
     classdocs
     '''
 
-    def __init__(self, ui):
+    def __init__(self, mainWindow):
         '''
         Constructor
         '''
         super(RootContainer, self).__init__("root")
-        self.__ui = ui
-        self.__listActions = [None, ui.actionNewElement, ui.actionNewPlus]
+        self.__mainWindow = mainWindow
+        self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus]
         
     def set(self, attr, value):
         
@@ -37,23 +39,33 @@ class RootContainer(BContainer.BContainer):
                 return BContainer.BContainer.set(self,"idxToolSelected", 0)
             
         elif attr == "bSimulationMode":
+            
             if value == True:
-                self.__ui.actionRun.setEnabled(True)
-                self.__ui.actionActivate_Simulation_Mode.setChecked(True)
-                self.__ui.actionNewElement.setEnabled(False)
-                self.__ui.actionNewPlus.setEnabled(False)
-                self.__ui.actionNewMinus.setEnabled(False)
-                self.__ui.actionNewMultiplication.setEnabled(False)
-                self.__ui.actionNewDivision.setEnabled(False)                   
+                pal = QtGui.QPalette()
+                pal.setColor(QtGui.QPalette.Background,PX_Templ.color.backgroundSim)
+                self.__mainWindow.drawWidget.setPalette(pal)                
+                self.__mainWindow.ui.actionRun.setEnabled(True)
+                self.__mainWindow.ui.actionOsci.setEnabled(True)
+                self.__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(True)
+                self.__mainWindow.ui.actionNewElement.setEnabled(False)
+                self.__mainWindow.ui.actionNewPlus.setEnabled(False)
+                self.__mainWindow.ui.actionNewMinus.setEnabled(False)
+                self.__mainWindow.ui.actionNewMultiplication.setEnabled(False)
+                self.__mainWindow.ui.actionNewDivision.setEnabled(False)                   
                 return BContainer.BContainer.set(self,"bSimulationMode", True)
+            
             elif value == False:
-                self.__ui.actionRun.setEnabled(False)
-                self.__ui.actionActivate_Simulation_Mode.setChecked(False)
-                self.__ui.actionNewElement.setEnabled(True)
-                self.__ui.actionNewPlus.setEnabled(True)
-                self.__ui.actionNewMinus.setEnabled(True)
-                self.__ui.actionNewMultiplication.setEnabled(True)
-                self.__ui.actionNewDivision.setEnabled(True)                
+                pal = QtGui.QPalette()
+                pal.setColor(QtGui.QPalette.Background,PX_Templ.color.background)
+                self.__mainWindow.drawWidget.setPalette(pal)
+                self.__mainWindow.ui.actionRun.setEnabled(False)
+                self.__mainWindow.ui.actionOsci.setEnabled(False)
+                self.__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(False)
+                self.__mainWindow.ui.actionNewElement.setEnabled(True)
+                self.__mainWindow.ui.actionNewPlus.setEnabled(True)
+                self.__mainWindow.ui.actionNewMinus.setEnabled(True)
+                self.__mainWindow.ui.actionNewMultiplication.setEnabled(True)
+                self.__mainWindow.ui.actionNewDivision.setEnabled(True)
                 return BContainer.BContainer.set(self,"bSimulationMode", False)
                 
         else:

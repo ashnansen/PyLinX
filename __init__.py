@@ -20,6 +20,92 @@ from PyLinXCodeGen import *
 import PX_Templates as PX_Templ
 import PyLinXData.PyLinXHelper as helper
 
+class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
+    
+    def __init__(self, parent, variable):
+        
+        super(PX_Dialogue_SimpleStimulate, self).__init__(parent)
+        
+        layout = QtGui.QVBoxLayout(self)
+        
+        StimulationFunction = variable.get("StimulationFunction")
+        print "StimulationFunction: ", StimulationFunction 
+        
+#         init_list = [{ "Name": "constVal",        "DisplayName":  "Value",     "ValueType": "float"},\
+#                      { "Name": "stim_Frequency",  "DisplayName":  "Frequency", "ValueType": "float", "Unit": "Hz"},\
+#                      { "Name": "stim_Phase",      "DisplayName":  "Phase",     "ValueType": "float"}]
+       
+        init_list = PX_Templ.PX_DiagData.StimForm[StimulationFunction]
+        # Get Data 
+        for dictVar in init_list:
+            dictVar["Value"] = str(variable.get(dictVar["Name"])) 
+        
+        self.setLayout(layout)
+        self.variable = variable
+        
+        self.listFunctions = ["Constant", "Sine"]
+        self.combo = QtGui.QComboBox(self)
+        counter = 0
+        index = 0
+        for function in self.listFunctions:
+            self.combo.addItem(function)
+            if StimulationFunction == function:
+                index = counter
+            counter +=1
+        self.combo.setCurrentIndex(index)
+        self.combo.setEditText(StimulationFunction)
+        self.combo.activated[str].connect(self.onActivated)
+        self.layout().addWidget(self.combo)
+
+        easyWidget = BEasyWidget.EasyWidget(init_list)
+        self.layout().addWidget(easyWidget)
+        self.formWidget    = easyWidget
+
+        # OK and Cancel buttons
+        self.buttons = QtGui.QDialogButtonBox(
+            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+            QtCore.Qt.Horizontal, self)
+        self.buttons.accepted.connect(self.on_accept)
+        self.buttons.rejected.connect(self.on_reject)
+        self.layout().addWidget(self.buttons)
+#        self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        
+#    def sizeHint(self):
+#        return QtCore.QSize(0, 0)
+         
+    def on_reject(self):
+        self.hide()
+        
+    def on_accept(self):
+        values = self.formWidget.getValues()
+        self.variable._BContainer__Attributes.update(values)
+        self.hide()
+    
+    def onActivated(self, text):
+        text = str(text)
+        print "text: ", text
+        self.variable.set("StimulationFunction", text)
+        init_list = PX_Templ.PX_DiagData.StimForm[text]
+        formWidget_New = BEasyWidget.EasyWidget(init_list)
+        self.formWidget.setParent(None)
+        self.buttons.setParent(None)
+        del  self.formWidget
+        self.formWidget = formWidget_New
+        self.layout().addWidget(formWidget_New)
+        self.layout().addWidget(self.buttons)
+        self.adjustSize() 
+        self.repaint()
+        
+    @staticmethod
+    def getParams(parent, variable):
+        dialog = PX_Dialogue_SimpleStimulate(parent, variable)
+        result = dialog.exec_()
+        #values = dialog.formWidget.getValues()
+        #variable.__BContainer_Attributes.update(values)
+        
+        #print "values: ", values
+        #return values
+
 
 class PyLinXMain(QtGui.QMainWindow):
 
@@ -35,7 +121,8 @@ class PyLinXMain(QtGui.QMainWindow):
         QtGui.QApplication.setStyle( QtGui.QStyleFactory.create('cleanlooks') )
         
         # ExampleData
-        self.rootContainer = PyLinX_DataObjectsInternal.RootContainer(self.ui)
+
+        self.rootContainer = PyLinX_DataObjectsInternal.RootContainer(self)
         rootGraphics = PyLinXDataObjects.PX_PlotableObject("rootGraphics")
         self.rootContainer.paste(rootGraphics)
         testvar  = PyLinXDataObjects.PX_PlotableVarElement("TestVar_0", 150,100, 15 )
@@ -57,14 +144,14 @@ class PyLinXMain(QtGui.QMainWindow):
         # ID of the connector which is actually drawn
         self.rootContainer.set("ID_activeConnector", -1)
         rootGraphics.set("idxOutPinConnectorPloting", None)
-        self.rootContainer.set("bSimulationMode", False)
+        
         
         
         # Drawing GUI
         
         scrollingArea = QtGui.QScrollArea()
         horizongalLayout2 = QtGui.QHBoxLayout()
-        drawWidget = DrawWidget(self.rootContainer, self)
+        drawWidget = DrawWidget(self.rootContainer, self)        
         self.drawWidget = drawWidget
         pal = QtGui.QPalette()
         pal.setColor(QtGui.QPalette.Background,PX_Templ.color.background)
@@ -72,7 +159,7 @@ class PyLinXMain(QtGui.QMainWindow):
         drawWidget.setPalette(pal)
         
         
-        
+        self.rootContainer.set("bSimulationMode", False)
         
         #drawWidget.setBaseSize(1500,480)
         horizongalLayout2.addWidget(drawWidget)
@@ -126,8 +213,10 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
         self.ui.actionNewElement.setCheckable(True)
         self.ui.actionNewPlus.triggered.connect(self.on_actionNewPlus)
+        self.ui.actionOsci.triggered.connect(self.on_actionOsci)
         self.ui.actionNewPlus.setCheckable(True)
         self.ui.actionRun.setEnabled(False)
+        self.ui.actionOsci.setEnabled(False)
         self.ui.actionActivate_Simulation_Mode.triggered.connect(self.on_Activate_Simulation_Mode)
         
         self.ui.resize(800,600)
@@ -253,6 +342,9 @@ class PyLinXMain(QtGui.QMainWindow):
             self.rootContainer.set("bSimulationMode", True)
             
         self.drawWidget.repaint()
+        
+    def on_actionOsci(self):
+        print "on_actionOsci"
 
 
 class DrawWidget (QtGui.QWidget):
@@ -273,7 +365,7 @@ class DrawWidget (QtGui.QWidget):
         # Why does this not work?
         self.setMinimumSize(1000,600)
         
-        self.setFocus( QtCore.Qt.PopupFocusReason)
+        self.setFocus(QtCore.Qt.PopupFocusReason) 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         # set button context menu policy
@@ -288,8 +380,9 @@ class DrawWidget (QtGui.QWidget):
         self.actionStimulate = QtGui.QAction(iconStimulate , 'Stimulate', self)
         self.actionMeasure.setCheckable(True)
         self.actionStimulate.setCheckable(True)
-        self.popMenu_SimulationMode.addAction(self.actionMeasure)
         self.popMenu_SimulationMode.addAction(self.actionStimulate)
+        self.popMenu_SimulationMode.addAction(self.actionMeasure)
+
 
         self.setEnabled(True)
     
@@ -307,8 +400,14 @@ class DrawWidget (QtGui.QWidget):
                     self.actionMeasure.setChecked(bMeasure)
                     self.actionStimulate.setChecked(bStimulate)
                     self.popMenu_SimulationMode.exec_(self.mapToGlobal(coord))
-                    var.set("bMeasure", self.actionMeasure.isChecked())
-                    var.set("bStimulate", self.actionStimulate.isChecked())    
+                    actionMeasureIsChecked = self.actionMeasure.isChecked()
+                    actionStimulateIsChecked = self.actionStimulate.isChecked()
+                    
+                    if actionStimulateIsChecked:
+                        PX_Dialogue_SimpleStimulate.getParams(self, var)
+                    
+                    var.set("bMeasure", actionMeasureIsChecked)
+                    var.set("bStimulate",actionStimulateIsChecked)    
                     
                     self.repaint() 
 
@@ -718,8 +817,31 @@ class DrawWidget (QtGui.QWidget):
                 self.activeGraphics.delete( ConnectorPloting.ID )
                 self.rootGraphics.set("bConnectorPloting", False)
                 self.rootContainer.set("idxToolSelected", helper.ToolSelected.none)
-                self.repaint()           
-                        
+                self.repaint()
+                
+        else:
+            X = coord.x()
+            Y = coord.y()
+            keys = self.activeGraphics.getChildKeys()
+            for key in keys:
+                element = self.activeGraphics.getb(key)
+                types = inspect.getmro(type(element))
+                bFocus = False
+                if PyLinXDataObjects.PX_PlotableVarElement in types:
+                    Shape_stim = element.get("Shape_stim")
+                    print "Shape_stim: ", Shape_stim
+                    if Shape_stim != None:
+                        idxPolygon = helper.point_inside_polygon(X , Y,Shape_stim)
+                        print idxPolygon
+                        bFocus = not (len(idxPolygon) == 0)
+                        if bFocus:
+                            break
+            if bFocus:
+                values = PX_Dialogue_SimpleStimulate.getParams(self, element)          
+                print values
+
+
+
 def run():
     app = QtGui.QApplication(sys.argv)
     obj = PyLinXMain()   

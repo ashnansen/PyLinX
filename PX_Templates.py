@@ -7,9 +7,11 @@ Created on 30.10.2014
 from PyQt4 import QtCore
 from PyQt4.QtGui import *
 
+
 class color():
     white           = QColor(255,255,255)
     background      = QColor(255,255,224)
+    backgroundSim   = QColor(236,255,236)
     black           = QColor(0,0,0)
     transparent     = QColor(0,0,0,0)
     red             = QColor(206,0,0)
@@ -22,6 +24,28 @@ class color():
     grayLight       = QColor(196,196,196)
     Highlight       = QColor(200,200,255)
     HighlightTransp = QColor(200,200,255, 60)
+    tupleOsciColors = (QColor(128,0  ,0  ),\
+                       QColor(0  ,128,0  ),\
+                       QColor(0  ,0  ,128),\
+                       QColor(64 ,64 ,0  ),\
+                       QColor(64 ,0  ,64 ),\
+                       QColor(0  ,64 ,64 ),\
+                       QColor(96 ,0  ,32 ),\
+                       QColor(33 ,0  ,96 ),\
+                       QColor(0  ,32 ,96 ),\
+                       QColor(0  ,96 ,32 ),\
+                       QColor(96 ,0  ,32 ),\
+                       QColor(32 ,0  ,96 ),\
+                       QColor(16 ,32 ,18 ),\
+                       QColor(32 ,16 ,80 ),\
+                       QColor(16 ,80 ,32 ),\
+                       QColor(32 ,80 ,16 ),\
+                       QColor(80 ,16 ,32 ),\
+                       QColor(80 ,32 ,16 ),\
+                       QColor(64 ,32 ,32 ),\
+                       QColor(32 ,64 ,32 ),\
+                       QColor(32 ,32 ,64 ))
+
 
 class brush():
     white           = QBrush(QtCore.Qt.white)
@@ -37,6 +61,28 @@ class brush():
 
 class Plot_Target(): 
     Gui             = 1
+
+class PX_DiagData():
+    StimForm = {}
+    StimForm["Constant"]  = [{ "Name": "stim_const_val",        "DisplayName":  "Value",     "ValueType": "float", "Value": 0.}]
+    StimForm["Sine"]      = [{ "Name": "stim_sine_frequency",   "DisplayName":  "Frequency", "ValueType": "float", "Value": 0., "Unit" : "Hz"},\
+                             { "Name": "stim_sine_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0., "Unit": "s"},\
+                             { "Name": "stim_sine_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_sine_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]
+    StimForm["Ramp"]      = [{ "Name": "stim_ramp_frequency",   "DisplayName":  "Frequency", "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_ramp_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_ramp_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_ramp_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}] 
+    StimForm["Pulse"]     = [{ "Name": "stim_pulse_frequency",  "DisplayName":  "Frequency", "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_pulse_phase",      "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_pulse_offset",     "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_pulse_amplitude",  "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
+    StimForm["Step"]      = [{ "Name": "stim_step_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_step_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_step_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
+    StimForm["Random"]    = [{ "Name": "stim_random_phase",     "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_random_offset",    "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+                             { "Name": "stim_random_amplitude", "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
 
 ## Definition of graphical measures 
 
