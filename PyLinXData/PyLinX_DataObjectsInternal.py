@@ -7,8 +7,10 @@ Created on 26.11.2014
 import BContainer
 import PyLinXHelper
 from PyQt4 import QtGui, QtCore, uic, Qt
+import inspect
 
 import PX_Templates as PX_Templ
+import PyLinXDataObjects 
 
 
 
@@ -24,6 +26,9 @@ class RootContainer(BContainer.BContainer):
         super(RootContainer, self).__init__("root")
         self.__mainWindow = mainWindow
         self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus]
+        
+        
+    
         
     def set(self, attr, value):
         

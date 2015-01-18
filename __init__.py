@@ -8,7 +8,6 @@ import copy
 import cProfile
 import ctypes
 import inspect
-import json
 import jsonpickle
 import os
 from PyQt4 import QtGui, QtCore, uic, Qt
@@ -22,28 +21,29 @@ import PyLinXData.PyLinXHelper as helper
 
 class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     
-    def __init__(self, parent, variable):
+    def __init__(self, parent, variable, drawWidget):
         
         super(PX_Dialogue_SimpleStimulate, self).__init__(parent)
         
         layout = QtGui.QVBoxLayout(self)
         
         StimulationFunction = variable.get("StimulationFunction")
-        print "StimulationFunction: ", StimulationFunction 
-        
-#         init_list = [{ "Name": "constVal",        "DisplayName":  "Value",     "ValueType": "float"},\
-#                      { "Name": "stim_Frequency",  "DisplayName":  "Frequency", "ValueType": "float", "Unit": "Hz"},\
-#                      { "Name": "stim_Phase",      "DisplayName":  "Phase",     "ValueType": "float"}]
+        if StimulationFunction == None:
+            StimulationFunction = "Constant"
        
-        init_list = PX_Templ.PX_DiagData.StimForm[StimulationFunction]
+        init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
         # Get Data 
         for dictVar in init_list:
-            dictVar["Value"] = str(variable.get(dictVar["Name"])) 
+            value = variable.get(dictVar["Name"])
+            if value == None:
+                value = 0.0
+            dictVar["Value"] = str(value)
         
         self.setLayout(layout)
         self.variable = variable
+        self.drawWidget = drawWidget
         
-        self.listFunctions = ["Constant", "Sine"]
+        self.listFunctions = ["Constant", "Sine", "Ramp", "Pulse", "Step", "Random"]
         self.combo = QtGui.QComboBox(self)
         counter = 0
         index = 0
@@ -68,22 +68,19 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         self.buttons.accepted.connect(self.on_accept)
         self.buttons.rejected.connect(self.on_reject)
         self.layout().addWidget(self.buttons)
-#        self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        
-#    def sizeHint(self):
-#        return QtCore.QSize(0, 0)
+        self.result = False
          
     def on_reject(self):
         self.hide()
         
     def on_accept(self):
+        self.result = True
         values = self.formWidget.getValues()
         self.variable._BContainer__Attributes.update(values)
         self.hide()
     
     def onActivated(self, text):
         text = str(text)
-        print "text: ", text
         self.variable.set("StimulationFunction", text)
         init_list = PX_Templ.PX_DiagData.StimForm[text]
         formWidget_New = BEasyWidget.EasyWidget(init_list)
@@ -97,14 +94,13 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         self.repaint()
         
     @staticmethod
-    def getParams(parent, variable):
-        dialog = PX_Dialogue_SimpleStimulate(parent, variable)
+    def getParams(parent, variable, drawWidget):
+        dialog = PX_Dialogue_SimpleStimulate(parent, variable, drawWidget)
+        print "(0)", variable._BContainer__Attributes
         result = dialog.exec_()
-        #values = dialog.formWidget.getValues()
-        #variable.__BContainer_Attributes.update(values)
-        
-        #print "values: ", values
-        #return values
+        print "(1)", variable._BContainer__Attributes
+        drawWidget.repaint() 
+        return dialog.result
 
 
 class PyLinXMain(QtGui.QMainWindow):
@@ -116,8 +112,6 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui = uic.loadUi(uiString)
         self.ui.setWindowIcon(QtGui.QIcon('pylinx.png'))
         self.ui.setWindowTitle('PyLinX')
-        # self.ui.layout().setSizeConstraint(QtGui.QLayout.SetFixedSize)
-        # self.ui.statusbar.hide()
         QtGui.QApplication.setStyle( QtGui.QStyleFactory.create('cleanlooks') )
         
         # ExampleData
@@ -128,9 +122,7 @@ class PyLinXMain(QtGui.QMainWindow):
         testvar  = PyLinXDataObjects.PX_PlotableVarElement("TestVar_0", 150,100, 15 )
         rootGraphics.paste(testvar, bHashById=True)
         testvar2 = PyLinXDataObjects.PX_PlotableVarElement("TestVar_1", 400,200, 15 )
-        #rootGraphics.paste(testvar2, bHashById=True)
-        connector1 = PyLinXDataObjects.PX_PlottableConnector(testvar, testvar2, [300]) 
-        #rootGraphics.paste(connector1, bHashById = True)   
+        connector1 = PyLinXDataObjects.PX_PlottableConnector(testvar, testvar2, [300])  
         plusOperator = PyLinXDataObjects.PX_PlotableBasicOperator(300,200, "+")
         rootGraphics.paste(plusOperator, bHashById = True) 
         rootGraphics.set("bConnectorPloting", False)     
@@ -218,6 +210,7 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.actionRun.setEnabled(False)
         self.ui.actionOsci.setEnabled(False)
         self.ui.actionActivate_Simulation_Mode.triggered.connect(self.on_Activate_Simulation_Mode)
+        self.ui.actionRun.triggered.connect(self.on_run)
         
         self.ui.resize(800,600)
         
@@ -294,6 +287,7 @@ class PyLinXMain(QtGui.QMainWindow):
         self.rootContainer.paste(newProject,"rootGraphics",  bForceOverwrite = True)
         self.drawWidget.newProject(newProject)
         del oldProject
+        self.rootContainer.set("bSimulationMode", False)
         maxID = newProject.getMaxID()
         PyLinXDataObjects.PX_IdObject._PX_IdObject__ID = maxID + 1
         self.drawWidget.repaint()
@@ -301,6 +295,7 @@ class PyLinXMain(QtGui.QMainWindow):
     def on_actionNewProject(self):
         rootGraphicsNew = PyLinXDataObjects.PX_PlotableObject("rootGraphics")
         self.rootContainer.delete("rootGraphics")
+        self.rootContainer.set("bSimulationMode", False)
         self.rootContainer.paste(rootGraphicsNew)
         self.drawWidget.repaint()
 
@@ -337,11 +332,16 @@ class PyLinXMain(QtGui.QMainWindow):
         if bSimulationMode:
             self.rootContainer.set("bSimulationMode", False)
         else:
-            runEngine = PyLinXRunEngine.PX_CodeGeerator(self.rootContainer)
-            self.rootContainer.paste(runEngine)
+            runEngine = PyLinXRunEngine.PX_CodeGenerator(self.rootContainer)
+            self.rootContainer.paste(runEngine, bForceOverwrite=True)
             self.rootContainer.set("bSimulationMode", True)
             
         self.drawWidget.repaint()
+        
+    def on_run(self):
+        
+        runEngine = self.rootContainer.getb("PX_CodeGeerator")
+        runEngine.run(self.drawWidget)
         
     def on_actionOsci(self):
         print "on_actionOsci"
@@ -404,7 +404,10 @@ class DrawWidget (QtGui.QWidget):
                     actionStimulateIsChecked = self.actionStimulate.isChecked()
                     
                     if actionStimulateIsChecked:
-                        PX_Dialogue_SimpleStimulate.getParams(self, var)
+                        result = PX_Dialogue_SimpleStimulate.getParams(self, var, self)
+                        if result == False:
+                            self.actionStimulate.setChecked(False)
+                            actionStimulateIsChecked = False
                     
                     var.set("bMeasure", actionMeasureIsChecked)
                     var.set("bStimulate",actionStimulateIsChecked)    
@@ -423,10 +426,11 @@ class DrawWidget (QtGui.QWidget):
 
         def __keyPressEvent_delete():
         
-            keys = self.activeGraphics.getChildKeys()
+            #keys = self.activeGraphics.getChildKeys()
             objectsInFocus = list(self.activeGraphics.objectsInFocus)
             setDelete = set([])
-            for key in keys:
+            #for key in keys:
+            for key in self.activeGraphics._BContainer__Body:    
                 element = self.activeGraphics.getb(key)
                 types = inspect.getmro(type(element))
                 if (PyLinXDataObjects.PX_PlottableConnector in types):
@@ -467,7 +471,14 @@ class DrawWidget (QtGui.QWidget):
                     elem0.set("setIdxConnectedOutPins", setIdxConnectedOutPins)
                     elem1.set("setIdxConnectedInPins", setIdxConnectedInPins)
                     
+            DataDictionary = self.rootContainer.getb("DataDictionary")
+            bDictionary = (DataDictionary != None)
             for element in setDelete:
+                if bDictionary:
+                    elementObject = self.activeGraphics.getb(element)
+                    name = elementObject.get("Name")
+                    if name in DataDictionary:
+                        DataDictionary.pop(name)
                 self.activeGraphics.delete(element)
             self.repaint()
 
@@ -538,8 +549,6 @@ class DrawWidget (QtGui.QWidget):
                             if len(idxPin) == 1:
                                 idxPin = idxPin[0]
                             break  
-                #print "idxPin(2): ", idxPin
-                #print "objInFocus: ", objInFocus 
                 if objInFocus == None:
                 
                     # case there is no second element
@@ -618,8 +627,6 @@ class DrawWidget (QtGui.QWidget):
                         objInFocus, idxPin = element.isPinInFocus(x,y)
                         if len(idxPin) > 0:
                             idxPin = idxPin[0]                         
-                        #print "objInFocus: ", objInFocus
-                        #print "idxPin (3): ", idxPin 
                         if objInFocus != None and (idxPin > -1):
                             proxyElem = PyLinXDataObjects.PX_PlottableProxyElement(x,y)
                             self.activeGraphics.paste(proxyElem)
@@ -681,6 +688,7 @@ class DrawWidget (QtGui.QWidget):
         toolSelected = self.rootContainer.get("idxToolSelected")
 
         bSimulationMode = self.rootContainer.get("bSimulationMode")
+        
         if not bSimulationMode:
         
             if toolSelected == helper.ToolSelected.none:
@@ -829,7 +837,6 @@ class DrawWidget (QtGui.QWidget):
                 bFocus = False
                 if PyLinXDataObjects.PX_PlotableVarElement in types:
                     Shape_stim = element.get("Shape_stim")
-                    print "Shape_stim: ", Shape_stim
                     if Shape_stim != None:
                         idxPolygon = helper.point_inside_polygon(X , Y,Shape_stim)
                         print idxPolygon
@@ -837,7 +844,7 @@ class DrawWidget (QtGui.QWidget):
                         if bFocus:
                             break
             if bFocus:
-                values = PX_Dialogue_SimpleStimulate.getParams(self, element)          
+                values = PX_Dialogue_SimpleStimulate.getParams(self, element, self)          
                 print values
 
 

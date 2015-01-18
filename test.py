@@ -1059,47 +1059,287 @@ website: zetcode.com
 last edited: September 2011
 """
 
-import sys
-from PyQt4 import QtGui, QtCore
+# import sys
+# from PyQt4 import QtGui, QtCore
+# 
+# class Example(QtGui.QWidget):
+#     
+#     def __init__(self):
+#         super(Example, self).__init__()
+#         
+#         self.initUI()
+#         
+#     def initUI(self):      
+# 
+#         self.lbl = QtGui.QLabel("Ubuntu", self)
+# 
+#         combo = QtGui.QComboBox(self)
+#         combo.addItem("Ubuntu")
+#         combo.addItem("Mandriva")
+#         combo.addItem("Fedora")
+#         combo.addItem("Red Hat")
+#         combo.addItem("Gentoo")
+# 
+#         combo.move(50, 50)
+#         self.lbl.move(50, 150)
+# 
+#         combo.activated[str].connect(self.onActivated)        
+#          
+#         self.setGeometry(300, 300, 300, 200)
+#         self.setWindowTitle('QtGui.QComboBox')
+#         self.show()
+#         
+#     def onActivated(self, text):
+#       
+#         self.lbl.setText(text)
+#         self.lbl.adjustSize()  
+#                 
+# def main():
+#     
+#     app = QtGui.QApplication(sys.argv)
+#     ex = Example()
+#     sys.exit(app.exec_())
+# 
+# 
+# if __name__ == '__main__':
+#     main()
 
-class Example(QtGui.QWidget):
-    
-    def __init__(self):
-        super(Example, self).__init__()
-        
-        self.initUI()
-        
-    def initUI(self):      
+#! /usr/bin/python
 
-        self.lbl = QtGui.QLabel("Ubuntu", self)
+'''
+Exammple for Texteditor
+'''
 
-        combo = QtGui.QComboBox(self)
-        combo.addItem("Ubuntu")
-        combo.addItem("Mandriva")
-        combo.addItem("Fedora")
-        combo.addItem("Red Hat")
-        combo.addItem("Gentoo")
+# import sys
+# import os
+# from PyQt4 import QtGui
+# 
+# class Notepad(QtGui.QMainWindow):
+# 
+#     def __init__(self):
+#         super(Notepad, self).__init__()
+#         self.initUI()
+#         
+#     def initUI(self):
+#         newAction = QtGui.QAction('New', self)
+#         newAction.setShortcut('Ctrl+N')
+#         newAction.setStatusTip('Create new file')
+#         newAction.triggered.connect(self.newFile)
+#         
+#         saveAction = QtGui.QAction('Save', self)
+#         saveAction.setShortcut('Ctrl+S')
+#         saveAction.setStatusTip('Save current file')
+#         saveAction.triggered.connect(self.saveFile)
+#         
+#         openAction = QtGui.QAction('Open', self)
+#         openAction.setShortcut('Ctrl+O')
+#         openAction.setStatusTip('Open a file')
+#         openAction.triggered.connect(self.openFile)
+#         
+#         closeAction = QtGui.QAction('Close', self)
+#         closeAction.setShortcut('Ctrl+Q')
+#         closeAction.setStatusTip('Close Notepad')
+#         closeAction.triggered.connect(self.close)
+#         
+#         menubar = self.menuBar()
+#         fileMenu = menubar.addMenu('&File')
+#         fileMenu.addAction(newAction)
+#         fileMenu.addAction(saveAction)
+#         fileMenu.addAction(openAction)
+#         fileMenu.addAction(closeAction)
+#         
+#         self.text = QtGui.QTextEdit(self)
+#         
+#         self.setCentralWidget(self.text)
+#         self.setGeometry(300,300,300,300)
+#         self.setWindowTitle('Notepad')
+#         self.show()
+#         
+#     def newFile(self):
+#         self.text.clear()
+#         
+#     def saveFile(self):
+#         filename = QtGui.QFileDialog.getSaveFileName(self, 'Save File', os.getenv('HOME'))
+#         f = open(filename, 'w')
+#         filedata = self.text.toPlainText()
+#         f.write(filedata)
+#         f.close()
+#         
+#         
+#     def openFile(self):
+#         filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
+#         f = open(filename, 'r')
+#         filedata = f.read()
+#         self.text.setText(filedata)
+#         f.close()
+#         
+# def main():
+#     app = QtGui.QApplication(sys.argv)
+#     notepad = Notepad()
+#     sys.exit(app.exec_())
+#     
+# if __name__ == '__main__':
+#     main()
 
-        combo.move(50, 50)
-        self.lbl.move(50, 150)
+#!/usr/bin/env python
 
-        combo.activated[str].connect(self.onActivated)        
-         
-        self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('QtGui.QComboBox')
-        self.show()
-        
-    def onActivated(self, text):
-      
-        self.lbl.setText(text)
-        self.lbl.adjustSize()  
-                
-def main():
-    
-    app = QtGui.QApplication(sys.argv)
-    ex = Example()
-    sys.exit(app.exec_())
+"""PyQt4 port of the richtext/syntaxhighlighter example from Qt v4.x"""
+
+# from PyQt4 import QtCore, QtGui
+# 
+# 
+# class MainWindow(QtGui.QMainWindow):
+#     def __init__(self, parent=None):
+#         super(MainWindow, self).__init__(parent)
+# 
+#         self.setupFileMenu()
+#         self.setupHelpMenu()
+#         self.setupEditor()
+# 
+#         self.setCentralWidget(self.editor)
+#         self.setWindowTitle("Syntax Highlighter")
+# 
+#     def about(self):
+#         QtGui.QMessageBox.about(self, "About Syntax Highlighter",
+#                 "<p>The <b>Syntax Highlighter</b> example shows how to " \
+#                 "perform simple syntax highlighting by subclassing the " \
+#                 "QSyntaxHighlighter class and describing highlighting " \
+#                 "rules using regular expressions.</p>")
+# 
+#     def newFile(self):
+#         self.editor.clear()
+# 
+#     def openFile(self, path=None):
+#         if not path:
+#             path = QtGui.QFileDialog.getOpenFileName(self, "Open File",
+#                     '', "C++ Files (*.cpp *.h)")
+# 
+#         if path:
+#             inFile = QtCore.QFile(path)
+#             if inFile.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text):
+#                 text = inFile.readAll()
+# 
+#                 try:
+#                     # Python v3.
+#                     text = str(text, encoding='ascii')
+#                 except TypeError:
+#                     # Python v2.
+#                     text = str(text)
+# 
+#                 self.editor.setPlainText(text)
+# 
+#     def setupEditor(self):
+#         font = QtGui.QFont()
+#         font.setFamily('Courier')
+#         font.setFixedPitch(True)
+#         font.setPointSize(10)
+# 
+#         self.editor = QtGui.QTextEdit()
+#         self.editor.setFont(font)
+# 
+#         self.highlighter = Highlighter(self.editor.document())
+# 
+#     def setupFileMenu(self):
+#         fileMenu = QtGui.QMenu("&File", self)
+#         self.menuBar().addMenu(fileMenu)
+# 
+#         fileMenu.addAction("&New...", self.newFile, "Ctrl+N")
+#         fileMenu.addAction("&Open...", self.openFile, "Ctrl+O")
+#         fileMenu.addAction("E&xit", QtGui.qApp.quit, "Ctrl+Q")
+# 
+#     def setupHelpMenu(self):
+#         helpMenu = QtGui.QMenu("&Help", self)
+#         self.menuBar().addMenu(helpMenu)
+# 
+#         helpMenu.addAction("&About", self.about)
+#         helpMenu.addAction("About &Qt", QtGui.qApp.aboutQt)
+# 
+# 
+# class Highlighter(QtGui.QSyntaxHighlighter):
+#     def __init__(self, parent=None):
+#         super(Highlighter, self).__init__(parent)
+# 
+#         keywordFormat = QtGui.QTextCharFormat()
+#         keywordFormat.setForeground(QtCore.Qt.darkBlue)
+#         keywordFormat.setFontWeight(QtGui.QFont.Bold)
+# 
+#         keywordPatterns = ["\\bchar\\b", "\\bclass\\b", "\\bconst\\b",
+#                 "\\bdouble\\b", "\\benum\\b", "\\bexplicit\\b", "\\bfriend\\b",
+#                 "\\binline\\b", "\\bint\\b", "\\blong\\b", "\\bnamespace\\b",
+#                 "\\boperator\\b", "\\bprivate\\b", "\\bprotected\\b",
+#                 "\\bpublic\\b", "\\bshort\\b", "\\bsignals\\b", "\\bsigned\\b",
+#                 "\\bslots\\b", "\\bstatic\\b", "\\bstruct\\b",
+#                 "\\btemplate\\b", "\\btypedef\\b", "\\btypename\\b",
+#                 "\\bunion\\b", "\\bunsigned\\b", "\\bvirtual\\b", "\\bvoid\\b",
+#                 "\\bvolatile\\b"]
+# 
+#         self.highlightingRules = [(QtCore.QRegExp(pattern), keywordFormat)
+#                 for pattern in keywordPatterns]
+# 
+#         classFormat = QtGui.QTextCharFormat()
+#         classFormat.setFontWeight(QtGui.QFont.Bold)
+#         classFormat.setForeground(QtCore.Qt.darkMagenta)
+#         self.highlightingRules.append((QtCore.QRegExp("\\bQ[A-Za-z]+\\b"),
+#                 classFormat))
+# 
+#         singleLineCommentFormat = QtGui.QTextCharFormat()
+#         singleLineCommentFormat.setForeground(QtCore.Qt.red)
+#         self.highlightingRules.append((QtCore.QRegExp("//[^\n]*"),
+#                 singleLineCommentFormat))
+# 
+#         self.multiLineCommentFormat = QtGui.QTextCharFormat()
+#         self.multiLineCommentFormat.setForeground(QtCore.Qt.red)
+# 
+#         quotationFormat = QtGui.QTextCharFormat()
+#         quotationFormat.setForeground(QtCore.Qt.darkGreen)
+#         self.highlightingRules.append((QtCore.QRegExp("\".*\""),
+#                 quotationFormat))
+# 
+#         functionFormat = QtGui.QTextCharFormat()
+#         functionFormat.setFontItalic(True)
+#         functionFormat.setForeground(QtCore.Qt.blue)
+#         self.highlightingRules.append((QtCore.QRegExp("\\b[A-Za-z0-9_]+(?=\\()"),
+#                 functionFormat))
+# 
+#         self.commentStartExpression = QtCore.QRegExp("/\\*")
+#         self.commentEndExpression = QtCore.QRegExp("\\*/")
+# 
+#     def highlightBlock(self, text):
+#         for pattern, format in self.highlightingRules:
+#             expression = QtCore.QRegExp(pattern)
+#             index = expression.indexIn(text)
+#             while index >= 0:
+#                 length = expression.matchedLength()
+#                 self.setFormat(index, length, format)
+#                 index = expression.indexIn(text, index + length)
+# 
+#         self.setCurrentBlockState(0)
+# 
+#         startIndex = 0
+#         if self.previousBlockState() != 1:
+#             startIndex = self.commentStartExpression.indexIn(text)
+# 
+#         while startIndex >= 0:
+#             endIndex = self.commentEndExpression.indexIn(text, startIndex)
+# 
+#             if endIndex == -1:
+#                 self.setCurrentBlockState(1)
+#                 commentLength = len(text) - startIndex
+#             else:
+#                 commentLength = endIndex - startIndex + self.commentEndExpression.matchedLength()
+# 
+#             self.setFormat(startIndex, commentLength,self.multiLineCommentFormat)
+#             startIndex = self.commentStartExpression.indexIn(text,startIndex + commentLength)
+# 
+# 
+# if __name__ == '__main__':
+# 
+#     import sys 
+# 
+#     app = QtGui.QApplication(sys.argv)
+#     window = MainWindow()
+#     window.resize(640, 512)
+#     window.show()
+#     sys.exit(app.exec_())
 
 
-if __name__ == '__main__':
-    main()

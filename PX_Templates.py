@@ -80,8 +80,8 @@ class PX_DiagData():
     StimForm["Step"]      = [{ "Name": "stim_step_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
                              { "Name": "stim_step_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
                              { "Name": "stim_step_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
-    StimForm["Random"]    = [{ "Name": "stim_random_phase",     "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_random_offset",    "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
+    #StimForm["Random"]    = [{ "Name": "stim_random_phase",     "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
+    StimForm["Random"]    = [{ "Name": "stim_random_offset",    "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
                              { "Name": "stim_random_amplitude", "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
 
 ## Definition of graphical measures 

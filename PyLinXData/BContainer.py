@@ -32,40 +32,33 @@ class BContainer(object):
         # reference to the root knot
         self.__parent = parent
 
-        self.__Attributes                               = {} 
-        self.__Attributes['Type']                       = 0
-        self.__Attributes['Name']                       = name
-        self.__Attributes['DisplayName']                = name
+        self.__Attributes                = {} 
+        self.__Attributes['Type']        = 0
+        self.__Attributes['Name']        = name
+        self.__Attributes['DisplayName'] = name
   
        
     ## Method for deleting BContainers    
     
     def delete(self, name):
         
-        if name in self.__Body.keys():
+        if name in self.__Body:
             obj = self.__Body.pop(name)
-            for childKey in obj.__Body.keys():
+            keys = obj.__Body.keys()
+            for childKey in keys:
                 obj.delete(childKey)
             del obj
 
 
     ## Method that gets the value of an label
     
-    def get(self, attr):    
-        if attr in self.__Attributes.keys():
-            #print "> ", attr
-            return self.__Attributes[attr]
-        else:
-            return None
-
+    def get(self, attr): 
+        return self.__Attributes.get(attr)   
     
     ## Method that gets elements of the body of a container
            
     def getb(self,name):
-        if name in self.__Body.keys():
-            return self.__Body[name]
-        else:
-            return None
+        return self.__Body.get(name)
         
     ## Method that gets the head of a container
      
@@ -86,37 +79,32 @@ class BContainer(object):
     ## Method that returns True if the attribute exists
     
     def isAttr(self, attr):
-        if attr in self.__Attributes.keys():
-            return True
-        else:
-            return False
+        #return self.__Attributes.get(attr) is True
+        return attr in self.__Attributes
     
     ## Method that returns true, if an attribute exists and has the value "True", otherwise it returns "False" 
 
     def isAttrTrue(self, attr):
-        if attr in self.__Attributes.keys():
-            if self.__Attributes[attr] == True:
-                return True
-            else:
-                return False
-        else:
-            return False
+        return self.__Attributes.get(attr) is True
+#         if self.__Attributes.get(attr) is True:
+#             if self.__Attributes[attr] == True:
+#                 return True
+#             else:
+#                 return False
+#         else:
+#             return False
         
     ## Method that determines if there exists an element for a certain key
     
     def isInBody(self, key):
-        if key in self.__Body.keys():
-            return True
-        else:
-            return False
+        return key in self.__Body  
     
     ## Method that gets all attributes
     
     def getAttrs(self):
         
         return self.__Attributes.keys()
-    
-    
+     
     ## Method that gets all keys of the child elements
     
     def getChildKeys(self):
@@ -128,7 +116,6 @@ class BContainer(object):
     def paste(self, obj, name = None, bForceOverwrite = False, pathkey = None, bHashById = False):
         
         types = inspect.getmro(type(obj))
-        #print "---> ", types
         if BContainer in types:
             if bHashById == True:
                  
@@ -167,3 +154,18 @@ class BContainer(object):
     def set(self,  attr, setObj):
         
         self.__Attributes[attr] = setObj    
+
+class BList(BContainer, list):
+    
+    def __init__(self, *args):
+        
+        list.__init__(self, *args)
+        BContainer.__init__(self, *args)
+        
+
+class BDict(BContainer, dict):
+    
+    def __init__(self, *args):
+        
+        dict.__init__(self, *args)
+        BContainer.__init__(self, *args)

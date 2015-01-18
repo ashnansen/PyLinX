@@ -8,13 +8,12 @@ import inspect
 
 # PyLinX specific imports
 from PyLinXData import *
-import CodeObj
 
 
-class PX_CodeGeerator(BContainer.BContainer):
+class PX_CodeGenerator(BContainer.BContainer):
  
     def __init__(self, parent):
-        super(PX_CodeGeerator, self).__init__("PX_CodeGeerator")
+        super(PX_CodeGenerator, self).__init__("PX_CodeGeerator")
         
         # Object Data
         ###############
@@ -37,15 +36,34 @@ class PX_CodeGeerator(BContainer.BContainer):
         
         # Code
         
-        self.__Code = ""
+        self.__Code = []
+        self.__CodeStr = ""
         
         # Processing
-        ###################
+        ############
         
         # generate Code 
         
         self.__genCode()
         
+        # create global data-Dictionary
+
+        RunConfigDictionary = BContainer.BDict({})
+        RunConfigDictionary.set("Name", "RunConfigDictionary")
+        RunConfigDictionary.set("DisplayName", "RunConfigDictionary")
+        RunConfigDictionary["t"] = 0.0
+        self.__rootContainer.paste(RunConfigDictionary, bForceOverwrite = True)        
+        DataDictionary = BContainer.BDict({})
+        DataDictionary.set("Name", "DataDictionary")
+        DataDictionary.set("DisplayName", "DataDictionary")
+        self.__rootContainer.paste(DataDictionary, bForceOverwrite = True)        
+        # initializing values
+        for element in self.__listVarElements:
+            DataDictionary[element.get("Name")] = 0.0
+        # setting values to predefined defaults (e.g. constant stimulations should be displayed)         
+        self.__rootGraphics.updateDataDictionary()
+  
+
         
     ################################################
     # internal classes used for code-generation
@@ -58,13 +76,12 @@ class PX_CodeGeerator(BContainer.BContainer):
         classdocs
         '''
     
-    
         def __init__(self, refObj):
             '''
             Constructor
             '''
             name = refObj.get("Name") + "_REF"
-            super(PX_CodeGeerator.PX_CodeRefObject, self).__init__(name)
+            super(PX_CodeGenerator.PX_CodeRefObject, self).__init__(name)
             self._BContainer__Head = refObj
             
             
@@ -72,19 +89,18 @@ class PX_CodeGeerator(BContainer.BContainer):
             return self._BContainer__Head
         
         ref = property(get_ref)
-    
-    
-    
+            
+                
     class PX_CodableObject(PX_CodeRefObject):
         
         def __init__(self,*param):
-            super(PX_CodeGeerator.PX_CodableObject, self).__init__(*param)
+            super(PX_CodeGenerator.PX_CodableObject, self).__init__(*param)
             
     
     class PX_CodableBasicOperator(PX_CodableObject):
         
         def __init__(self,*param):
-            super(PX_CodeGeerator.PX_CodableBasicOperator, self).__init__(*param)
+            super(PX_CodeGenerator.PX_CodableBasicOperator, self).__init__(*param)
             
         def getCode(self,):
             lenBody = len(self._BContainer__Body)
@@ -102,19 +118,18 @@ class PX_CodeGeerator(BContainer.BContainer):
     class PX_CodableVarElement(PX_CodableObject):
             
         def __init__(self,*param):
-            super(PX_CodeGeerator.PX_CodableVarElement, self).__init__(*param)
+            super(PX_CodeGenerator.PX_CodableVarElement, self).__init__(*param)
             
         def getCode(self):
             global Code
+            global nIndent
             lenBody = len(self._BContainer__Body)
             name = self.ref.get("Name") 
             if lenBody == 1:
                 input = self.getb(self.getChildKeys()[0])
-                code_to_add =  name + " = " + input.getCode() 
+                code_to_add = nIndent * "    " + name + " = " + input.getCode() 
                 Code.append(code_to_add)
             return name
-    
-        
             
     def __genCode(self):
         
@@ -159,9 +174,9 @@ class PX_CodeGeerator(BContainer.BContainer):
 
             types = inspect.getmro(type(knot))
             if PyLinXDataObjects.PX_PlotableVarElement in types:
-                knotRefObj = PX_CodeGeerator.PX_CodableVarElement(knot)
+                knotRefObj = PX_CodeGenerator.PX_CodableVarElement(knot)
             if PyLinXDataObjects.PX_PlotableBasicOperator in types:
-                knotRefObj = PX_CodeGeerator.PX_CodableBasicOperator(knot)
+                knotRefObj = PX_CodeGenerator.PX_CodableBasicOperator(knot)
                       
             for connector in self.__listConnectors:
                 if connector.elem1 == knot:
@@ -201,7 +216,7 @@ class PX_CodeGeerator(BContainer.BContainer):
 
         # Creating the Syntax Tree
         
-        rootRef = PX_CodeGeerator.PX_CodeRefObject(self.__rootGraphics)
+        rootRef = PX_CodeGenerator.PX_CodeRefObject(self.__rootGraphics)
         for notConnectedOutElement in self.__listNotConnectedOutVarElements:
             rootRef.paste(__createSingleBranch(notConnectedOutElement), bHashById = True )
         self.__syntaxTree = rootRef
@@ -211,18 +226,62 @@ class PX_CodeGeerator(BContainer.BContainer):
         
         global Code
         Code = []
+        global nIndent
+        Code.append("def main():\n")
+        Code.append("    global DataDictionary")
+        Code.append("    Variables = DataDictionary.keys()")
+        Code.append("    for variable in Variables:")
+        Code.append("        execStr = variable + \" = DataDictionary[variable]\" ")
+        Code.append("        exec(execStr)\n")
+        
+        nIndent = 1
         
         keys = self.__syntaxTree.getChildKeys()
         for key in keys:
             child = self.__syntaxTree.getb(key)
             child.getCode()
-        
+          
+        Code.append("\n    for variable in Variables:")
+        Code.append("        execStr = \"DataDictionary[variable] = \" + variable ")
+        Code.append("        exec(execStr)\n")
+        Code.append("\nmain()")
+
+
         self.__Code = Code
+        self.__CodeStr = ""
         
-        print "BEGIN---------------"
+        
         for line in Code:
-            print line
-        print "END--------------"
+            #print line
+            self.__CodeStr += line
+            self.__CodeStr += "\n"
+        print "BEGIN---------------"
+        print self.__CodeStr
+        print "END-----------------"
         
+        
+    
+    def run(self, drawWidget):
+        t = 0
+        delta_t = 0.02
+        global DataDictionary
+        DataDictionary = self.__rootContainer.getb("DataDictionary")
+        global RunConfigDictionary 
+        RunConfigDictionary = self.__rootContainer.getb("RunConfigDictionary")
+        RunConfigDictionary["t"] = t
+        RunConfigDictionary["delta_t"] = delta_t
+        bSimulationRun = True
+        RunConfigDictionary["bSimulationRun"] = bSimulationRun
+        
+        i = 0
+        while bSimulationRun:
+            self.__rootGraphics.updateDataDictionary()
+            exec(self.__CodeStr)
+            t+= delta_t
+            RunConfigDictionary["t"] = t
+            i +=1
+            if i == 100:
+                bSimulationRun = False
+            drawWidget.repaint()
         
         

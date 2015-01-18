@@ -10,11 +10,11 @@ import sys
 import copy
 import math
 
-
 # project specific modules to import
 import BContainer
 import PX_Templates as PX_Templ
 import PyLinXHelper
+import PyLinXCodeGen
 
 
 ## Meta-Class for all PyLinX data Objects,
@@ -32,7 +32,6 @@ class PX_Object(BContainer.BContainer):
             element = self._BContainer__Body[key]
             types = inspect.getmro(type(element))
             if PX_IdObject in types:
-                #element_id = element.get("ID")
                 element_id = element.ID
                 if element_id > _id:
                     _id = element_id
@@ -69,10 +68,6 @@ class PX_PlotableObject (PX_Object):#, QtGui.QGraphicsItem):
     def __init__(self, name = None, *var):
         super(PX_PlotableObject, self).__init__(name)
         self.set("bVisible", False)
-#         if type(self) == PX_PlotableObject:
-#             self.set("px_mousePressedAt_X", sys.maxint)
-#             self.set("px_mousePressedAt_Y", sys.maxint)
-#             self._objectsInFocus = []
         self.set("px_mousePressedAt_X", sys.maxint)
         self.set("px_mousePressedAt_Y", sys.maxint)
         self._objectsInFocus = []
@@ -154,6 +149,15 @@ class PX_PlotableObject (PX_Object):#, QtGui.QGraphicsItem):
     
     def plot(self, paint, templ):
         pass
+
+
+    def updateDataDictionary(self):
+        for key in self._BContainer__Body:
+            element = self._BContainer__Body[key]
+            types = inspect.getmro(type(element))
+            if PX_PlotableVarElement in types:
+                element.updateDataDictionary()    
+            
     
     # Method that returns the object, that is in focus or none
     
@@ -190,6 +194,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
     penBold.setJoinStyle(QtCore.Qt.MiterJoin)
     penLight               = QtGui.QPen(PX_Templ.color.black,PX_Templ.Template.Gui.px_ELEMENT_MediumLight(), QtCore.Qt.SolidLine)
     penNoBorder            = QtGui.QPen(PX_Templ.color.black,0, QtCore.Qt.SolidLine)
+    penTransparent         = QtGui.QPen(QtGui.QColor(0,0,0,0), 0)
     penShadow              = QtGui.QPen(PX_Templ.color.grayLight, PX_Templ.Template.Gui.px_ELEMENT_Border(), QtCore.Qt.SolidLine)
     penHighlight           = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_ELEMENT_Highlight(), QtCore.Qt.SolidLine)
     penHighlight.setJoinStyle(QtCore.Qt.MiterJoin)
@@ -349,7 +354,6 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
             x_pin       = inPin[0] + self._X
             y_pin       = inPin[1] + self._Y
             x_pinEnd    = inPin[2] + self._X
-            #y_pinEnd    = inPin[3] 
             x_arrow = x_pinEnd - self.triangleOffset   
 
             path.moveTo(    x_arrow,    y_pin - self.pinHalfHeigth)
@@ -382,7 +386,6 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
             x_pin       = outPin[0] + self._X
             y_pin       = outPin[1] + self._Y
             x_pinEnd    = outPin[2] + self._X + self.halfBorder
-            #y_pinEnd    = inPin[3] 
             x_arrow = x_pinEnd + self.triangleOffset   
 
             path.moveTo(    x_pinEnd,    y_pin - self.pinHalfHeigth)
@@ -412,9 +415,7 @@ class PX_PlotableElement(PX_PlotableObject, PX_IdObject):
         ShapeInPins  = self.get("ShapeInPins")
         ShapeOutPins = self.get("ShapeOutPins")
         
-        #idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins)
         idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins) 
-        #print "idxInPins: ", idxInPins
         
         if idxInPins != []:
             idxInPins = [-idx -1 for idx in idxInPins]
@@ -468,9 +469,9 @@ class  PX_PlotableVarElement(PX_PlotableElement):
         self.__Head = value 
         PX_PlotableElement.calcDimensions(self)
         self.set("bStimulate", False)
-        self.set("bMeasure", False)
-        
-#         self.set("StimulationFunction", "Constant")
+        self.set("bMeasure", False)        
+        self.set("StimulationFunction", "Constant")
+
 #         self.set("stim_const_val", 0.)
 #         self.set("stim_sine_frequency", 0.)  
 #         self.set("stim_sine_frequency", 0.)  
@@ -553,9 +554,8 @@ class  PX_PlotableVarElement(PX_PlotableElement):
                                      (self.x6_meas,self.y6_meas),\
                                      ]])
         else:
-            self.set("Shape_meas", [])
-            
-                  
+            self.set("Shape_meas", [])       
+                               
     def plot(self, paint, templ):
 
         ## Method to plot the color bar of a variable element
@@ -576,7 +576,7 @@ class  PX_PlotableVarElement(PX_PlotableElement):
             
         def __drawStimulationPoint():
             
-            paint.setPen(PX_PlotableElement.penSimulationModeBold)
+            #paint.setPen(PX_PlotableElement.penSimulationModeBold)
             paint.setBrush(PX_Templ.brush.green)                        
             paint.setPen(PX_PlotableElement.penSimulationModeNone)
 
@@ -594,7 +594,7 @@ class  PX_PlotableVarElement(PX_PlotableElement):
 
         def __drawMeasurePoint():
             
-            paint.setPen(PX_PlotableElement.penSimulationModeBold)
+            #paint.setPen(PX_PlotableElement.penSimulationModeBold)
             paint.setBrush(PX_Templ.brush.green)
                         
             paint.setPen(PX_PlotableElement.penSimulationModeNone)
@@ -609,6 +609,29 @@ class  PX_PlotableVarElement(PX_PlotableElement):
             path.lineTo(self.x6_meas,self.y6_meas)
             path.lineTo(self.x0_meas,self.y0_meas)
             paint.drawPath(path)       
+
+        
+        def __drawValue():
+            
+            rootContainer = self.getRoot()
+            DataDictionary = rootContainer.getb("DataDictionary")
+            value = DataDictionary[self.get("Name")]
+            strValue = str(value)
+            widthValue  = 1.5 * PX_PlotableElement.fontStdVarMetrics.width(QtCore.QString(strValue))
+            heightValue  = PX_PlotableElement.fontStdVarMetrics.height()
+            posText_x = self.X - 0.5 * widthValue 
+            posText_y = self.Y - 13
+            paint.setBrush(PX_Templ.brush.HighlightTransp)
+            #paint.setPen(PX_PlotableElement.penSimulationModeNone)
+            paint.setPen(PX_PlotableElement.penTransparent)
+            #paint.drawRect(posText_x, posText_y,widthValue,-heightValue)
+            boundingRect = PX_PlotableElement.fontStdVarMetrics.boundingRect(strValue)
+            paint.drawRect(posText_x, posText_y-boundingRect.height(), 1.5 * boundingRect.width(),boundingRect.height() )
+            paint.setBrush(PX_Templ.brush.green)
+            paint.setPen(PX_PlotableElement.penSimulationModeNone)
+            paint.drawText(posText_x, posText_y, strValue)
+            
+            
             
         paint.setFont(PX_PlotableElement.fontStdVar)
         name = self.get("Name")
@@ -636,7 +659,64 @@ class  PX_PlotableVarElement(PX_PlotableElement):
                 __drawStimulationPoint()
             if bMeasure:
                 __drawMeasurePoint()
+            __drawValue()
 
+
+    def updateDataDictionary(self):
+        
+        if self.get("bStimulate"):
+            
+            rootContainer = self.getRoot()
+            DataDictionary = rootContainer.getb("DataDictionary")
+            RunConfigDictionary = rootContainer.getb("RunConfigDictionary")
+            StimulationFunction = self.get("StimulationFunction")
+            value = 0.0
+            
+            if StimulationFunction == "Constant":
+                value = self.get("stim_const_val")
+            elif StimulationFunction == "Sine":
+                stim_sine_frequency = self.get("stim_sine_frequency")  
+                stim_sine_offset = self.get("stim_sine_offset")     
+                stim_sine_amplitude = self.get("stim_sine_amplitude")
+                t = RunConfigDictionary["t"]
+                value = stim_sine_offset + stim_sine_amplitude * math.sin(2 * math.pi * stim_sine_frequency * t )
+            elif StimulationFunction == "Ramp":
+                stim_ramp_frequency = self.get("stim_ramp_frequency")
+                stim_ramp_phase = self.get("stim_ramp_phase")
+                stim_ramp_offset = self.get("stim_ramp_offset")
+                stim_ramp_amplitude = self.get("stim_ramp_amplitude")
+                t = RunConfigDictionary["t"]
+                ratio = (t +  stim_ramp_phase) / stim_ramp_frequency
+                value = stim_ramp_offset + stim_ramp_amplitude * (ratio - math.ceil(ratio) )
+            elif StimulationFunction == "Pulse":
+                stim_pulse_frequency = self.get("stim_pulse_frequency")
+                stim_pulse_phase = self.get("stim_pulse_phase")
+                stim_pulse_amplitude = self.get("stim_pulse_amplitude")
+                t = RunConfigDictionary["t"]
+                ratio = (t +  stim_pulse_phase) / stim_pulse_frequency
+                if ratio < 0.5:
+                    value = 0
+                else:
+                    value = stim_pulse_amplitude                
+            elif StimulationFunction ==  "Step":
+                stim_step_phase = self.get("stim_step_phase")
+                stim_step_offset = self.get("stim_step_offset")
+                stim_step_amplitude = self.get("stim_step_amplitude")
+                t = RunConfigDictionary["t"]
+                if stim_step_phase > t:
+                    value = stim_step_offset
+                else:
+                    value = stim_step_offset + stim_step_amplitude
+            elif StimulationFunction ==  "Random":
+                #stim_random_phase = self.get("stim_random_phase")
+                stim_random_offset = self.get("stim_random_offset")
+                stim_random_amplitude = self.get("stim_random_amplitude")
+                t = RunConfigDictionary["t"]
+                value = stim_random_offset + stim_random_amplitude * rand()
+            name = self.get("Name")
+            DataDictionary[name] = value
+        
+        
 
 ## Class for binary Operators
 
