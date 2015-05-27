@@ -172,6 +172,12 @@ class Scalable:
     
     def px_ELEMENT_stdFontSize(self):
         return self.ratio * 8
+
+    def px_ELEMENT_OsciFontSize(self):
+        return self.ratio * 15
+    
+    def px_DispVarObjSize(self):
+        return self.ratio * 40
     
     def px_ELEMENT_whiteSpace(self):
         return self.ratio * 4
@@ -198,13 +204,13 @@ class Scalable:
     ## plottable elemtary operator
     ################################
     
-    def px_PLOTABLEELEMOPERATOR_size(self):
+    def px_PlottableELEMOPERATOR_size(self):
         return self.ratio * 30
     
-    def px_PLOTABLEELEMOPERATOR_innerDiameter(self):
+    def px_PlottableELEMOPERATOR_innerDiameter(self):
         return self.ratio * 1.7
 
-    def px_PLOTABLEELEMOPERATOR_outerDiameter(self):
+    def px_PlottableELEMOPERATOR_outerDiameter(self):
         return self.ratio * 10
     
     

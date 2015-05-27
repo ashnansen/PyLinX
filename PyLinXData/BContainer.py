@@ -11,6 +11,10 @@ Created on 15.09.2014
 
 
 import inspect
+import threading
+from PyQt4 import QtCore
+
+
 import PyLinXData
 
 
@@ -36,7 +40,7 @@ class BContainer(object):
         self.__Attributes['Type']        = 0
         self.__Attributes['Name']        = name
         self.__Attributes['DisplayName'] = name
-  
+
        
     ## Method for deleting BContainers    
     
@@ -52,10 +56,9 @@ class BContainer(object):
 
     ## Method that gets the value of an label
     
-    def get(self, attr): 
+    def get(self, attr):
         return self.__Attributes.get(attr)   
-    
-    ## Method that gets elements of the body of a container
+
            
     def getb(self,name):
         return self.__Body.get(name)
@@ -153,7 +156,9 @@ class BContainer(object):
     
     def set(self,  attr, setObj):
         
-        self.__Attributes[attr] = setObj    
+
+        self.__Attributes[attr] = setObj
+   
 
 class BList(BContainer, list):
     
@@ -161,7 +166,9 @@ class BList(BContainer, list):
         
         list.__init__(self, *args)
         BContainer.__init__(self, *args)
-        
+
+
+
 
 class BDict(BContainer, dict):
     
@@ -169,3 +176,4 @@ class BDict(BContainer, dict):
         
         dict.__init__(self, *args)
         BContainer.__init__(self, *args)
+

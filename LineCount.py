@@ -1,7 +1,7 @@
 import os
 import xml.sax as sax
 cur_path = os.getcwd()
-ignore_set = set(["LineCount.py",  "test.py", "testLabelBus2.py", "testLabelBus.py", "TestOsci.py", "testQScintilla.py"])
+ignore_set = set(["LineCount.py",  "test.py", "testLabelBus2.py", "testLabelBus.py", "TestOsci.py", "testQScintilla.py", "TestQScintilla.py"])
 
 loclist = []
 
@@ -17,7 +17,7 @@ for linenumbercount, filename in loclist:
 
 print "\nTotal: %s lines (%s)" %(sum([x[0] for x in loclist]), cur_path)
 
-'''
+'''  
 Created on 05.04.2013
 
 @author: wplaum

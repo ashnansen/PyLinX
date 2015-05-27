@@ -1342,4 +1342,281 @@ Exammple for Texteditor
 #     window.show()
 #     sys.exit(app.exec_())
 
+'''
+QThread example
+'''
 
+# import sys, time
+# from PyQt4 import QtCore, QtGui 
+# 
+# class WorkThread(QtCore.QThread): 
+#      
+#     def __init__(self):  
+#         QtCore.QThread.__init__(self)  
+#      
+#     def __del__(self):  
+#         self.wait()  
+#          
+#     def run(self):  
+#         for i in range(6):   
+#             time.sleep(0.3) 
+#             # artificial time delay   
+#         self.emit( QtCore.SIGNAL('update(QString)'), "from work thread " + str(i) )  
+#         return 
+#      
+# class GenericThread(QtCore.QThread): 
+#      
+#     def __init__(self, function, *args, **kwargs):  
+#         QtCore.QThread.__init__(self)  
+#         self.function = function  
+#         self.args = args  
+#         self.kwargs = kwargs  
+#          
+#     def __del__(self):  
+#         self.wait()  
+#         
+#     def run(self):  
+#         self.function(*self.args,**self.kwargs)  
+#         return 
+# 
+# class MyApp(QtGui.QWidget): 
+#     def __init__(self, parent=None):  
+#         QtGui.QWidget.__init__(self, parent)   
+#         self.setGeometry(300, 300, 280, 600)  
+#         self.setWindowTitle('threads')   
+#         self.layout = QtGui.QVBoxLayout(self)   
+#         self.testButton = QtGui.QPushButton("test")  
+#         self.connect(self.testButton, QtCore.SIGNAL("released()"), self.test)  
+#         self.listwidget = QtGui.QListWidget(self)   
+#         self.layout.addWidget(self.testButton)  
+#         self.layout.addWidget(self.listwidget)   
+#         self.threadPool = []  
+#         
+#     def add(self, text):  
+#         
+#         """ Add item to list widget """  
+#         print "Add: " + text  
+#         self.listwidget.addItem(text)  
+#         self.listwidget.sortItems()  
+#         
+#     def addBatch(self,text="test",iters=6,delay=0.3): 
+#         
+#         """ Add several items to list widget """ 
+#         for i in range(iters):   
+#             time.sleep(delay) # artificial time delay   
+#             self.add(text+" "+str(i))  
+#              
+#     def addBatch2(self,text="test",iters=6,delay=0.3):  
+#         for i in range(iters):   time.sleep(delay) 
+#         # artificial time delay   
+#         self.emit( QtCore.SIGNAL('add(QString)'), text+" "+str(i) )  
+#         
+#     def test(self):  
+#         self.listwidget.clear()  
+#         # adding in main application: locks ui  
+#         #self.addBatch("_non_thread",iters=6,delay=0.3)   
+#         # adding by emitting signal in different thread  
+#         self.threadPool.append( WorkThread() )  
+#         self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL("update(QString)"), self.add )  
+#         self.threadPool[len(self.threadPool)-1].start()   
+#         # generic thread using signal  
+#         self.threadPool.append( GenericThread(self.addBatch2,"from generic thread using signal ",delay=0.3) )  
+#         self.disconnect( self, QtCore.SIGNAL("add(QString)"), self.add )  
+#         self.connect( self, QtCore.SIGNAL("add(QString)"), self.add )  
+#         self.threadPool[len(self.threadPool)-1].start() 
+#         
+#  
+#         
+# #run
+# app = QtGui.QApplication(sys.argv)
+# test = MyApp()
+# test.show()
+# app.exec_()
+
+'''
+Example signals, qthread, eventloops 
+'''
+# import sip
+# 
+# sip.setapi('QString',2)
+# sip.setapi('QVariant',2) 
+# from PyQt4.QtCore import *
+# from PyQt4.QtGui import *
+# import sys 
+# 
+# def waitForSignal(sender, senderSignal, timeoutMs, expectedSignalParams=None):    
+#     timer=QTimer(singleShot=True)    
+#     loop=QEventLoop()     
+#     senderSignalArgsWrong=[]     
+#     
+#     @pyqtSlot()    
+#     def senderSignalSlot(*args):
+#         senderSignalArgsWrong.append((expectedSignalParams is not None) and   expectedSignalParams!=args)        
+#         loop.quit()     
+#         
+#     senderSignal.connect(senderSignalSlot)    
+#     timer.timeout.connect(loop.quit)     
+#     QTimer.singleShot(0, sender)    
+#     timer.start(timeoutMs)     
+#     ex=[]    
+#         
+#     def exceptHook(type_, value, traceback):        
+#         ex.append(value)        
+#         oeh(type_, value, traceback)     
+#     oeh=sys.excepthook    
+#     sys.excepthook=exceptHook     
+#     loop.exec_()    
+#     if ex: 
+#         raise ex[0]     
+#     ret=timer.isActive()    
+#     timer.stop()    
+#     senderSignal.disconnect(senderSignalSlot)    
+#     timer.timeout.disconnect(loop.quit)     
+#     
+#     sys.excepthook=oeh     
+#     return ret and senderSignalArgsWrong and (not senderSignalArgsWrong[0]) 
+#         
+# if __name__=="__main__":    
+#     from sys import argv, exit     
+#     class Widget(QWidget):        
+#     
+#         def __init__(self, parent=None, **kwargs):            
+#             QWidget.__init__(self, parent, **kwargs)             
+#             l=QVBoxLayout(self)            
+#             l.addWidget(QPushButton("Start", self, clicked=self.start))            
+#             self._stopButton=QPushButton("Stop", self)            
+#             l.addWidget(self._stopButton)         
+#             
+#         @pyqtSlot()        
+#         def start(self):            
+#             print "Start"           
+#             ret=waitForSignal(self.work, self._stopButton.clicked, 5000)            
+#             print "Finished:", ret         
+#             
+#         @pyqtSlot()            
+#         def work(self): 
+#             print "Work"     
+# a=QApplication(argv)    
+# w=Widget()    
+# w.show()    
+# w.raise_()    
+# exit(a.exec_())
+
+# import sys, time, random
+# from PyQt4.QtCore import *
+# from PyQt4.QtGui import *
+# from PyQt4.Qt import * 
+# 
+# rand = random.Random()
+# class WorkerThread(QThread):
+#     def __init__(self, name, receiver):
+#         QThread.__init__(self)
+#         self.name = name
+#         self.receiver = receiver
+#         self.stopped = 0
+#     def run(self):
+#         while not self.stopped:
+#             time.sleep(rand.random() * 0.3)
+#             msg = rand.random()
+#             event = QEvent(10000)
+#             event.setData("%s: %f" % (self.name, msg))
+#             QThread.postEvent(self.receiver, event)
+# 
+#     def stop(self):
+#         self.stopped = 1
+# 
+# class ThreadExample(QLineEdit):
+#     def __init__(self, *args):
+#         QLineEdit.__init__(self, *args)
+#         #self.setCaption("Threading Example")
+#         self.threads = []
+#         for name in ["t1", "t2", "t3"]:
+#             t = WorkerThread(name, self)
+#             t.start()
+#             self.threads.append(t)
+#       
+#     def customEvent(self,event):
+#         if event.type() == 10000:
+#             s = event.data()
+#             self.append(s)
+# 
+#     def __del__(self):
+#         for t in self.threads:
+#             running = t.running()
+#             t.stop()
+#             if not t.finished():
+#                 t.wait()
+# 
+# 
+# app = QApplication(sys.argv)
+# threadExample = ThreadExample()
+# #app.setMainWidget(threadExample)
+# threadExample.show()
+# 
+# sys.exit(app.exec_())
+
+import time
+import Queue
+import threading
+from  PyQt4 import QtCore
+
+class SimulationThread( QtCore.QThread ):
+    
+    def __init__(self, queue):
+        QtCore.QThread.__init__(self)
+        self.__runThreadMessageQueue = queue
+        
+    def __del__(self):
+        self.exit(0)
+        
+    def run(self):
+
+        i = 0
+        while 1:
+            
+            print "i: ", i
+            i += 1
+            
+            print "self.__runThreadMessageQueue: ", self.__runThreadMessageQueue
+            
+            if not self.__runThreadMessageQueue.empty():
+                try:
+                    message = self.__runThreadMessageQueue.get()
+                except:
+                    print "Except Queue!"
+                    message = None
+            else:
+                print "Queue not full!"
+                message = None
+            
+            print "message: ", message
+                
+            if message != None:
+                #self.stopRun() 
+                self.__runThreadMessageQueue.task_done()
+                print "Thread stoped"
+                time.sleep(0.01)
+                return
+                
+queue  = Queue.Queue()
+print "queue: ", queue
+thread = SimulationThread(queue)
+thread.start()
+time.sleep(0.01)
+print "---------------------------------------------------------------------------> QUEUE FILLED!!!"
+queue.put(-1)
+queue.put(-2)
+
+if not queue.empty():
+    try:
+        message = queue.get()
+    except:
+        print "Except Queue (2)!"
+        message = None
+else:
+    print "Queue not full! (2)"
+    message = None
+
+print "message (2): ", message
+
+time.sleep(0.02)

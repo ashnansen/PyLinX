@@ -25,10 +25,16 @@ class RootContainer(BContainer.BContainer):
         '''
         super(RootContainer, self).__init__("root")
         self.__mainWindow = mainWindow
-        self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus]
+        self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus,\
+                              mainWindow.ui.actionOsci]
+        self.set("listDataDispObj", [])
         
-        
+    def get(self, attr):
     
+        if attr == "mainWindow":
+            return self.__mainWindow.ui.DrawWidget
+        else:
+            return super(RootContainer, self).get(attr)  
         
     def set(self, attr, value):
         
@@ -56,7 +62,8 @@ class RootContainer(BContainer.BContainer):
                 self.__mainWindow.ui.actionNewPlus.setEnabled(False)
                 self.__mainWindow.ui.actionNewMinus.setEnabled(False)
                 self.__mainWindow.ui.actionNewMultiplication.setEnabled(False)
-                self.__mainWindow.ui.actionNewDivision.setEnabled(False)                   
+                self.__mainWindow.ui.actionNewDivision.setEnabled(False)
+                self.__mainWindow.ui.actionStop.setEnabled(True)   
                 return BContainer.BContainer.set(self,"bSimulationMode", True)
             
             elif value == False:
@@ -71,7 +78,9 @@ class RootContainer(BContainer.BContainer):
                 self.__mainWindow.ui.actionNewMinus.setEnabled(True)
                 self.__mainWindow.ui.actionNewMultiplication.setEnabled(True)
                 self.__mainWindow.ui.actionNewDivision.setEnabled(True)
+                self.__mainWindow.ui.actionStop.setEnabled(False)  
                 return BContainer.BContainer.set(self,"bSimulationMode", False)
                 
         else:
-            return BContainer.BContainer.set(self,attr, value)
+            return super(RootContainer, self).set(attr,value)
+        

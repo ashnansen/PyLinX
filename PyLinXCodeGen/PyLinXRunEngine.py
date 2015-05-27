@@ -5,20 +5,29 @@ Created on 18.12.2014
 '''
 # general imports
 import inspect
+from PyQt4 import QtCore
+import threading
 
 # PyLinX specific imports
 from PyLinXData import *
 
+global DataDictionary
 
 class PX_CodeGenerator(BContainer.BContainer):
  
-    def __init__(self, parent):
+    def __init__(self, parent, PyLinXMainObject):
         super(PX_CodeGenerator, self).__init__("PX_CodeGeerator")
         
+        # TEST
+        ######
+        
+        self.__runThread = None
+        self.__runThreadMessageQueue = PyLinXMainObject.runThreadMessageQueue
         # Object Data
         ###############
         
-        self.__rootContainer = parent 
+        self.__rootContainer = parent
+        self.__PyLinXMainObject  = PyLinXMainObject
         self.__rootGraphics  = self.__rootContainer.getb("rootGraphics")
         
         # Initialize Lists of DataTypes
@@ -38,7 +47,7 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         self.__Code = []
         self.__CodeStr = ""
-        
+
         # Processing
         ############
         
@@ -52,19 +61,26 @@ class PX_CodeGenerator(BContainer.BContainer):
         RunConfigDictionary.set("Name", "RunConfigDictionary")
         RunConfigDictionary.set("DisplayName", "RunConfigDictionary")
         RunConfigDictionary["t"] = 0.0
-        self.__rootContainer.paste(RunConfigDictionary, bForceOverwrite = True)        
+        self.__rootContainer.paste(RunConfigDictionary, bForceOverwrite = True)  
+        global DataDictionary      
         DataDictionary = BContainer.BDict({})
+        DataDictionary["*bGuiToUpdate"] = True      # Bit indicating that the values are updated, but the GUI, excpecially the 
+                                                    # data viewers are not updated yet. The star indicates that this is and 
+                                                    # should no valid Python Variable used in the simulation model 
         DataDictionary.set("Name", "DataDictionary")
-        DataDictionary.set("DisplayName", "DataDictionary")
-        self.__rootContainer.paste(DataDictionary, bForceOverwrite = True)        
+        DataDictionary.set("DisplayName", "DataDictionary")    
         # initializing values
         for element in self.__listVarElements:
             DataDictionary[element.get("Name")] = 0.0
+        self.__rootContainer.paste(DataDictionary, bForceOverwrite = True)                
         # setting values to predefined defaults (e.g. constant stimulations should be displayed)         
         self.__rootGraphics.updateDataDictionary()
   
 
+
+
         
+      
     ################################################
     # internal classes used for code-generation
     # they should "know" all the global information
@@ -173,9 +189,9 @@ class PX_CodeGenerator(BContainer.BContainer):
         def __createSingleBranch(knot):
 
             types = inspect.getmro(type(knot))
-            if PyLinXDataObjects.PX_PlotableVarElement in types:
+            if PyLinXDataObjects.PX_PlottableVarElement in types:
                 knotRefObj = PX_CodeGenerator.PX_CodableVarElement(knot)
-            if PyLinXDataObjects.PX_PlotableBasicOperator in types:
+            if PyLinXDataObjects.PX_PlottableBasicOperator in types:
                 knotRefObj = PX_CodeGenerator.PX_CodableBasicOperator(knot)
                       
             for connector in self.__listConnectors:
@@ -194,9 +210,9 @@ class PX_CodeGenerator(BContainer.BContainer):
             types = inspect.getmro(type(element))
             if PyLinXDataObjects.PX_PlottableConnector in types:
                 self.__listConnectors.append(element)
-            if PyLinXDataObjects.PX_PlotableVarElement in types:
+            if PyLinXDataObjects.PX_PlottableVarElement in types:
                 self.__listVarElements.append(element)
-            if PyLinXDataObjects.PX_PlotableBasicOperator in types:
+            if PyLinXDataObjects.PX_PlottableBasicOperator in types:
                 self.__listBasicOperators.append(element)
         
         
@@ -231,8 +247,9 @@ class PX_CodeGenerator(BContainer.BContainer):
         Code.append("    global DataDictionary")
         Code.append("    Variables = DataDictionary.keys()")
         Code.append("    for variable in Variables:")
-        Code.append("        execStr = variable + \" = DataDictionary[variable]\" ")
-        Code.append("        exec(execStr)\n")
+        Code.append("        if variable[0] != \"*\":")
+        Code.append("            execStr = variable + \" = DataDictionary[variable]\" ")
+        Code.append("            exec(execStr)\n")
         
         nIndent = 1
         
@@ -242,8 +259,9 @@ class PX_CodeGenerator(BContainer.BContainer):
             child.getCode()
           
         Code.append("\n    for variable in Variables:")
-        Code.append("        execStr = \"DataDictionary[variable] = \" + variable ")
-        Code.append("        exec(execStr)\n")
+        Code.append("        if variable[0] != \"*\":")
+        Code.append("            execStr = \"DataDictionary[variable] = \" + variable ")
+        Code.append("            exec(execStr)\n")
         Code.append("\nmain()")
 
 
@@ -252,36 +270,90 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         
         for line in Code:
-            #print line
             self.__CodeStr += line
             self.__CodeStr += "\n"
         print "BEGIN---------------"
         print self.__CodeStr
         print "END-----------------"
+
+    class SimulationThread(BContainer.BContainer, QtCore.QThread ):
         
+        def __init__(self, CodeGenerator,  mainDrawWidget, rootContainer):
+            QtCore.QThread.__init__(self)
+            self.__CodeGenerator            = CodeGenerator
+            self.__runThreadMessageQueue    = CodeGenerator._PX_CodeGenerator__runThreadMessageQueue
+            self.__drawWidget               = mainDrawWidget
+            self.__rootContainer            = rootContainer
+            self.__signalUpdated            = QtCore.pyqtSignal(str)
+            
+        def __del__(self):
+            self.exit(0)
+            
+        def run(self):
+            
+            
+            RunConfigDictionary = self.__rootContainer.getb("RunConfigDictionary")
+            self.__CodeGenerator.runInit()
+            while 1:
+                self.__CodeGenerator.run()
+                print "test 0"
+                self.emit(QtCore.SIGNAL("signal_repaint"))
+                #self.emit(QtCore.SIGNAL("signal_repaint"))
+                print "test 1"
+                
+                if not self.__runThreadMessageQueue.empty():
+                    try:
+                        message = self.__runThreadMessageQueue.get()
+                    except:
+                        message = None
+                else:
+                    message = None
+                                
+                # Maybe some day we have to implement a more sophisticated protocoll
+                if message != None:
+                    print "runThreadMessageQueue.task_done()"
+                    self.__runThreadMessageQueue.task_done()
+                    return
+                
         
-    
-    def run(self, drawWidget):
-        t = 0
-        delta_t = 0.02
+    def startRun(self, drawWQidget, stopEvent, repaintEvent):
+        
+        self.__runThread = PX_CodeGenerator.SimulationThread(self, self.__PyLinXMainObject.drawWidget, self.__rootContainer)
+ 
+        self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL("signal_repaint"), self.__PyLinXMainObject.drawWidget.repaint,\
+                                                                          QtCore.Qt.BlockingQueuedConnection)
+        self.__runThread.start()
+        
+    def stopRun(self):
+        
+        self.__runThread.exit(0)
+
+    def runInit(self):
+        self.t = 0
+        self.delta_t = 0.02
         global DataDictionary
         DataDictionary = self.__rootContainer.getb("DataDictionary")
-        global RunConfigDictionary 
+        global RunConfigDictionary
         RunConfigDictionary = self.__rootContainer.getb("RunConfigDictionary")
-        RunConfigDictionary["t"] = t
-        RunConfigDictionary["delta_t"] = delta_t
-        bSimulationRun = True
-        RunConfigDictionary["bSimulationRun"] = bSimulationRun
-        
-        i = 0
-        while bSimulationRun:
-            self.__rootGraphics.updateDataDictionary()
+        RunConfigDictionary["t"] = self.t
+        RunConfigDictionary["delta_t"] = self.delta_t
+        bSimulationRuning = True
+        RunConfigDictionary["bSimulationRuning"] = bSimulationRuning
+        self.i = 0
+            
+    def run(self):
+        #print "i:", self.i
+        global DataDictionary
+        self.__rootGraphics.updateDataDictionary()
+        try:
             exec(self.__CodeStr)
-            t+= delta_t
-            RunConfigDictionary["t"] = t
-            i +=1
-            if i == 100:
-                bSimulationRun = False
-            drawWidget.repaint()
+        except Exception as exc:
+            strExp = str(exc)
+            print "Error executing code! -- " + strExp 
         
-        
+        self.t+= self.delta_t
+        DataDictionary["*bGuiToUpdate"] = True
+        RunConfigDictionary["t"] = self.t
+
+        self.i +=1
+

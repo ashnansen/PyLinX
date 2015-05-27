@@ -9,6 +9,7 @@ from PyQt4.QtGui import *
 import numpy as np
 import math
 import time
+import cProfile
 
 # test parameters
 
@@ -30,25 +31,42 @@ class DataPlot2(QtGui.QWidget):
         self.resize(400,200)
         self.fac_t = 360 / max(self.t)
         self.fac_y = 160 / 2
+        self.counter = 0
+        self.paths = []
+        for i in range(N_OSCIS):
+            self.paths.append( QPainterPath())
     
     def update(self, data):
         for i in range(N_OSCIS):
             self.y[i] = np.concatenate((self.y[i][1:], self.y[i][:1]), 1)
             self.y[i][-1] = data[i]
+        # faster
         QtGui.QWidget.update(self)
+        # slower
+        # QtGui.QWidget.repaint(self)
         
     def paintEvent(self, event=None):
+        #if self.counter %3 == 0:
         self.paint.begin(self)
         self.paint.fillRect(20, 20, 360, 160, QtGui.QColor(255,255,255))
         self.paint.drawRect(20, 20, 360, 160)
         for j in range(N_OSCIS):
+            y_j = self.y[j]
             path = QPainterPath()
             path.moveTo(20, 100)
             for i in range(1, len(self.t)):
-                path.lineTo(20 + self.fac_t * self.t[i] , 100 + self.fac_y * self.y[j][i] ) 
+                path.lineTo(20 + self.fac_t * self.t[i] , 100 + self.fac_y * y_j[i] ) 
             self.paint.drawPath(path)
-                
+            
+            
+#             self.paths[j].moveTo(20, 100)
+#             for i in range(1, len(self.t)):
+#                 self.paths[j].lineTo(20 + self.fac_t * self.t[i] , 100 + self.fac_y * self.y[j][i] ) 
+#             self.paint.drawPath(self.paths[j])
+
         self.paint.end()
+        #QApplication.processEvents()
+        self.counter += 1
 
 
 class MainWidget(QtGui.QWidget):
@@ -59,13 +77,12 @@ class MainWidget(QtGui.QWidget):
         vLayout1 = QtGui.QVBoxLayout()
         vLayout2 = QtGui.QVBoxLayout()
 
-        #centralWidget = QWidget()
         self.mainLayout = QtGui.QHBoxLayout()
         self._thread = UpdateThread(self)
-        self._thread.updated.connect(self.update)
+        self._thread.updated.connect(self.update, QtCore.Qt.BlockingQueuedConnection)
+        #self._thread.updated.connect(self.update)
         self._thread.start()
 
-        #centralWidget.setLayout(self.mainLayout)
         self.setLayout(self.mainLayout)
 
         self.mainLayout.addWidget(widget2)   
@@ -91,8 +108,6 @@ class MainWidget(QtGui.QWidget):
         for i in range(N_OSCIS):
             self.listWidgets[i].update(result[(10*i):(10*(i + 1))])
 
-
-
 class DataFactory(object):
     
     def __init__(self,_n=1):
@@ -112,14 +127,17 @@ class DataFactory(object):
 
 class UpdateThread(QtCore.QThread):
      
-    updated = QtCore.pyqtSignal(str)   
+    updated = QtCore.pyqtSignal(str)
+    
     def run(self):
-        time.sleep(1.)
+        #time.sleep(1.)
         i = 0
+        QApplication.processEvents()
         while True:
-            time.sleep(TIME_CONSTANT)
+            #time.sleep(TIME_CONSTANT)
             self.updated.emit(str(1))
-
+            i+=1
+            
 class QtApp(object):
     
     def __init__(self):
@@ -127,8 +145,17 @@ class QtApp(object):
         self.oszi = MainWidget()
         self.oszi.show()
 
-if __name__ == '__main__':
+def run():
 
     app = QtGui.QApplication(sys.argv)
     qtapp = QtApp() 
     app.exec_()  
+
+if __name__ == '__main__':
+
+    PROFILE = True
+    
+    if PROFILE:
+        cProfile.run('run()')
+    else:
+        run()

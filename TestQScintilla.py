@@ -17,7 +17,7 @@ Created on 13.01.2015
 #        ###############
 #
 #        Source: http://eli.thegreenplace.net/2011/04/01/sample-using-qscintilla-with-pyqt
-#        Here some important additional information is added
+#        Here some important additional information is given!
 #
 #-------------------------------------------------------------------------
 
