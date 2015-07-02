@@ -23,33 +23,37 @@ class RootContainer(BContainer.BContainer):
         '''
         Constructor
         '''
-        super(RootContainer, self).__init__("root")
+        super(RootContainer, self).__init__(u"root")
         self.__mainWindow = mainWindow
         self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus,\
-                              mainWindow.ui.actionOsci]
-        self.set("listDataDispObj", [])
+                              mainWindow.ui.actionOsci, mainWindow.ui.actionNewMinus, \
+                              mainWindow.ui.actionNewMultiplication, mainWindow.ui.actionNewDivision]
+        self.set(u"listDataDispObj", [])
         
     def get(self, attr):
     
-        if attr == "mainWindow":
-            return self.__mainWindow.ui.DrawWidget
+        if attr == u"mainWindow":
+            #return self.__mainWindow.ui.DrawWidget
+            return self.__mainWindow
+        elif attr == u"drawWidget":
+            return self.__mainWindow.drawWidget
         else:
             return super(RootContainer, self).get(attr)  
         
     def set(self, attr, value):
         
-        if attr == "idxToolSelected":
-            idxToolSelectedOld = self.get("idxToolSelected")
+        if attr == u"idxToolSelected":
+            idxToolSelectedOld = self.get(u"idxToolSelected")
             if idxToolSelectedOld not in [None, 0]:
                 oldAction = self.__listActions[idxToolSelectedOld]
                 oldAction.setChecked(False)
             if value > 0 and value <= PyLinXHelper.ToolSelected.max:
                 self.__listActions[value].setChecked(True)
-                return BContainer.BContainer.set(self,"idxToolSelected", value)
+                return BContainer.BContainer.set(self,u"idxToolSelected", value)
             elif value == 0:
-                return BContainer.BContainer.set(self,"idxToolSelected", 0)
+                return BContainer.BContainer.set(self,u"idxToolSelected", 0)
             
-        elif attr == "bSimulationMode":
+        elif attr == u"bSimulationMode":
             
             if value == True:
                 pal = QtGui.QPalette()
@@ -63,8 +67,10 @@ class RootContainer(BContainer.BContainer):
                 self.__mainWindow.ui.actionNewMinus.setEnabled(False)
                 self.__mainWindow.ui.actionNewMultiplication.setEnabled(False)
                 self.__mainWindow.ui.actionNewDivision.setEnabled(False)
-                self.__mainWindow.ui.actionStop.setEnabled(True)   
-                return BContainer.BContainer.set(self,"bSimulationMode", True)
+                self.__mainWindow.ui.actionStop.setEnabled(True)
+                rootGraphics = self.getb(u"rootGraphics")
+                rootGraphics.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"widgetShow", ())
+                return BContainer.BContainer.set(self,u"bSimulationMode", True)
             
             elif value == False:
                 pal = QtGui.QPalette()
@@ -78,9 +84,17 @@ class RootContainer(BContainer.BContainer):
                 self.__mainWindow.ui.actionNewMinus.setEnabled(True)
                 self.__mainWindow.ui.actionNewMultiplication.setEnabled(True)
                 self.__mainWindow.ui.actionNewDivision.setEnabled(True)
-                self.__mainWindow.ui.actionStop.setEnabled(False)  
-                return BContainer.BContainer.set(self,"bSimulationMode", False)
+                self.__mainWindow.ui.actionStop.setEnabled(False)
+                rootGraphics = self.getb(u"rootGraphics")
+                rootGraphics.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"widgetHide", ())
+                return BContainer.BContainer.set(self,u"bSimulationMode", False)
                 
         else:
             return super(RootContainer, self).set(attr,value)
+    
+    # Method that synchronizes the DataDictionary with the data hold for graphical representation in the DataViewer
+      
+    
+    def sync(self):
+        self.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"sync", ())
         

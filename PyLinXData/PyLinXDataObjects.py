@@ -16,7 +16,7 @@ import weakref
 import BContainer
 import PX_Templates as PX_Templ
 import PyLinXHelper
-import PyLinXCodeGen
+
 import PyLinXGui
 
 
@@ -24,9 +24,12 @@ import PyLinXGui
 
 class PX_Object(BContainer.BContainer):
     
+    
+    
     def __init__(self, name, *args):
         
         super(PX_Object, self).__init__(name, *args)
+        
         
     def getMaxID(self, _id = 0):
         
@@ -40,6 +43,9 @@ class PX_Object(BContainer.BContainer):
                     _id = element_id
             _id = element.getMaxID(_id)
         return _id
+    
+    def set(self, attr, val):
+        super(PX_Object, self).set(attr, val)
     
 
 ## Classes, which should have an ID should inherit from this class
@@ -66,14 +72,16 @@ class PX_IdObject(PX_Object):
 
 class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
     
+    
+    
     # Constructor  
     
     def __init__(self, name = None, *var):
         super(PX_PlottableObject, self).__init__(name)
-        self.set("bVisible", False)
-        self.set("px_mousePressedAt_X", sys.maxint)
-        self.set("px_mousePressedAt_Y", sys.maxint)
-        self.set("bOnlyVisibleInSimMode", False)
+        self.set(u"bVisible", False)
+        self.set(u"px_mousePressedAt_X", sys.maxint)
+        self.set(u"px_mousePressedAt_Y", sys.maxint)
+        self.set(u"bOnlyVisibleInSimMode", False)
         self._objectsInFocus = []
 
     
@@ -127,9 +135,9 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         types = inspect.getmro(type(obj))
         if QtGui.QWidget in types:
             self.__plotHierarchyLevel(obj, para)
-        else:
-            pass
-        
+        #else:
+       #   pass
+
     
     # Method that plots one hierarchy level
     
@@ -139,11 +147,15 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         listLatent = []
         for key in self._BContainer__Body:
             element = self._BContainer__Body[key]
-            if element.isAttrTrue("bVisible"):
-                if element.isAttrTrue("bLatent"):
+            if element.isAttrTrue(u"bVisible"):
+                if element.isAttrTrue(u"bLatent"):
                     listLatent.append(element)
                     continue
                 element.plot(paint, templ)
+        
+#         if PyLinXRunEngine.DataDictionary["*bGuiToUpdate"]:
+#             PyLinXRunEngine.DataDictionary["*bGuiToUpdate"] = False
+                
         # latent elements has to be plottet on top
         for element in listLatent:
             element.plot(paint, templ)
@@ -164,10 +176,10 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
     
     def get(self, attr):
     
-        if attr == "bUnlock":
+        if attr == u"bUnlock":
             rootContainer = self.getRoot()
-            bSimulationMode = rootContainer.get("bSimulationMode")
-            bOnlyVisibleInSimMode = self.get("bOnlyVisibleInSimMode")
+            bSimulationMode = rootContainer.get(u"bSimulationMode")
+            bOnlyVisibleInSimMode = self.get(u"bOnlyVisibleInSimMode")
             return (bOnlyVisibleInSimMode and bSimulationMode) or \
                 ( (not bOnlyVisibleInSimMode) and (not bSimulationMode) )
         else:
@@ -184,7 +196,7 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         returnVal = []
         for key in keys:
             element = self._BContainer__Body[key] 
-            if element.isAttrTrue("bVisible"): # and element.get("bUnlock"):
+            if element.isAttrTrue(u"bVisible"): # and element.get("bUnlock"):
                 if len(element.isInFocus(X,Y)) > 0:
                     returnVal = [element]
         return returnVal
@@ -195,9 +207,11 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         keys = self._BContainer__Body
         for key in keys:
             element = self._BContainer__Body[key]
-            if element.isAttrTrue("bVisible"):
+            if element.isAttrTrue(u"bVisible"):
                 pass
 
+    def set(self, attr, val):
+        super(PX_PlottableObject, self).set(attr, val)
   
 ## Meta-Class for all plotalble objects that can be connected
     
@@ -217,9 +231,9 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
     penHighlight.setJoinStyle(QtCore.Qt.MiterJoin)
     penSimulationModeBold     = QtGui.QPen(PX_Templ.color.green,PX_Templ.Template.Gui.px_ELEMENT_PinSimulationWidth(), QtCore.Qt.SolidLine)
     penSimulationModeNone     = QtGui.QPen(PX_Templ.color.green,0, QtCore.Qt.SolidLine)
-    fontStdVar                = QtGui.QFont("FreeSans", PX_Templ.Template.Gui.px_ELEMENT_stdFontSize())
+    fontStdVar                = QtGui.QFont(u"FreeSans", PX_Templ.Template.Gui.px_ELEMENT_stdFontSize())
     fontStdVarMetrics         = QtGui.QFontMetrics(fontStdVar)
-    fontStdVarDispNum         = QtGui.QFont("FreeSans", PX_Templ.Template.Gui.px_ELEMENT_OsciFontSize(), QtGui.QFont.Bold)
+    fontStdVarDispNum         = QtGui.QFont(u"FreeSans", PX_Templ.Template.Gui.px_ELEMENT_OsciFontSize(), QtGui.QFont.Bold)
     fontStdVarDispNumMetrics  = QtGui.QFontMetrics(fontStdVarDispNum)
     
     def __init__(self, name, X, Y, value = None, tupleInPins = (), tupleOutPins = ()):
@@ -233,10 +247,10 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
         self._listOutPins = []
         self._listInPins  = []
         
-        self.set("bMethodIsInFocus", True)
-        self.set("setIdxConnectedInPins", set([]))
-        self.set("setIdxConnectedOutPins", set([]))
-        self.set("bVisible", True)  
+        self.set(u"bMethodIsInFocus", True)
+        self.set(u"setIdxConnectedInPins", set([]))
+        self.set(u"setIdxConnectedOutPins", set([]))
+        self.set(u"bVisible", True)  
         PX_PlottableElement.calcDimensions(self, tupleInPins = tupleInPins, tupleOutPins = tupleOutPins)
         
     ## Properties
@@ -320,7 +334,7 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
         # CHAANGED
         #elementWidth_half_X = elementWidth_half + self._X
         #elementWidth_half_Y = elementWidth_half + self._Y
-        self.set("Shape",[[(self._X - elementWidth_half, self._Y - elementHeight_half ),\
+        self.set(u"Shape",[[(self._X - elementWidth_half, self._Y - elementHeight_half ),\
                            (self._X + elementWidth_half, self._Y - elementHeight_half ),\
                            (self._X + elementWidth_half, self._Y + elementHeight_half ),\
                            (self._X - elementWidth_half, self._Y + elementHeight_half ),\
@@ -342,8 +356,8 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
         
         self._listInPins = listInPins
         self._listOutPins = listOutPins
-        self.set("ShapeInPins",  ShapeInPins )
-        self.set("ShapeOutPins", ShapeOutPins )
+        self.set(u"ShapeInPins",  ShapeInPins )
+        self.set(u"ShapeOutPins", ShapeOutPins )
 
     
     ## Method to plot the main square of the Element
@@ -447,8 +461,8 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
         X = X - x
         Y = Y - y  
         
-        ShapeInPins  = self.get("ShapeInPins")
-        ShapeOutPins = self.get("ShapeOutPins")
+        ShapeInPins  = self.get(u"ShapeInPins")
+        ShapeOutPins = self.get(u"ShapeOutPins")
         
         idxInPins  = PyLinXHelper.point_inside_polygon(X, Y, ShapeInPins) 
         
@@ -483,15 +497,18 @@ class PX_PlottableElement(PX_PlottableObject, PX_IdObject):
 #         X = X - x
 #         Y = Y - y
         
-        return PyLinXHelper.point_inside_polygon(X, Y, self.get("Shape"))
+        return PyLinXHelper.point_inside_polygon(X, Y, self.get(u"Shape"))
 
 ## Proxy class used as place holder of the target object of a connector during drawing the connection
+
+    def set(self, attr, val):
+        return super(PX_PlottableElement, self).set(attr, val)
 
 class PX_PlottableProxyElement(PX_PlottableElement):
     
     def __init__(self, X, Y):
         
-        super(PX_PlottableProxyElement, self).__init__("PX_PlottableProxyElement", X, Y, None)
+        super(PX_PlottableProxyElement, self).__init__(u"PX_PlottableProxyElement", X, Y, None)
         self.listInPins = [(0,0,0,0)]
     
     def isInFocus(self, X, Y):
@@ -504,15 +521,15 @@ class  PX_PlottableVarElement(PX_PlottableElement):
     
     def __init__(self, name, X, Y, value = None):
 
-        tupleInPins  = ((0,""),)
-        tupleOutPins = ((0,""),)
+        tupleInPins  = ((0,u""),)
+        tupleOutPins = ((0,u""),)
         super(PX_PlottableVarElement, self).__init__(name, X, Y, tupleInPins = tupleInPins, tupleOutPins = tupleOutPins)
         self.__Head = value 
-        self.set("bStimulate", False)   
-        self.set("StimulationFunction", "Constant")
-        self.set("tupleInPins", tupleInPins)
-        self.set("tupleOutPins", tupleOutPins)
-        self.set("listSelectedDispObj", [])
+        self.set(u"bStimulate", False)   
+        self.set(u"StimulationFunction", u"Constant")
+        self.set(u"tupleInPins", tupleInPins)
+        self.set(u"tupleOutPins", tupleOutPins)
+        self.set(u"listSelectedDispObj", [])
 
     def calcDimensions(self,bStimulate,bMeasure):
         
@@ -535,7 +552,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
             self.x6_stim = self.x0_stim + x1_offset
             self.y6_stim = self.y1_stim
             
-            self.set("Shape_stim", [[(self.x0_stim,self.y0_stim),\
+            self.set(u"Shape_stim", [[(self.x0_stim,self.y0_stim),\
                                      (self.x1_stim,self.y1_stim),\
                                      (self.x2_stim,self.y2_stim),\
                                      (self.x3_stim,self.y3_stim),\
@@ -544,7 +561,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
                                      (self.x6_stim,self.y6_stim),\
                                      ]])
         else:
-            self.set("Shape_stim", [])
+            self.set(u"Shape_stim", [])
         
         if bMeasure:
             self.x0_meas = self._X - PX_Templ.Template.Gui.px_ELEMENT_PinSimulation_x() 
@@ -564,7 +581,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
             self.x6_meas = self.x0_meas + x1_offset
             self.y6_meas = self.y1_meas 
         
-            self.set("Shape_meas", [[(self.x0_meas,self.y0_meas),\
+            self.set(u"Shape_meas", [[(self.x0_meas,self.y0_meas),\
                                      (self.x1_meas,self.y1_meas),\
                                      (self.x2_meas,self.y2_meas),\
                                      (self.x3_meas,self.y3_meas),\
@@ -573,7 +590,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
                                      (self.x6_meas,self.y6_meas),\
                                      ]])
         else:
-            self.set("Shape_meas", [])       
+            self.set(u"Shape_meas", [])       
                                
     def plot(self, paint, templ):
 
@@ -627,7 +644,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
             path.lineTo(self.x0_meas,self.y0_meas)
             paint.drawPath(path)
             
-            listSelectedDispObj = self.get("listSelectedDispObj")
+            listSelectedDispObj = self.get(u"listSelectedDispObj")
             strSelectedDispObj = ""
             for listItem in listSelectedDispObj:
                 if strSelectedDispObj != "":
@@ -643,8 +660,8 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         def __drawValue():
             
             rootContainer = self.getRoot()
-            DataDictionary = rootContainer.getb("DataDictionary")
-            name = self.get("Name")
+            DataDictionary = rootContainer.getb(u"DataDictionary")
+            name = self.get(u"Name")
             if name in DataDictionary:
                 value = DataDictionary[name]
             else:
@@ -663,7 +680,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
             paint.drawText(posText_x, posText_y, strValue)
             
         paint.setFont(PX_PlottableElement.fontStdVar)
-        name = self.get("Name")
+        name = self.get(u"Name")
         widthName  = PX_PlottableElement.fontStdVarMetrics.width(name)
         whiteSpace = PX_Templ.Template.Gui.px_ELEMENT_whiteSpace()
         width_raw = PX_Templ.Template.Gui.px_ELEMENT_minWidthColorBar() + 2 *  whiteSpace  + 4 *  self.border + widthName 
@@ -671,15 +688,15 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         width  = 20 * math.ceil(0.05 * float(width_raw) )
         heigth = PX_Templ.Template.Gui.px_EMELENT_minHeigth()
         
-        tupleInPins = self.get("tupleInPins")
-        tupleOutPins = self.get("tupleOutPins")        
+        tupleInPins = self.get(u"tupleInPins")
+        tupleOutPins = self.get(u"tupleOutPins")        
         
         PX_PlottableElement.calcDimensions(self,width, heigth, tupleInPins = tupleInPins, tupleOutPins = tupleOutPins)
         PX_PlottableElement.plotBasicElement(self, paint, templ)
         __plotElementSpecifier()
         
         rootContainer = self.getRoot()
-        bSimulationMode = rootContainer.get("bSimulationMode")
+        bSimulationMode = rootContainer.get(u"bSimulationMode")
         #print "bSimulationMode: ", bSimulationMode
         
 #         listSelectedDispObj = self.get("listSelectedDispObj")
@@ -687,8 +704,8 @@ class  PX_PlottableVarElement(PX_PlottableElement):
          
         if bSimulationMode:
 
-            bStimulate = self.get("bStimulate")
-            bMeasure = self.get("bMeasure")
+            bStimulate = self.get(u"bStimulate")
+            bMeasure = self.get(u"bMeasure")
             self.calcDimensions(bStimulate,bMeasure)
             
             __drawValue()
@@ -700,75 +717,88 @@ class  PX_PlottableVarElement(PX_PlottableElement):
     
     def updateDataDictionary(self):
         
-        if self.get("bStimulate"):
+        if self.get(u"bStimulate"):
             
             try:
                 rootContainer = self.getRoot()
-                DataDictionary = rootContainer.getb("DataDictionary")
-                RunConfigDictionary = rootContainer.getb("RunConfigDictionary")
-                StimulationFunction = self.get("StimulationFunction")
+                DataDictionary = rootContainer.getb(u"DataDictionary")
+                RunConfigDictionary = rootContainer.getb(u"RunConfigDictionary")
+                StimulationFunction = self.get(u"StimulationFunction")
                 value = 0.0
                 
-                if StimulationFunction == "Constant":
-                    value = self.get("stim_const_val")
-                elif StimulationFunction == "Sine":
-                    stim_sine_frequency = self.get("stim_sine_frequency")  
-                    stim_sine_offset = self.get("stim_sine_offset")     
-                    stim_sine_amplitude = self.get("stim_sine_amplitude")
-                    t = RunConfigDictionary["t"]
+                if StimulationFunction == u"Constant":
+                    value = self.get(u"stim_const_val")
+                elif StimulationFunction == u"Sine":
+                    stim_sine_frequency = self.get(u"stim_sine_frequency")  
+                    stim_sine_offset = self.get(u"stim_sine_offset")     
+                    stim_sine_amplitude = self.get(u"stim_sine_amplitude")
+                    t = RunConfigDictionary[u"t"]
                     value = stim_sine_offset + stim_sine_amplitude * math.sin(2 * math.pi * stim_sine_frequency * t )
-                elif StimulationFunction == "Ramp":
-                    stim_ramp_frequency = self.get("stim_ramp_frequency")
-                    stim_ramp_phase = self.get("stim_ramp_phase")
-                    stim_ramp_offset = self.get("stim_ramp_offset")
-                    stim_ramp_amplitude = self.get("stim_ramp_amplitude")
-                    t = RunConfigDictionary["t"]
+                elif StimulationFunction == u"Ramp":
+                    stim_ramp_frequency = self.get(u"stim_ramp_frequency")
+                    stim_ramp_phase = self.get(u"stim_ramp_phase")
+                    stim_ramp_offset = self.get(u"stim_ramp_offset")
+                    stim_ramp_amplitude = self.get(u"stim_ramp_amplitude")
+                    t = RunConfigDictionary[u"t"]
                     ratio = (t +  stim_ramp_phase) / stim_ramp_frequency
                     value = stim_ramp_offset + stim_ramp_amplitude * (ratio - math.ceil(ratio) )
-                elif StimulationFunction == "Pulse":
-                    stim_pulse_frequency = self.get("stim_pulse_frequency")
-                    stim_pulse_phase = self.get("stim_pulse_phase")
-                    stim_pulse_amplitude = self.get("stim_pulse_amplitude")
-                    stim_pulse_offset = self.get("stim_pulse_offset")
-                    t = RunConfigDictionary["t"]
+                elif StimulationFunction == u"Pulse":
+                    stim_pulse_frequency = self.get(u"stim_pulse_frequency")
+                    stim_pulse_phase = self.get(u"stim_pulse_phase")
+                    stim_pulse_amplitude = self.get(u"stim_pulse_amplitude")
+                    stim_pulse_offset = self.get(u"stim_pulse_offset")
+                    t = RunConfigDictionary[u"t"]
                     ratio = (t +  stim_pulse_phase) / stim_pulse_frequency
                     if ratio < 0.5:
                         value = stim_pulse_offset
                     else:
                         value = stim_pulse_offset + stim_pulse_amplitude
-                elif StimulationFunction ==  "Step":
-                    stim_step_phase = self.get("stim_step_phase")
-                    stim_step_offset = self.get("stim_step_offset")
-                    stim_step_amplitude = self.get("stim_step_amplitude")
-                    t = RunConfigDictionary["t"]
+                elif StimulationFunction ==  u"Step":
+                    stim_step_phase = self.get(u"stim_step_phase")
+                    stim_step_offset = self.get(u"stim_step_offset")
+                    stim_step_amplitude = self.get(u"stim_step_amplitude")
+                    t = RunConfigDictionary[u"t"]
                     if stim_step_phase > t:
                         value = stim_step_offset
                     else:
                         value = stim_step_offset + stim_step_amplitude
-                elif StimulationFunction ==  "Random":
-                    #stim_random_phase = self.get("stim_random_phase")
-                    stim_random_offset = self.get("stim_random_offset")
-                    stim_random_amplitude = self.get("stim_random_amplitude")
-                    t = RunConfigDictionary["t"]
+                elif StimulationFunction ==  u"Random":
+                    #stim_random_phase = self.get(u"stim_random_phase")
+                    stim_random_offset = self.get(u"stim_random_offset")
+                    stim_random_amplitude = self.get(u"stim_random_amplitude")
+                    t = RunConfigDictionary[u"t"]
                     value = stim_random_offset + stim_random_amplitude * numpy.random.rand()
-                name = self.get("Name")
+                name = self.get(u"Name")
                 #DataDictionary.qmutex.lock()            
                 DataDictionary[name] = value
                 #DataDictionary.qmutex.unlock()
             except:
-                raise Exception("Error PX_PlottableVarElement.updateDataDictionary()")
+                raise Exception(u"Error PX_PlottableVarElement.updateDataDictionary()")
        
     def get(self, attr):
     
-        if attr == "bMeasure":
-            listSelectedDispObj = self.get("listSelectedDispObj")
+        if attr == u"bMeasure":
+            listSelectedDispObj = self.get(u"listSelectedDispObj")
             if len(listSelectedDispObj) > 0:
                 return True
             else:
                 return False
         else:
-            return super(PX_PlottableVarElement, self).get(attr)               
+            return super(PX_PlottableVarElement, self).get(attr)     
         
+    def set(self, attr, value):
+        
+        if attr == u"bMeasure":
+            rootContainer = self.getRoot()
+            rootGraphics = rootContainer.getb(u"rootGraphics")
+            listSelectedDispObj = self.get(u"listSelectedDispObj")
+            name = self.get(u"Name")
+            if value == True:
+                print u"labelAdd (0)"
+                rootGraphics.recur(PX_PlottableVarDispElement,u"labelAdd", (name , listSelectedDispObj) )
+            elif value == False:
+                rootGraphics.recur(PX_PlottableVarDispElement,u"labelRemove", (name,))
+        super(PX_PlottableVarElement, self).set(attr, value)
 
 ## Class for variable viewer object
 
@@ -786,28 +816,23 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
                 i += 1
             listDataDispObj.append(i)
             return i
-        
-        
+                
         rootContainer = parent.getRoot()
-        listDataDispObj = rootContainer.get("listDataDispObj")
-        
-        ## NEU
-        
-        #mainWindow    = rootContainer.get("meinWindow")
-        #rawWidget =  mainWindow.drawWidget 
-        #drawWidget.connect
-        
-        ## ENDE NEU
+        listDataDispObj = rootContainer.get(u"listDataDispObj")
         
         idx = __getIdxDataDispObj(listDataDispObj)
-        super(PX_PlottableVarDispElement, self).__init__("DataDispObj" + "_" + str(idx), X, Y)
-        self.set("idxDataDispObj", idx)
-        self.set("bOnlyVisibleInSimMode", True)
-        self.set("bExitMethod", True)
-        self.__widget = None
-        self.set("bVarDispVisible", False)
+        super(PX_PlottableVarDispElement, self).__init__(u"DataDispObj" + u"_" + str(idx), X, Y)
+        self.set(u"setVars", set([]))
+        self.set(u"idxDataDispObj", idx)
+        self.set(u"bOnlyVisibleInSimMode", True)
+        self.set(u"bExitMethod", True)
         
-
+        self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(self,self.get(u"idxDataDispObj"))
+        self.__widgetGeometry = self.__widget.geometry() 
+        self.__widgetPos      = self.__widget.pos()
+        
+        self.set(u"bVarDispVisible", False)
+        
         super(PX_PlottableVarDispElement, self).calcDimensions(width = PX_Templ.Template.Gui.px_DispVarObjSize(),\
                                           heigth = PX_Templ.Template.Gui.px_DispVarObjSize())
    
@@ -815,33 +840,66 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
 
         def delFromListSelectedDispObj(element,idx):
             keys = element.getChildKeys()
-            listSelectedDispObj = element.get("listSelectedDispObj")
+            listSelectedDispObj = element.get(u"listSelectedDispObj")
             if listSelectedDispObj != None:
                 newLlistSelectedDispObj = [x for x in listSelectedDispObj if x != idx]
-                element.set("listSelectedDispObj", newLlistSelectedDispObj)    
+                element.set(u"listSelectedDispObj", newLlistSelectedDispObj)    
             for key in keys:
                 elementChild = element.getb(key)
                 delFromListSelectedDispObj(elementChild, idx)
 
-        idx = self.get("idxDataDispObj")
+        self.idx = self.get(u"idxDataDispObj")
         rootContainer = self.getRoot()
-        listDataDispObj = rootContainer.get("listDataDispObj")
-        newListDataDispObj = [x for x in listDataDispObj if x != idx]
-        rootContainer.set("listDataDispObj", newListDataDispObj)    
+        listDataDispObj = rootContainer.get(u"listDataDispObj")
+        newListDataDispObj = [x for x in listDataDispObj if x != self.idx]
+        rootContainer.set(u"listDataDispObj", newListDataDispObj)    
         
-        rootGraphics = rootContainer.getb("rootGraphics")
-        delFromListSelectedDispObj(rootGraphics, idx)
+        rootGraphics = rootContainer.getb(u"rootGraphics")
+        delFromListSelectedDispObj(rootGraphics, self.idx)
 
         
+        
+        
+    def get(self, attr):
+        
+        if attr == u"bVisible":
+            rootContainer = self.getRoot()
+            return rootContainer.get(u"bSimulationMode")
+        else:
+            return super(PX_PlottableVarDispElement, self).get(attr)
+        
+    def labelAdd(self, label, listIdx = []):
+        idx = self.get(u"idxDataDispObj")
+        print "LABEL ADD -> idx: ", idx, "listIdx: ", listIdx, "  label: ", label
+        if idx in listIdx:
+            setVars = self.get(u"setVars")
+            setVars.add(label)
+            self.set(u"setVars",setVars)
+            #print u"self.get(\"setVars\"): ", self.get(u"setVars")
+
+        
+    def labelRemove(self, label, listIdx = []):
+        print u"LabelRemocve"
+        idx = self.get(u"idxDataDispObj")
+        if idx in listIdx:
+            setVars = self.get(u"setVars")
+            if label in setVars:
+                print u"setVars: ", setVars 
+                setVars.remove(label)
+                self.set(u"setVars", setVars)
+                print u"self.get(\"setVars\"): ",  self.get(u"setVars")
+#             if label in  self.__widget.listVars:
+#                 self.__widget.listVars.remove(label)
+    
     def plot(self, paint, templ):
         
         rootContainer = self.getRoot()
-        bSimulationMode = rootContainer.get("bSimulationMode")
+        bSimulationMode = rootContainer.get(u"bSimulationMode")
         if not bSimulationMode:
             return
         
         paint.setFont(PX_PlottableElement.fontStdVarDispNum)
-        idx = self.get("idxDataDispObj")
+        idx = self.get(u"idxDataDispObj")
         strIdx = str(idx)
         widthStrIdx =  PX_PlottableElement.fontStdVarDispNumMetrics.width(strIdx)
         dim_xy = PX_Templ.Template.Gui.px_DispVarObjSize()
@@ -857,25 +915,21 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
         paint.drawText( self.x + 0.5 *  ( self.elementWidth - 1.2 *widthStrIdx ), \
                         self.y + 0.62 *   self.elementHeigth                 \
                         , strIdx)
-        if self.get("bVarDispVisible"):
-            self.__widget.update()
-            pass
+#         if self.get("bVarDispVisible"):
+#             print "UPDATE idxDataDispObj: ",  self.get("idxDataDispObj")
+#             self.__widget.update()
         
-    def get(self, attr):
-        
-        if attr == "bVisible":
-            rootContainer = self.getRoot()
-            return rootContainer.get("bSimulationMode")
-        else:
-            return super(PX_PlottableVarDispElement, self).get(attr)
-        
-        
+    def sync(self):
+        self.__widget.update()
+    
     def set(self, attr, value):
         
-        if attr == "bVarDispVisible":
+        if attr == u"bVarDispVisible":
             if self.__widget == None:
                 if  value == True:
-                    self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(["Variable_id3"])
+                    #self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(["Variable_id3", "Variable_id4"])
+#                     self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(list(self.get("setVars")),\
+#                                                                               self.get("idxDataDispObj"))
                     self.__widget.show()
                     return super(PX_PlottableVarDispElement, self).set(attr, True)
                 elif value == False:
@@ -886,11 +940,25 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
                         self.__widget.show()
                     elif value == False:
                         self.__widget.hide()
-                    return super(PX_PlottableVarDispElement, self).set(attr, value)
-        else:
-            return super(PX_PlottableVarDispElement, self).set(attr, value)
+                    #return super(PX_PlottableVarDispElement, self).set(attr, value)
+        #else:
+            #return super(PX_PlottableVarDispElement, self).set(attr, value)
+        return super(PX_PlottableVarDispElement, self).set(attr, value)
 
-
+    def widgetShow(self):
+        bVarDispVisible = self.get(u"bVarDispVisible")
+        #print "bVarDispVisible: ", bVarDispVisible
+        if bVarDispVisible:
+            self.__widget.setGeometry(self.__widgetGeometry)
+            self.__widget.move(self.__widgetPos)
+            self.__widget.show()
+            
+    
+    def widgetHide(self):
+        self.__widgetGeometry = self.__widget.geometry()
+        self.__widgetPos = self.__widget.pos() 
+        self.__widget.hide()
+        
 ## Class for binary Operators
     
 class PX_PlottableBasicOperator(PX_PlottableElement):
@@ -900,16 +968,16 @@ class PX_PlottableBasicOperator(PX_PlottableElement):
     
     def __init__(self, X, Y, value = None):
         n = PX_IdObject._PX_IdObject__ID + 1
-        name = "Operator_" + value + "_id" + str(n)
+        name = u"Operator_" + value + u"_id" + str(n)
         stdPinDistance =  PX_Templ.Template.Gui.px_ELEMENT_stdPinDistance()
         stdPinDistance_half = 0.5 * stdPinDistance 
-        tupleInPins  = ((-stdPinDistance_half, ""), (stdPinDistance_half, ""))
-        tupleOutPins = ((0,""),)
+        tupleInPins  = ((-stdPinDistance_half, u""), (stdPinDistance_half, u""))
+        tupleOutPins = ((0,u""),)
         super(PX_PlottableBasicOperator, self).__init__(name, X, Y, \
                                             tupleInPins  = tupleInPins,\
                                             tupleOutPins = tupleOutPins)
-        self.set("tupleInPins", tupleInPins)
-        self.set("tupleOutPins", tupleOutPins)
+        self.set(u"tupleInPins", tupleInPins)
+        self.set(u"tupleOutPins", tupleOutPins)
         self._BContainer__Head = value
         PX_PlottableElement.calcDimensions(self, tupleInPins  = tupleInPins,tupleOutPins = tupleOutPins)
         
@@ -938,22 +1006,107 @@ class PX_PlottableBasicOperator(PX_PlottableElement):
             path.lineTo( self._X + outerDiam, self._Y - innerDiam)
             path.lineTo( self._X + outerDiam, self._Y + innerDiam)
             path.lineTo( self._X + innerDiam, self._Y + innerDiam)
-            paint.drawPath(path)        
+            paint.drawPath(path)     
 
-        size = PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_size()
-        #stdPinDistance =  PX_Templ.Template.Gui.px_ELEMENT_stdPinDistance()
-        #stdPinDistance_half = 0.5 * stdPinDistance 
+
+            #plotting the "-" 
+            
+        def __plotMinusSpecifier():
+
+            paint.setPen(PX_PlottableBasicOperator.penSpecifier)
+            paint.setBrush(PX_PlottableBasicOperator.brushSpecifier)
+
+            innerDiam = PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_innerDiameter()
+            outerDiam = PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_outerDiameter()
+            
+            path = QtGui.QPainterPath()
+            path.moveTo( self._X + 0.8 * outerDiam, self._Y + innerDiam)
+            path.lineTo( self._X - 0.8 * outerDiam, self._Y + innerDiam)
+            path.lineTo( self._X - 0.8 * outerDiam, self._Y - innerDiam)
+            path.lineTo( self._X + 0.8 * outerDiam, self._Y - innerDiam) 
+            path.lineTo( self._X + 0.8 * outerDiam, self._Y + innerDiam)
+            paint.drawPath(path)     
+
+
+        def __plotMultiplicationSpecifier():
+
+            paint.setPen(PX_PlottableBasicOperator.penSpecifier)
+            paint.setBrush(PX_PlottableBasicOperator.brushSpecifier)
+
+            innerDiam = 1.4 * PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_innerDiameter()
+            outerDiam = 0.9 * PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_outerDiameter()
+            
+            #plotting the "x" 
+            path = QtGui.QPainterPath()
+            path.moveTo( self._X + innerDiam,              self._Y                        )
+            path.lineTo( self._X + outerDiam,              self._Y + outerDiam - innerDiam)
+            path.lineTo( self._X + outerDiam,              self._Y + outerDiam            )
+            path.lineTo( self._X + outerDiam - innerDiam , self._Y + outerDiam            )
+
+            path.lineTo( self._X            ,              self._Y + innerDiam            )
+            path.lineTo( self._X - outerDiam + innerDiam , self._Y + outerDiam            )
+            path.lineTo( self._X - outerDiam,              self._Y + outerDiam            )
+            path.lineTo( self._X - outerDiam,              self._Y + outerDiam - innerDiam)
+
+            path.lineTo( self._X - innerDiam,              self._Y                        )
+            path.lineTo( self._X - outerDiam,              self._Y - outerDiam + innerDiam)
+            path.lineTo( self._X - outerDiam,              self._Y - outerDiam            )
+            path.lineTo( self._X - outerDiam + innerDiam , self._Y - outerDiam            )
+
+            path.lineTo( self._X            ,              self._Y - innerDiam            )
+            path.lineTo( self._X + outerDiam - innerDiam , self._Y - outerDiam            )
+            path.lineTo( self._X + outerDiam,              self._Y - outerDiam            )
+            path.lineTo( self._X + outerDiam,              self._Y - outerDiam + innerDiam)
+
+            path.lineTo( self._X + innerDiam,              self._Y                        )
+            paint.drawPath(path)     
         
-        tupleInPins = self.get("tupleInPins")
-        tupleOutPins = self.get("tupleOutPins")
+        def __plotDivisionSpecifier():
+            
+            paint.setPen(PX_PlottableBasicOperator.penSpecifier)
+            paint.setBrush(PX_PlottableBasicOperator.brushSpecifier)
+
+            innerDiam = 1.4 * PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_innerDiameter()
+            outerDiam = 0.9 * PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_outerDiameter()
+            
+            #plotting the "/" 
+
+            path = QtGui.QPainterPath()
+            path.moveTo( self._X            ,              self._Y + innerDiam            )
+            path.lineTo( self._X - outerDiam + innerDiam , self._Y + outerDiam            )
+            path.lineTo( self._X - outerDiam,              self._Y + outerDiam            )
+            path.lineTo( self._X - outerDiam,              self._Y + outerDiam - innerDiam)
+ 
+            path.lineTo( self._X            ,              self._Y - innerDiam            )
+            path.lineTo( self._X + outerDiam - innerDiam , self._Y - outerDiam            )
+            path.lineTo( self._X + outerDiam,              self._Y - outerDiam            )
+            path.lineTo( self._X + outerDiam,              self._Y - outerDiam + innerDiam)
+ 
+            path.lineTo( self._X            ,              self._Y + innerDiam            )
+             
+            paint.drawPath(path)
+            
+            paint.drawEllipse(self._X + outerDiam - 2 * innerDiam,self._Y + outerDiam - 2 * innerDiam,2 * innerDiam, 2 * innerDiam )
+            paint.drawEllipse(self._X - outerDiam,              self._Y - outerDiam ,2 * innerDiam, 2 * innerDiam )
+            
+            
+            
+        size = PX_Templ.Template.Gui.px_PlottableELEMOPERATOR_size()
+        
+        tupleInPins = self.get(u"tupleInPins")
+        tupleOutPins = self.get(u"tupleOutPins")
         
         PX_PlottableElement.calcDimensions(self, size, size,tupleInPins = tupleInPins, tupleOutPins = tupleOutPins)
         PX_PlottableElement.plotBasicElement(self, paint, templ)
         
-        if self._BContainer__Head == "+":
+        if self._BContainer__Head == u"+":
             __plotPlusSpecifier()
-        elif self._BContainer__Head == "-":
-            pass
+        elif self._BContainer__Head == u"-":
+            __plotMinusSpecifier()
+        elif self._BContainer__Head == u"*":
+            __plotMultiplicationSpecifier()
+        elif self._BContainer__Head == u"/":
+            __plotDivisionSpecifier()
         
         
 ## Meta-Class for all connections of objects from the type PX_Variables
@@ -964,18 +1117,18 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
         
         super(PX_PlottableConnector, self).__init__()
         id_0 = elem0.ID
-        self.set("ID_0", id_0)
+        self.set(u"ID_0", id_0)
         self._elem0 = elem0
-        self.set("bVisible", True)
+        self.set(u"bVisible", True)
         self._idxOutPin = idxOutPin
         self._idxInPin = idxInPin
         
         if elem1 != None:
             id_1 = elem1.ID
-            self.set("ID_1", id_1)
+            self.set(u"ID_1", id_1)
             self._elem1 = elem1
         else:
-            self.set("ID_1", None)
+            self.set(u"ID_1", None)
             self._elem1 = None
             
         X = elem0.X
@@ -989,7 +1142,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
             #y-value
             else:
                 listPoints[i] = listPoints[i] - Y       
-        self.set("listPoints", listPoints)
+        self.set(u"listPoints", listPoints)
         
         self.rad = PX_Templ.Template.Gui.px_CONNECTOR_rad()
         self.diam = 2 * self.rad
@@ -1020,7 +1173,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
     def set_elem1(self, elem1):
         id_1 = elem1.ID
         self._elem1 = elem1
-        BContainer.BContainer.set(self,"ID_1", id_1)
+        BContainer.BContainer.set(self,u"ID_1", id_1)
         
     elem1 = property(get_elem1, set_elem1)
     
@@ -1076,7 +1229,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
         self.listOutPins0 = elem0.listOutPins
         self.listInPins1  = elem1.listInPins
         
-        self.listPoints = list(self.get("listPoints"))
+        self.listPoints = list(self.get(u"listPoints"))
                 
         idxOutPin = self.idxOutPin
         idxInPin = self.idxInPin
@@ -1087,7 +1240,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
             self.outPin_x =  self.listOutPins0[ idxOutPin ][0]
             self.outPin_y =  self.listOutPins0[ idxOutPin ][1] 
         except:
-            print "Error"        
+            print u"Error"        
         idxInPin_transformed =  - idxInPin - 1 
         self.inPin_x  =  self.listInPins1 [ idxInPin_transformed  ][0]
         self.inPin_y  =  self.listInPins1 [ idxInPin_transformed  ][1]
@@ -1143,7 +1296,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
         
         #Case final connection
         if self.bNoFinalConnection == False:
-            self.set("listPoints", self.listPoints)
+            self.set(u"listPoints", self.listPoints)
         
         # Determining the shape of the connector
         # From the "Shape" the GUI knows where an object
@@ -1184,7 +1337,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
                 shape.append(self._PX_PlottableObject__getPolygon(x0,y0,x1,y1))
                 #print "x0: ", x0, "y0: ", y0, "x1: ", x1, "y1: ", y1 
    
-        self.set("Shape",shape )
+        self.set(u"Shape",shape )
   
     def plot(self, paint, templ):
         
@@ -1337,7 +1490,7 @@ class PX_PlottableConnector(PX_PlottableObject, PX_IdObject):
 #         X = X - x
 #         Y = Y - y
         
-        return PyLinXHelper.point_inside_polygon(X, Y, self.get("Shape"))
+        return PyLinXHelper.point_inside_polygon(X, Y, self.get(u"Shape"))
 
 
 ## Class for highlightning
@@ -1347,22 +1500,22 @@ class PX_LatentPlottable_HighlightRect(PX_PlottableObject):
     def __init__(self, X, Y):
         
         super(PX_LatentPlottable_HighlightRect, self).__init__()
-        self.set("bLatent", True)
-        self.set("X0", X)
-        self.set("Y0", Y)
-        self.set("X1", X)
-        self.set("Y1", Y)
-        self.set("Name", "HighlightObject")
-        self.set("bVisible", True)
+        self.set(u"bLatent", True)
+        self.set(u"X0", X)
+        self.set(u"Y0", Y)
+        self.set(u"X1", X)
+        self.set(u"Y1", Y)
+        self.set(u"Name", u"HighlightObject")
+        self.set(u"bVisible", True)
 
         
         
     def plot(self, paint, templ):
         
-        X0 = self.get("X0")
-        Y0 = self.get("Y0")
-        X1 = self.get("X1")
-        Y1 = self.get("Y1")
+        X0 = self.get(u"X0")
+        Y0 = self.get(u"Y0")
+        X1 = self.get(u"X1")
+        Y1 = self.get(u"Y1")
         
         pen = QtGui.QPen(PX_Templ.color.Highlight,PX_Templ.Template.Gui.px_HIGHLIGHT_border(), QtCore.Qt.SolidLine)
         pen.setJoinStyle(QtCore.Qt.MiterJoin)
@@ -1376,3 +1529,5 @@ class PX_LatentPlottable_HighlightRect(PX_PlottableObject):
 
 
 
+#
+#from PyLinXCodeGen import PyLinXRunEngine

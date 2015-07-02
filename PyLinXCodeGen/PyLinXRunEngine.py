@@ -9,6 +9,7 @@ from PyQt4 import QtCore
 import threading
 
 # PyLinX specific imports
+#from PyLinXCodeGen import PyLinXRunEngine
 from PyLinXData import *
 
 global DataDictionary
@@ -16,7 +17,7 @@ global DataDictionary
 class PX_CodeGenerator(BContainer.BContainer):
  
     def __init__(self, parent, PyLinXMainObject):
-        super(PX_CodeGenerator, self).__init__("PX_CodeGeerator")
+        super(PX_CodeGenerator, self).__init__(u"PX_CodeGeerator")
         
         # TEST
         ######
@@ -28,7 +29,7 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         self.__rootContainer = parent
         self.__PyLinXMainObject  = PyLinXMainObject
-        self.__rootGraphics  = self.__rootContainer.getb("rootGraphics")
+        self.__rootGraphics  = self.__rootContainer.getb(u"rootGraphics")
         
         # Initialize Lists of DataTypes
         
@@ -46,7 +47,7 @@ class PX_CodeGenerator(BContainer.BContainer):
         # Code
         
         self.__Code = []
-        self.__CodeStr = ""
+        self.__CodeStr = u""
 
         # Processing
         ############
@@ -58,20 +59,20 @@ class PX_CodeGenerator(BContainer.BContainer):
         # create global data-Dictionary
 
         RunConfigDictionary = BContainer.BDict({})
-        RunConfigDictionary.set("Name", "RunConfigDictionary")
-        RunConfigDictionary.set("DisplayName", "RunConfigDictionary")
-        RunConfigDictionary["t"] = 0.0
+        RunConfigDictionary.set(u"Name", u"RunConfigDictionary")
+        RunConfigDictionary.set(u"DisplayName", u"RunConfigDictionary")
+        RunConfigDictionary[u"t"] = 0.0
         self.__rootContainer.paste(RunConfigDictionary, bForceOverwrite = True)  
         global DataDictionary      
         DataDictionary = BContainer.BDict({})
-        DataDictionary["*bGuiToUpdate"] = True      # Bit indicating that the values are updated, but the GUI, excpecially the 
+        DataDictionary[u"*bGuiToUpdate"] = True      # Bit indicating that the values are updated, but the GUI, excpecially the 
                                                     # data viewers are not updated yet. The star indicates that this is and 
                                                     # should no valid Python Variable used in the simulation model 
-        DataDictionary.set("Name", "DataDictionary")
-        DataDictionary.set("DisplayName", "DataDictionary")    
+        DataDictionary.set(u"Name", u"DataDictionary")
+        DataDictionary.set(u"DisplayName", u"DataDictionary")    
         # initializing values
         for element in self.__listVarElements:
-            DataDictionary[element.get("Name")] = 0.0
+            DataDictionary[element.get(u"Name")] = 0.0
         self.__rootContainer.paste(DataDictionary, bForceOverwrite = True)                
         # setting values to predefined defaults (e.g. constant stimulations should be displayed)         
         self.__rootGraphics.updateDataDictionary()
@@ -96,7 +97,7 @@ class PX_CodeGenerator(BContainer.BContainer):
             '''
             Constructor
             '''
-            name = refObj.get("Name") + "_REF"
+            name = refObj.get(u"Name") + u"_REF"
             super(PX_CodeGenerator.PX_CodeRefObject, self).__init__(name)
             self._BContainer__Head = refObj
             
@@ -128,7 +129,7 @@ class PX_CodeGenerator(BContainer.BContainer):
                 operator = self.ref._BContainer__Head
                 var0 = self.getb(keys[0]).getCode()
                 var1 = self.getb(keys[1]).getCode() 
-                return "( " + var0 + " " + operator + " " + var1 + " ) "
+                return u"( " + var0 + u" " + operator + u" " + var1 + u" ) "
 
 
     class PX_CodableVarElement(PX_CodableObject):
@@ -140,10 +141,10 @@ class PX_CodeGenerator(BContainer.BContainer):
             global Code
             global nIndent
             lenBody = len(self._BContainer__Body)
-            name = self.ref.get("Name") 
+            name = self.ref.get(u"Name") 
             if lenBody == 1:
                 input = self.getb(self.getChildKeys()[0])
-                code_to_add = nIndent * "    " + name + " = " + input.getCode() 
+                code_to_add = nIndent * u"    " + name + u" = " + input.getCode() 
                 Code.append(code_to_add)
             return name
             
@@ -243,13 +244,15 @@ class PX_CodeGenerator(BContainer.BContainer):
         global Code
         Code = []
         global nIndent
-        Code.append("def main():\n")
-        Code.append("    global DataDictionary")
-        Code.append("    Variables = DataDictionary.keys()")
-        Code.append("    for variable in Variables:")
-        Code.append("        if variable[0] != \"*\":")
-        Code.append("            execStr = variable + \" = DataDictionary[variable]\" ")
-        Code.append("            exec(execStr)\n")
+        Code.append(u"def main():\n")
+        Code.append(u"    global DataDictionary")
+        Code.append(u"    Variables = DataDictionary.keys()")
+        Code.append(u"    execStr = u\"\"")
+        Code.append(u"    for variable in Variables:")
+        Code.append(u"        if variable[0] != u\"*\":")
+        Code.append(u"            execStr += (variable + u\" = DataDictionary[\\\"\" + variable +\"\\\"]\\n\")")
+        #Code.append(u"    print execStr")        
+        Code.append(u"    exec(execStr)\n")
         
         nIndent = 1
         
@@ -258,20 +261,22 @@ class PX_CodeGenerator(BContainer.BContainer):
             child = self.__syntaxTree.getb(key)
             child.getCode()
           
-        Code.append("\n    for variable in Variables:")
-        Code.append("        if variable[0] != \"*\":")
-        Code.append("            execStr = \"DataDictionary[variable] = \" + variable ")
-        Code.append("            exec(execStr)\n")
-        Code.append("\nmain()")
+        Code.append(u"\n    execStr = u\"\"")
+        Code.append(u"    for variable in Variables:")
+        Code.append(u"        if variable[0] != \"*\":")
+        Code.append(u"            execStr += (u\"DataDictionary[\\\"\" + variable + \"\\\"] = \" + variable + u\"\\n\" )")
+        #Code.append(u"    print execStr")
+        Code.append(u"    exec(execStr)\n")
+        Code.append(u"\nmain()")
 
 
         self.__Code = Code
-        self.__CodeStr = ""
+        self.__CodeStr = u""
         
         
         for line in Code:
             self.__CodeStr += line
-            self.__CodeStr += "\n"
+            self.__CodeStr += u"\n"
         print "BEGIN---------------"
         print self.__CodeStr
         print "END-----------------"
@@ -292,14 +297,14 @@ class PX_CodeGenerator(BContainer.BContainer):
         def run(self):
             
             
-            RunConfigDictionary = self.__rootContainer.getb("RunConfigDictionary")
+            RunConfigDictionary = self.__rootContainer.getb(u"RunConfigDictionary")
             self.__CodeGenerator.runInit()
             while 1:
                 self.__CodeGenerator.run()
-                print "test 0"
-                self.emit(QtCore.SIGNAL("signal_repaint"))
-                #self.emit(QtCore.SIGNAL("signal_repaint"))
-                print "test 1"
+                # Synchronize the data in DataDictionary with the data stored in the DataViewer-GUI
+                self.emit(QtCore.SIGNAL(u"signal_sync"))
+                # Trigger Repaint
+                self.emit(QtCore.SIGNAL(u"signal_repaint"))
                 
                 if not self.__runThreadMessageQueue.empty():
                     try:
@@ -311,7 +316,7 @@ class PX_CodeGenerator(BContainer.BContainer):
                                 
                 # Maybe some day we have to implement a more sophisticated protocoll
                 if message != None:
-                    print "runThreadMessageQueue.task_done()"
+                    print u"runThreadMessageQueue.task_done()"
                     self.__runThreadMessageQueue.task_done()
                     return
                 
@@ -320,8 +325,13 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         self.__runThread = PX_CodeGenerator.SimulationThread(self, self.__PyLinXMainObject.drawWidget, self.__rootContainer)
  
-        self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL("signal_repaint"), self.__PyLinXMainObject.drawWidget.repaint,\
+        self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_repaint"), self.__PyLinXMainObject.drawWidget.repaint,\
                                                                           QtCore.Qt.BlockingQueuedConnection)
+        
+        self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"), self.__PyLinXMainObject.rootContainer.sync,\
+                                                                          QtCore.Qt.BlockingQueuedConnection)
+        
+        
         self.__runThread.start()
         
     def stopRun(self):
@@ -332,17 +342,36 @@ class PX_CodeGenerator(BContainer.BContainer):
         self.t = 0
         self.delta_t = 0.02
         global DataDictionary
-        DataDictionary = self.__rootContainer.getb("DataDictionary")
+        DataDictionary = self.__rootContainer.getb(u"DataDictionary")
         global RunConfigDictionary
-        RunConfigDictionary = self.__rootContainer.getb("RunConfigDictionary")
-        RunConfigDictionary["t"] = self.t
-        RunConfigDictionary["delta_t"] = self.delta_t
+        RunConfigDictionary = self.__rootContainer.getb(u"RunConfigDictionary")
+        RunConfigDictionary[u"t"] = self.t
+        RunConfigDictionary[u"delta_t"] = self.delta_t
         bSimulationRuning = True
-        RunConfigDictionary["bSimulationRuning"] = bSimulationRuning
+        RunConfigDictionary[u"bSimulationRuning"] = bSimulationRuning
         self.i = 0
             
-    def run(self):
-        #print "i:", self.i
+#     def run(self):
+#         global DataDictionary
+#         self.__rootGraphics.updateDataDictionary()
+#         try:
+#             exec(self.__CodeStr)
+#         except Exception as exc:
+#             strExp = str(exc)
+#             print "Error executing code! -- " + strExp 
+#         
+#         self.t+= self.delta_t
+#         DataDictionary[u"*bGuiToUpdate"] = True
+#         RunConfigDictionary[u"t"] = self.t
+# 
+#         self.i +=1
+
+    def run(self): 
+        import cProfile 
+        cProfile.runctx("self.run_()", globals(), locals(), "profile.stat")
+        #cProfile.run('run_()') 
+           
+    def run_(self):
         global DataDictionary
         self.__rootGraphics.updateDataDictionary()
         try:
@@ -350,10 +379,9 @@ class PX_CodeGenerator(BContainer.BContainer):
         except Exception as exc:
             strExp = str(exc)
             print "Error executing code! -- " + strExp 
-        
+         
         self.t+= self.delta_t
-        DataDictionary["*bGuiToUpdate"] = True
-        RunConfigDictionary["t"] = self.t
-
+        DataDictionary[u"*bGuiToUpdate"] = True
+        RunConfigDictionary[u"t"] = self.t
+ 
         self.i +=1
-

@@ -27,21 +27,21 @@ class BCommand:
     __idxCountIdGlobal = 0
     __instanceGlobal = None
     #__listInstances = ["view", "mon", "log", "ctl", "sync", "relDB", "objDB"]
-    __dictProtocol  = { "set"        :  com_set,
-                        "get"        :  com_get,
-                        "getCond"    :  com_getCond,
-                        "getRoot"    :  com_getRoot,
-                        "paste"      :  com_paste,
-                        "write"      :  com_write,
-                        "getb"       :  com_getb,
-                        "move"       :  com_move,
-                        "del"        :  com_del,
-                        "is"         :  com_is,
-                        "add"        :  com_add,
-                        "cut"        :  com_cut,
-                        "copy"       :  com_copy,
-                        "deepcopy"   :  com_deepcopy,
-                        "print"      :  com_print }
+    __dictProtocol  = { u"set"        :  com_set,
+                        u"get"        :  com_get,
+                        u"getCond"    :  com_getCond,
+                        u"getRoot"    :  com_getRoot,
+                        u"paste"      :  com_paste,
+                        u"write"      :  com_write,
+                        u"getb"       :  com_getb,
+                        u"move"       :  com_move,
+                        u"del"        :  com_del,
+                        u"is"         :  com_is,
+                        u"add"        :  com_add,
+                        u"cut"        :  com_cut,
+                        u"copy"       :  com_copy,
+                        u"deepcopy"   :  com_deepcopy,
+                        u"print"      :  com_print }
 
     def __init__(self, initObject=None, idCom = None,  instance = None):
 
@@ -63,7 +63,7 @@ class BCommand:
         self.__instance         = BCommand.__instanceGlobal
         self.__com              = None
         self.__listStr          = []
-        self.__destination      = ""
+        self.__destination      = u""
         
         # TODO: Some mechanism to prevent overflow
         if idCom == None:
@@ -114,11 +114,11 @@ class BCommand:
 
     def __repr__(self):
         if self.__constrIdCom == None:
-            retStr = "BCommand(initObject="+ repr(self.__constrInitObject)+",instance="\
-                            + repr(self.__instance)+",idCom="+ repr(self.__idxCountId) +")"
+            retStr = u"BCommand(initObject="+ repr(self.__constrInitObject)+u",instance="\
+                            + repr(self.__instance)+u",idCom="+ repr(self.__idxCountId) +u")"
         else:
-            retStr = "BCommand(initObject="+ repr(self.__constrInitObject)+",instance="\
-                            + repr(self.__instance)+",idCom="+ repr(self.__constrIdCom)+")" 
+            retStr = u"BCommand(initObject="+ repr(self.__constrInitObject)+u",instance="\
+                            + repr(self.__instance)+u",idCom="+ repr(self.__constrIdCom)+u")" 
         return retStr 
 
 if __name__ == "__main__":    

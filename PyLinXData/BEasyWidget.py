@@ -31,12 +31,12 @@ class EasyWidget(QtGui.QWidget):
         for valDict in init_list:
             
             keys        = valDict.keys()
-            Name        = valDict["Name"]
-            DisplayName = valDict["DisplayName"]
-            Value       = valDict["Value"]
-            ValueType   = valDict["ValueType"]
+            Name        = valDict[u"Name"]
+            DisplayName = valDict[u"DisplayName"]
+            Value       = valDict[u"Value"]
+            ValueType   = valDict[u"ValueType"]
             label = QtGui.QLabel(DisplayName)
-            if ValueType == "bool":
+            if ValueType == u"bool":
                 editElement = QtGui.QCheckBox()
                 if Value == True:
                     checkState = QtCore.Qt.Checked
@@ -55,9 +55,9 @@ class EasyWidget(QtGui.QWidget):
             
             self.__dictEditElements[Name] = editElement 
             
-            if "Unit" in keys:
-                Unit  = valDict["Unit"]
-                label = QtGui.QLabel("["+Unit+"]")
+            if u"Unit" in keys:
+                Unit  = valDict[u"Unit"]
+                label = QtGui.QLabel(u"["+Unit+u"]")
                 grid.addWidget(label, counter, 2)
             counter += 1
         
@@ -68,17 +68,17 @@ class EasyWidget(QtGui.QWidget):
         retDict = {}
         
         for valDict in self.__listInitData:
-            Name        = valDict["Name"]
-            ValueType   = valDict["ValueType"]
-            if ValueType == "bool":
+            Name        = valDict[u"Name"]
+            ValueType   = valDict[u"ValueType"]
+            if ValueType == u"bool":
                 value       = self.__dictEditElements[Name].checkState()
             else:
                 value       = self.__dictEditElements[Name].text()
-            ValueType   = valDict["ValueType"]
+            ValueType   = valDict[u"ValueType"]
             try:
-                if ValueType == "float":
+                if ValueType == u"float":
                     value = float(value)
-                elif ValueType == "bool":
+                elif ValueType == u"bool":
                     if value == QtCore.Qt.Checked:
                         value = True
                     elif value == QtCore.Qt.Unchecked:
@@ -91,16 +91,16 @@ class EasyWidget(QtGui.QWidget):
         return retDict
 
         
-if __name__ == "__main__":   
+if __name__ == u"__main__":   
     
     app = QtGui.QApplication(sys.argv)
     
-    init_list = [{ "Name": "constVal",        "DisplayName":  "Value",     "ValueType": "float", "Value":0},\
-                 { "Name": "stim_Frequency",  "DisplayName":  "Frequency", "ValueType": "float", "Unit": "Hz", "Value":0},\
-                 { "Name": "stim_Phase",      "DisplayName":  "Phase",     "ValueType": "float", "Value":0}]
-    init_list2 = [{ "Name": "constVal",       "DisplayName":  "Value",     "ValueType": "bool", "Value":True},\
-                 {  "Name": "stim_Frequency",  "DisplayName":  "Frequency", "ValueType": "bool", "Unit": "Hz", "Value":False},\
-                 {  "Name": "stim_Phase",      "DisplayName":  "Phase",     "ValueType": "bool", "Value":False}]
+    init_list = [{ u"Name": u"constVal",        u"DisplayName":  u"Value",     u"ValueType": u"float", u"Value":0},\
+                 { u"Name": u"stim_Frequency",  u"DisplayName":  u"Frequency", u"ValueType": u"float", u"Unit": u"Hz", u"Value":0},\
+                 { u"Name": u"stim_Phase",      u"DisplayName":  u"Phase",     u"ValueType": u"float", u"Value":0}]
+    init_list2 = [{ u"Name": u"constVal",       u"DisplayName":  u"Value",     u"ValueType": u"bool", u"Value":True},\
+                 {  u"Name": u"stim_Frequency",  u"DisplayName":  u"Frequency", u"ValueType": u"bool", u"Unit": u"Hz", u"Value":False},\
+                 {  u"Name": u"stim_Phase",      u"DisplayName":  u"Phase",     u"ValueType": u"bool", u"Value":False}]
     easyWidget = EasyWidget(init_list, False)
     easyWidget.show()
     app.exec_()

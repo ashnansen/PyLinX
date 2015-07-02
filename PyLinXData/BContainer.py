@@ -17,9 +17,6 @@ from PyQt4 import QtCore
 
 import PyLinXData
 
-
-#import PyLinXDataObjects
-
 ## Base class of the B object modell
 
 class BContainer(object):
@@ -27,7 +24,7 @@ class BContainer(object):
 
     ## Constructor
     
-    def __init__(self, name = "<no Name>", parent = None):
+    def __init__(self, name = u"<no Name>", parent = None):
 
         # Element for saving the main or global information ot the knot
         self.__Head = None
@@ -37,9 +34,9 @@ class BContainer(object):
         self.__parent = parent
 
         self.__Attributes                = {} 
-        self.__Attributes['Type']        = 0
-        self.__Attributes['Name']        = name
-        self.__Attributes['DisplayName'] = name
+        self.__Attributes[u"Type"]        = 0
+        self.__Attributes[u"Name"]        = name
+        self.__Attributes[u"DisplayName"] = name
 
        
     ## Method for deleting BContainers    
@@ -125,9 +122,9 @@ class BContainer(object):
                 if PyLinXData.PyLinXDataObjects.PX_IdObject in types:                    
                     key = obj.ID
                 else:
-                    key = obj.get("Name")
+                    key = obj.get(u"Name")
             else:
-                key = obj.get("Name")
+                key = obj.get(u"Name")
         else:
             if name == None:
                 # TODO: Error-Handling has to be implemented 
@@ -151,13 +148,43 @@ class BContainer(object):
             if(BContainer in types):
                 obj.__parent = self
 
+    
+    ## function to execite a function recursively on special typesy
+    
+    def recur(self, typeinfo, strFunction, tupleArgs, bSubTypes = False):
+        
+        
+        
+        if bSubTypes:
+            types = inspect.getmro(type(self))
+        else:
+            types = [type(self)]
+        bCallFunction = (typeinfo in types)
+
+        #print "typeinfo: ", typeinfo 
+        if bCallFunction:
+            if len(tupleArgs) > 0:
+                strExec = u"self." + strFunction + u"(" + u"*tupleArgs" + u")"
+            else:
+                strExec = u"self." + strFunction + u"()"
+            #print "-> RECUR typeInfo: ", typeinfo, "  strFunction: ", strFunction, "  tupleArgs: ", tupleArgs
+            #print "strExec: ", strExec
+            exec(strExec)
+                
+        for key in self.__Body:
+            element = self.__Body[key]
+            element.recur(typeinfo, strFunction, tupleArgs, bSubTypes)
+            
 
     ##  Method to add or set an attribute
     
     def set(self,  attr, setObj):
         
-
-        self.__Attributes[attr] = setObj
+        try:
+            self.__Attributes[attr] = setObj
+        except:
+            print "type(self): ",  type(self)
+            raise
    
 
 class BList(BContainer, list):

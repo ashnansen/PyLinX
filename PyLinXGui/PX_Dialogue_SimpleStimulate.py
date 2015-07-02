@@ -18,23 +18,23 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         
         layout = QtGui.QVBoxLayout(self)
         
-        StimulationFunction = variable.get("StimulationFunction")
+        StimulationFunction = variable.get(u"StimulationFunction")
         if StimulationFunction == None:
-            StimulationFunction = "Constant"
+            StimulationFunction = u"Constant"
        
         init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
         # Get Data 
         for dictVar in init_list:
-            value = variable.get(dictVar["Name"])
+            value = variable.get(dictVar[u"Name"])
             if value == None:
                 value = 0.0
-            dictVar["Value"] = str(value)
+            dictVar[u"Value"] = str(value)
         
         self.setLayout(layout)
         self.variable = variable
         self.drawWidget = drawWidget
         
-        self.listFunctions = ["Constant", "Sine", "Ramp", "Pulse", "Step", "Random"]
+        self.listFunctions = [u"Constant", u"Sine", u"Ramp", u"Pulse", u"Step", u"Random"]
         self.combo = QtGui.QComboBox(self)
         counter = 0
         index = 0
@@ -72,7 +72,7 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     
     def onActivated(self, text):
         text = str(text)
-        self.variable.set("StimulationFunction", text)
+        self.variable.set(u"StimulationFunction", text)
         init_list = PX_Templ.PX_DiagData.StimForm[text]
         formWidget_New = BEasyWidget.EasyWidget(init_list)
         self.formWidget.setParent(None)
