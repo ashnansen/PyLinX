@@ -6,13 +6,14 @@ Created on 12.03.2015
 import copy
 from PyQt4 import QtGui, QtCore
 from PyLinXData import * 
+from PyLinXGui import BEasyWidget
 
 
 import PX_Templates as PX_Templ
 
 class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     
-    def __init__(self, parent, variable, drawWidget):
+    def __init__(self, parent, variable, mainController, drawWidget):
         
         super(PX_Dialogue_SimpleStimulate, self).__init__(parent)
         
@@ -25,14 +26,17 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
         # Get Data 
         for dictVar in init_list:
-            value = variable.get(dictVar[u"Name"])
-            if value == None:
+            attr = dictVar[u"Name"]
+            if variable.isAttr(attr):
+                value = variable.get(attr)
+            else:
                 value = 0.0
-            dictVar[u"Value"] = str(value)
-        
+            dictVar[u"Value"] = unicode(value)
+                        
         self.setLayout(layout)
         self.variable = variable
         self.drawWidget = drawWidget
+        self.mainController = mainController
         
         self.listFunctions = [u"Constant", u"Sine", u"Ramp", u"Pulse", u"Step", u"Random"]
         self.combo = QtGui.QComboBox(self)
@@ -67,7 +71,11 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     def on_accept(self):
         self.result = True
         values = self.formWidget.getValues()
-        self.variable._BContainer__Attributes.update(values)
+        #self.variable._BContainer__Attributes.update(values)
+        #print "values", values
+        strValues = repr(values).replace(" ", "")
+        ustrExec = u"set " + self.variable.get(u"Name") + u". " + unicode(strValues)
+        self.mainController.execCommand(ustrExec)
         self.hide()
     
     def onActivated(self, text):
@@ -85,8 +93,8 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         self.repaint()
         
     @staticmethod
-    def getParams(parent, variable, drawWidget):
-        dialog = PX_Dialogue_SimpleStimulate(parent, variable, drawWidget)
+    def getParams(parent, variable, mainController, drawWidget):
+        dialog = PX_Dialogue_SimpleStimulate(parent, variable, mainController, drawWidget)
         result = dialog.exec_()
         drawWidget.repaint() 
         return dialog.result

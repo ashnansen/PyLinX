@@ -1555,68 +1555,223 @@ Example signals, qthread, eventloops
 # 
 # sys.exit(app.exec_())
 
-import time
-import Queue
-import threading
-from  PyQt4 import QtCore
+'''Queue'''
 
-class SimulationThread( QtCore.QThread ):
-    
-    def __init__(self, queue):
-        QtCore.QThread.__init__(self)
-        self.__runThreadMessageQueue = queue
-        
-    def __del__(self):
-        self.exit(0)
-        
-    def run(self):
+# import time
+# import Queue
+# import threading
+# from  PyQt4 import QtCore
+# 
+# class SimulationThread( QtCore.QThread ):
+#     
+#     def __init__(self, queue):
+#         QtCore.QThread.__init__(self)
+#         self.__runThreadMessageQueue = queue
+#         
+#     def __del__(self):
+#         self.exit(0)
+#         
+#     def run(self):
+# 
+#         i = 0
+#         while 1:
+#             
+#             print "i: ", i
+#             i += 1
+#             
+#             print "self.__runThreadMessageQueue: ", self.__runThreadMessageQueue
+#             
+#             if not self.__runThreadMessageQueue.empty():
+#                 try:
+#                     message = self.__runThreadMessageQueue.get()
+#                 except:
+#                     print "Except Queue!"
+#                     message = None
+#             else:
+#                 print "Queue not full!"
+#                 message = None
+#             
+#             print "message: ", message
+#                 
+#             if message != None:
+#                 #self.stopRun() 
+#                 self.__runThreadMessageQueue.task_done()
+#                 print "Thread stoped"
+#                 time.sleep(0.01)
+#                 return
+#                 
+# queue  = Queue.Queue()
+# print "queue: ", queue
+# thread = SimulationThread(queue)
+# thread.start()
+# time.sleep(0.01)
+# print "---------------------------------------------------------------------------> QUEUE FILLED!!!"
+# queue.put(-1)
+# queue.put(-2)
+# 
+# if not queue.empty():
+#     try:
+#         message = queue.get()
+#     except:
+#         print "Except Queue (2)!"
+#         message = None
+# else:
+#     print "Queue not full! (2)"
+#     message = None
+# 
+# print "message (2): ", message
+# 
+# time.sleep(0.02)
 
-        i = 0
-        while 1:
-            
-            print "i: ", i
-            i += 1
-            
-            print "self.__runThreadMessageQueue: ", self.__runThreadMessageQueue
-            
-            if not self.__runThreadMessageQueue.empty():
-                try:
-                    message = self.__runThreadMessageQueue.get()
-                except:
-                    print "Except Queue!"
-                    message = None
-            else:
-                print "Queue not full!"
-                message = None
-            
-            print "message: ", message
-                
-            if message != None:
-                #self.stopRun() 
-                self.__runThreadMessageQueue.task_done()
-                print "Thread stoped"
-                time.sleep(0.01)
-                return
-                
-queue  = Queue.Queue()
-print "queue: ", queue
-thread = SimulationThread(queue)
-thread.start()
-time.sleep(0.01)
-print "---------------------------------------------------------------------------> QUEUE FILLED!!!"
-queue.put(-1)
-queue.put(-2)
 
-if not queue.empty():
-    try:
-        message = queue.get()
-    except:
-        print "Except Queue (2)!"
-        message = None
-else:
-    print "Queue not full! (2)"
-    message = None
 
-print "message (2): ", message
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-time.sleep(0.02)
+#!/usr/bin/env python
+
+"""PyQt4 port of the painting/svgviewer example from Qt v4.x"""
+
+# This is only needed for Python v2 but is harmless for Python v3.
+# import sys
+# from PyQt4.QtCore import *
+# from PyQt4.QtGui import *
+# 
+# class ImageView(QGraphicsView):
+#     def __init__(self, parent=None, origPixmap=None):
+#         """
+#         QGraphicsView that will show an image scaled to the current widget size
+#         using events
+#         """
+#         super(ImageView, self).__init__(parent)
+#         self.origPixmap = origPixmap
+#         QMetaObject.connectSlotsByName(self)
+#         self.scale(1.2, 1.2)
+#     
+#     def resizeEvent(self, event):
+#         """
+#         Handle the resize event.
+#         """
+#         size = event.size()
+#         item =  self.items()[0]
+#         
+#         # using current pixmap after n-resizes would get really blurry image
+#         #pixmap = item.pixmap()
+#         pixmap = self.origPixmap
+#         
+#         pixmap = pixmap.scaled(size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+#         self.centerOn(1.0, 1.0)
+#         item.setPixmap(pixmap)
+# 
+# 
+# app = QApplication(sys.argv)
+# 
+# pic = QPixmap('zappa.png')
+# grview = ImageView(origPixmap=pic)
+# 
+# scene = QGraphicsScene()
+# scene.addPixmap(pic)
+# 
+# grview.setScene(scene)
+# grview.show()
+# 
+# sys.exit(app.exec_())
+
+'''Class functions'''
+
+# class Testclass2 (object):
+#     
+#     bHashedById = False
+#     listClasses = []
+# 
+#     def __init__(self):
+#         print type(self)
+#         
+#     @staticmethod
+#     def initialize():
+#         Testclass2.listClasses = [Testclass2, Testclass]
+# 
+# class Testclass(Testclass2):
+#     
+#     def __init__(self):
+#     
+#         super(Testclass, self).__init__()
+#         Testclass2.bHashedById = True
+# 
+# Testclass2.initialize()
+# 
+# obj1 = Testclass()
+# obj2 = Testclass2() 
+'''
+overwrite existing output
+'''
+# import sys
+# import time
+# for count in range(10) :
+#    sys.stdout.write("%s\r" % count)
+#    sys.stdout.flush()
+#    time.sleep(1)
+
+''' 
+Test programm for the mv function
+'''
+
+# from PyLinXData import *
+# 
+# objRoot = BContainer.BContainer("root")
+# obj1 = BContainer.BContainer("obj1")
+# objRoot.paste(obj1)
+# obj2 = BContainer.BContainer("obj2")
+# objRoot.paste(obj2)
+# obj3 = BContainer.BContainer("objToMove")
+# obj1.paste(obj3)
+# 
+# print "---objRoot---"
+# objRoot.ls()
+# print "---obj1---"
+# obj1.ls()
+# print "---obj2---"
+# obj2.ls()
+# 
+# objRoot.mv("/obj1/objToMove", "/obj2")
+# 
+# print "---objRoot---"
+# objRoot.ls()
+# print "---obj1---"
+# obj1.ls()
+# print "---obj2---"
+# obj2.ls()
+
+from PyLinXData.BContainer import BContainer
+
+con1 = BContainer("con1")
+con11 = BContainer("con11")
+con12 = BContainer("con12")
+con111 = BContainer("con111")
+
+con1.paste(con11)
+con11.paste(con111)
+con1.paste(con12)
+
+dictSet = {"attr1": 1, "@con11": {"attr2": "str2", "@con111":{"attr3":[1,2]}}}
+con1.set(None, dictSet)
+
+print "=============="
+con1.lsAttr()
+print "--------------"
+con11.lsAttr()
+print "--------------"
+con12.lsAttr()
+print "--------------"
+con111.lsAttr()
+print "=============="
+
+dictGet = {"attr1": None, "@con11": {"attr2": None, "@con111":{"attr3":None}}}
+
+print dictGet
+print con1.get(dictGet, bComplex=True)
+
+con111.ls()
+
+
+

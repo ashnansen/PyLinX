@@ -15,6 +15,8 @@ class DataViewerGui(QtGui.QDialog):
         
         global DataDictionary
         
+        self.setWindowIcon(QtGui.QIcon(r"pylinx_16.png"))
+        
         self.varDispObj = varDispObj
         self.listVars = list(self.varDispObj.get(u"setVars"))
          

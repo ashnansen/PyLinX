@@ -91,8 +91,8 @@ class EasyWidget(QtGui.QWidget):
         return retDict
 
         
-if __name__ == u"__main__":   
-    
+if __name__ == u"__main__":
+        
     app = QtGui.QApplication(sys.argv)
     
     init_list = [{ u"Name": u"constVal",        u"DisplayName":  u"Value",     u"ValueType": u"float", u"Value":0},\

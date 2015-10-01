@@ -11,8 +11,8 @@ class ToolSelected():
     newMinus            = 4
     newMultiplication   = 5
     newDivision         = 6
-    max                 =  newDivision   
-
+    max                 = newDivision
+    
 # determine if a point is inside a given polygon or not
 # Polygon is a list of (x,y) pairs. This function was taken from 
 # http://www.ariel.com.au/a/python-point-int-poly.html

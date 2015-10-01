@@ -16,9 +16,3 @@ for linenumbercount, filename in loclist:
     print "%05d lines in %s" % (linenumbercount, filename)
 
 print "\nTotal: %s lines (%s)" %(sum([x[0] for x in loclist]), cur_path)
-
-'''  
-Created on 05.04.2013
-
-@author: wplaum
-'''

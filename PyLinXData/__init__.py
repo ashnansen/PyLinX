@@ -1,1 +1,3 @@
-__all__ = ["BContainer", "PyLinX_DataObjectsInternal", "PyLinXDataObjects", "PyLinXHelper", "BEasyWidget"]
+__all__ = ["BContainer",\
+           "PyLinXDataObjects", \
+           "PyLinXHelper"]

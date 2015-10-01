@@ -1,34 +1,33 @@
 '''
 Created on 11.03.2015
 
-@author: wplaum
+@author: Waetzold Plaum
 '''
 import copy
 from PyQt4 import QtGui, QtCore
 
 from PyLinXData import * 
 import PX_Templates as PX_Templ
-1
+from PyLinXGui import BEasyWidget
+
 class PX_Dialogue_SelectDataViewer(QtGui.QDialog):
     
-    def __init__(self, parent, variable, rootContainer, drawWidget):
+    def __init__(self, parent, variable, mainController, drawWidget):
          
         super(PX_Dialogue_SelectDataViewer, self).__init__(parent)
         
-        self.rootContainer = rootContainer
+        self.mainController = mainController
         listSelectedDispObj = variable.get(u"listSelectedDispObj")
         layout = QtGui.QVBoxLayout(self)
-        listDataDispObj = rootContainer.get(u"listDataDispObj")
+        listDataDispObj = mainController.get(u"listDataDispObj")
         listSelectionDisp = list(set(listDataDispObj).intersection(set(listSelectedDispObj)))
         if len(listSelectionDisp ) > 0:
             listSelectionDisp.sort()
             
-        idxLastSelectedDataViewer = self.rootContainer.get(u"idxLastSelectedDataViewer")
-        print "idxLastSelectedDataViewer: ", idxLastSelectedDataViewer
+        idxLastSelectedDataViewer = self.mainController.get(u"idxLastSelectedDataViewer")
         
         init_list = []
         for item in listDataDispObj:
-            print "item: ", item
             dict_cache = {}
             dict_cache[u"Name"] = u"bDataViewer_" + str(item)
             dict_cache[u"DisplayName"] = u"data viewer " + str(item)
@@ -58,8 +57,6 @@ class PX_Dialogue_SelectDataViewer(QtGui.QDialog):
         self.setLayout(layout)
         self.drawWidget = drawWidget
         self.variable = variable
-        self.rootContainer = rootContainer
-        
         easyWidget          = BEasyWidget.EasyWidget(init_list, True)
         self.layout().addWidget(easyWidget)
         self.formWidget     = easyWidget
@@ -80,55 +77,31 @@ class PX_Dialogue_SelectDataViewer(QtGui.QDialog):
         
         self.result = True
         values = self.formWidget.getValues()
-        print u"values: ", values
         listSelectedDispObj_new = []
-        #idx = None
-        idx = self.rootContainer.get(u"idxLastSelectedDataViewer")
+        idx = self.mainController.get(u"idxLastSelectedDataViewer")
         listSelectedDispObj = self.variable.get(u"listSelectedDispObj")
         
-        #print u"values: ", values
         for key in values:
-            #print u"key: ", key
             if u"bDataViewer_" in key:
                 if values[key]:
                     listSelectedDispObj_new.append(int(key[12:]))
-        self.variable.set(u"listSelectedDispObj", listSelectedDispObj_new)
-        print u"listSelectedDispObj: ", listSelectedDispObj
         
-        #idx = -1
         if values[u"bNewDataViewer"]:
-            newVarDispObj = PyLinXDataObjects.PX_PlottableVarDispElement(50,50, self.rootContainer)
-            self.drawWidget.activeGraphics.paste(newVarDispObj, bHashById=True)
-            self.variable._BContainer__Attributes[u"bNewDataViewer"] = True
+            execStr = u"new dataViewer 50 50"
+            newVarDispObj = self.mainController.execCommand(execStr)
             idx = newVarDispObj.get(u"idxDataDispObj")
             listSelectedDispObj_new.append(idx)
-            self.variable.set(u"listSelectedDispObj", listSelectedDispObj_new)            
-            
-        else:
-            self.variable._BContainer__Attributes[u"bNewDataViewer"] = False
-            
-        
-        name = self.variable.get(u"Name")
-        rootGraphics = self.rootContainer.getb(u"rootGraphics")
-        #listSelectedDispObj
-        print u"labelAdd (1)  name: ", name, u"  listSelectedDispObj: ", listSelectedDispObj
-        #rootGraphics.recur(type(self), u"labelAdd", (name, listSelectedDispObj))
-        rootGraphics.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"labelAdd", (name, listSelectedDispObj_new))
-        
-        # delete the elements, that are in the old list but not in the new
-        list_del = list( set(listSelectedDispObj).difference(set(listSelectedDispObj_new)))
-        rootGraphics.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"labelRemove", (name, list_del))
-        
-        self.rootContainer.set(u"idxLastSelectedDataViewer", idx )
-        
+      
+        execStr = u"set ./" + self.variable.get("ustrHash") + u".listSelectedDispObj " +\
+                unicode(repr(listSelectedDispObj_new))
+        self.mainController.execCommand(execStr)
+        self.mainController.set(u"idxLastSelectedDataViewer", idx)
         self.hide()
         
     @staticmethod
-    def getParams(parent, variable, rootContainer,  drawWidget):
-        dialog = PX_Dialogue_SelectDataViewer(parent, variable, rootContainer,  drawWidget)
+    def getParams(parent, variable, mainController,  drawWidget):
+        dialog = PX_Dialogue_SelectDataViewer(parent, variable, mainController,  drawWidget)
         result = dialog.exec_()
         drawWidget.repaint() 
         return dialog.result
-        #return result                        
-        
         
