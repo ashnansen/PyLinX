@@ -102,12 +102,13 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
         for i in range(1, len(command)):
             command_i = command[i]
             command_i_0 = command_i[0]
-            if          command_i.isdigit()  \
-                    or (command_i_0 in (u"[", u"(", u"{")) \
+#             if          command_i.isdigit()  \
+#                     or (command_i_0 in (u"[", u"(", u"{")) \
+            if      (command_i_0 in (u"[", u"(", u"{")) \
                     or (command_i   in (u"True", u"False")): 
-                strExec += (u"command[" + str(i) + u"] = " + command[i] + u"\n")
+                strExec += (u"command[" + unicode(i) + u"] = " + command[i] + u"\n")
             else:
-                strExec += (u"command[" + str(i) + u"] = \"" + command[i] + u"\"\n")
+                strExec += (u"command[" + unicode(i) + u"] = \"" + command[i] + u"\"\n")
 
         exec(strExec)
         
@@ -181,6 +182,7 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
                 element.set(*tuple(command))
                 
     def __execCommand_select(self, command):
+        
         self.selection = [self.activeFolder.getb(key) for key in command]
         
         # reset ConnectorToModify if necessary
@@ -205,7 +207,7 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
             return (super(PyLinXMainController, self).get(u"ConnectorToModify"),\
                     super(PyLinXMainController, self).get(u"idxPointModified"))
         elif attr == u"Selection_listKeys":
-            return [ val.get("ustrHash") for val in self._selection ]
+            return [ val.get(u"Name") for val in self._selection ]
         elif attr[0] == u"@":
             if attr[1] == u".":
                 attr = attr[2:]
@@ -301,7 +303,7 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
                 return super(PyLinXMainController, self).set(attr,value, options)
         
         elif attr == u"ConnectModInfo":
-            super(PyLinXMainController, self).set(u"ConnectorToModify",self.mainController.activeFolder.getb(value[0]), options)
+            super(PyLinXMainController, self).set(u"ConnectorToModify",self.mainController.activeFolder.getb(unicode(value[0])), options)
             super(PyLinXMainController, self).set(u"idxPointModified",value[1], options)
             
         elif attr == u"Selection_listKeys":

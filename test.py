@@ -1742,36 +1742,36 @@ Test programm for the mv function
 # print "---obj2---"
 # obj2.ls()
 
-from PyLinXData.BContainer import BContainer
+# from PyLinXData.BContainer import BContainer
+# 
+# con1 = BContainer("con1")
+# con11 = BContainer("con11")
+# con12 = BContainer("con12")
+# con111 = BContainer("con111")
+# 
+# con1.paste(con11)
+# con11.paste(con111)
+# con1.paste(con12)
+# 
+# dictSet = {"attr1": 1, "@con11": {"attr2": "str2", "@con111":{"attr3":[1,2]}}}
+# con1.set(None, dictSet)
+# 
+# print "=============="
+# con1.lsAttr()
+# print "--------------"
+# con11.lsAttr()
+# print "--------------"
+# con12.lsAttr()
+# print "--------------"
+# con111.lsAttr()
+# print "=============="
+# 
+# dictGet = {"attr1": None, "@con11": {"attr2": None, "@con111":{"attr3":None}}}
+# 
+# print dictGet
+# print con1.get(dictGet, bComplex=True)
+# 
+# con111.ls()
 
-con1 = BContainer("con1")
-con11 = BContainer("con11")
-con12 = BContainer("con12")
-con111 = BContainer("con111")
 
-con1.paste(con11)
-con11.paste(con111)
-con1.paste(con12)
-
-dictSet = {"attr1": 1, "@con11": {"attr2": "str2", "@con111":{"attr3":[1,2]}}}
-con1.set(None, dictSet)
-
-print "=============="
-con1.lsAttr()
-print "--------------"
-con11.lsAttr()
-print "--------------"
-con12.lsAttr()
-print "--------------"
-con111.lsAttr()
-print "=============="
-
-dictGet = {"attr1": None, "@con11": {"attr2": None, "@con111":{"attr3":None}}}
-
-print dictGet
-print con1.get(dictGet, bComplex=True)
-
-con111.ls()
-
-
-
+print "Halo Hemander!"

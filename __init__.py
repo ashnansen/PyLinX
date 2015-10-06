@@ -45,6 +45,7 @@ class PyLinXMain(QtGui.QMainWindow):
 
         self.mainController = PyLinXMainController.PyLinXMainController(mainWindow = self )
         self.mainController.set(u"LogLevel",1)
+        self.mainController._BContainer__Attributes[u"bSimulationMode"] = False
         _rootGraphics = self.mainController.getb(u"rootGraphics")
         
         # ExampleData
@@ -53,9 +54,19 @@ class PyLinXMain(QtGui.QMainWindow):
         testvar2 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id4", 150,140, 15)
         testvar3 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id3", 400,100, 15)
         plusOperator = PyLinXDataObjects.PX_PlottableBasicOperator(_rootGraphics , u"+",  300,100 )
-        PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar.ID,plusOperator.ID,   idxInPin=1)
-        PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar2.ID,plusOperator.ID,  idxInPin=0)
-        PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, plusOperator.ID,testvar3.ID,  idxInPin=0)
+        con  = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar.ID,plusOperator.ID,   idxInPin=1)
+        con2 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar2.ID,plusOperator.ID,  idxInPin=0)
+        con3 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, plusOperator.ID,testvar3.ID,  idxInPin=0)
+#         print con.ID
+#         print con2.ID
+#         print con3.ID
+#         
+#         _rootGraphics.ls()
+#         con.lsAttr()
+#         con2.lsAttr()
+#         con3.lsAttr()
+        
+        
                 
         self.mainController.set(u"bConnectorPloting", False)     
 

@@ -104,6 +104,7 @@ class BContainer(object):
             print "name: ", name
             print "type(name): ", type(name)
             print "body: ", self.__Body
+            self.ls()
             raise Exception(u"Error BContainer.getb: Element \"" + name +"\" in " + unicode(type(self)) + u" does not exist.")
     
     def getbCond(self, attrib, value, returnAttribute = None):
@@ -194,6 +195,7 @@ class BContainer(object):
         for attr in self.__Attributes:
             listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )
         for attr in self.__AttributesVirtual:
+            print "attr: ", attr
             listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
         if len(listLsAttr) > 0:
             self.__printLsList(sorted(listLsAttr))
@@ -230,7 +232,7 @@ class BContainer(object):
 
     # moves an element
     
-    def mv(self, path0, path1, bHashById = False):
+    def mv(self, path0, path1):
                
         if type(path0) in (str, unicode):
             objSource       = self.getObjFromPath(path0)
@@ -242,7 +244,7 @@ class BContainer(object):
             parentTarget    = self.getObjFromPath(path1)
         else:
             parentTarget = path1
-        parentTarget.paste(objSource, bHashById = bHashById )
+        parentTarget.paste(objSource)
 
     def getObjFromPath(self,path):
         
@@ -280,15 +282,15 @@ class BContainer(object):
                     path = path[0]
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
                 # so far a quick and dirty workaround
-                if path.isdigit():
-                    path = int(path)
+                #if path.isdigit():
+                #    path = int(path)
                 obj = self.getb(path)
                 return obj
             else:
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
                 # so far a quick and dirty workaround
-                if path[0].isdigit():
-                    path[0] = int(path[0])
+                #if path[0].isdigit():
+                #    path[0] = int(path[0])
                 obj = self.getb(path[0])
                 return obj.getObjFromPath(path[1:]) 
     
@@ -300,35 +302,25 @@ class BContainer(object):
 
     ## This method pastes an object into another one.
                 
-    def paste(self, obj, name = None, bForceOverwrite = False, pathkey = None, bHashById = False):
+    def paste(self, obj, name = None, bForceOverwrite = False, pathkey = None):
+        
         
         types = inspect.getmro(type(obj))
-        if BContainer in types:
-            if bHashById == True:
-                 
-                if PyLinXData.PyLinXDataObjects.PX_IdObject in types:                    
-                    key = obj.ID
-                else:
-                    key = obj.get(u"Name")
-            else:
-                key = obj.get(u"Name")
+        if BContainer in types: 
+            key = obj.get(u"Name")
         else:
-            if name == None:
-                # TODO: Error-Handling has to be implemented 
-                print "Error BContainer.py: No key for paste-function!"
-                return
-            
+            if name == None: 
+                raise Exception(u"Error BContainer.py: No key for paste-function!")
+            else:
+                key = name
+        
         if key in self.__Body.keys():
             if bForceOverwrite:
                 self.__Body[key] = obj
                 obj.__parent = self                
             else:
-                '''
-                If an object with corresponding Name exists, then an error message should be returned
-                TODO: Has to be impemented
-                '''
-                pass
-        
+                print "key (2)", key
+                raise Exception(u"Key already in use. Set bForceOverwrite=True to enforce overwriting!")        
         else:
             self.__Body[key] = obj
             types = inspect.getmro(type(obj))

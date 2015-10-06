@@ -92,7 +92,7 @@ class PX_Dialogue_SelectDataViewer(QtGui.QDialog):
             idx = newVarDispObj.get(u"idxDataDispObj")
             listSelectedDispObj_new.append(idx)
       
-        execStr = u"set ./" + self.variable.get("ustrHash") + u".listSelectedDispObj " +\
+        execStr = u"set ./" + self.variable.get(u"Name") + u".listSelectedDispObj " +\
                 unicode(repr(listSelectedDispObj_new))
         self.mainController.execCommand(execStr)
         self.mainController.set(u"idxLastSelectedDataViewer", idx)

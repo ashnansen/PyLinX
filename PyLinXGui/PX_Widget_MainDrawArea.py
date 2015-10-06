@@ -127,7 +127,7 @@ class DrawWidget (QtGui.QWidget):
                             setDel.add(unicode(element.ID))
                     # deleting all objects in focus
                     if (element in objectsInFocus):
-                        setDel.add(element.get(u"ustrHash"))
+                        setDel.add(element.get(u"Name"))
             # writing the command
             command = u"del"
             for delItem in setDel:
@@ -169,7 +169,7 @@ class DrawWidget (QtGui.QWidget):
                     PyLinXDataObjects.PX_LatentPlottable_HighlightRect(self.latentGraphics,coord.x(), coord.y())
                 else:
                     if set(objInFocus) != set(self.mainController.selection):                
-                        usttObj = [obj.get("ustrHash") for obj in objInFocus]
+                        usttObj = [obj.get("Name") for obj in objInFocus]
                         self.mainController.execCommand(u"select " + u" ".join(usttObj)) 
                 
 
@@ -227,9 +227,9 @@ class DrawWidget (QtGui.QWidget):
                     #print "setIdxConnectedInPins: ", setIdxConnectedInPins 
                     if not (idxPin in setIdxConnectedInPins):
                         ConnectorPloting = self.mainController.get(u"ConnectorPloting")
-                        connectorName = ConnectorPloting.get(u"ustrHash")
-                        #ustrCommand = u"set ./" + connectorName + ".connectInfo (\"" + objInFocus.get(u"ustrHash") + u"\"," + unicode(idxPin) + u")"
-                        ustrCommand = u"set @latent/" + connectorName + ".connectInfo (\"" + objInFocus.get(u"ustrHash") + u"\"," + unicode(idxPin) + u")"
+                        connectorName = ConnectorPloting.get(u"Name")
+                        #ustrCommand = u"set ./" + connectorName + ".connectInfo (\"" + objInFocus.get(u"Name") + u"\"," + unicode(idxPin) + u")"
+                        ustrCommand = u"set @latent/" + connectorName + ".connectInfo (\"" + objInFocus.get(u"Name") + u"\"," + unicode(idxPin) + u")"
                         self.mainController.execCommand(ustrCommand)
                                                
             # connecting has not been started yet
@@ -352,7 +352,7 @@ class DrawWidget (QtGui.QWidget):
                             value = value + yOffset
                         listPoints[idxPointModified] = 10 * round( 0.1 * float(value))
                         if sum([abs(x-y) for x,y in zip(listPoints, listPointsOld)]) != 0:
-                            ustrCommand = "set ./" + ConnectorToModify.get(u"ustrHash") + ".listPoints " + repr(listPoints).replace(" ", "")
+                            ustrCommand = "set ./" + ConnectorToModify.get(u"Name") + ".listPoints " + repr(listPoints).replace(" ", "")
                             self.mainController.execCommand(ustrCommand)   
                     
                     self.mainController.set(u"px_mousePressedAt_X", X)

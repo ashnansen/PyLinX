@@ -175,7 +175,6 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         keys = self.__syntaxTree.getChildKeys()
         for key in keys:
-            #print "key: ", key
             child = self.__syntaxTree.getb(key)
             child.getCode(self.__Code)
           

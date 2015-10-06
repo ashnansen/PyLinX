@@ -25,16 +25,17 @@ import PyLinXGui
 
 class PX_Object(BContainer.BContainer):
     
-    listHashedById = []
+    #listHashedById = []
         
     def __init__(self, parent, name, mainController = None,  *args):
         
         super(PX_Object, self).__init__( name, *args)
         if parent != None:
-            if type(self) in PX_Object.listHashedById:
-                parent.paste(self, bHashById=True)
-            else:
-                parent.paste(self, bHashById=False)
+#             if type(self) in PX_Object.listHashedById:
+#                 parent.paste(self, bHashById=True)
+#             else:
+#                 parent.paste(self, bHashById=False)
+            parent.paste(self)
             self.mainController = parent.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
         else:
             types = inspect.getmro(type(self))
@@ -42,14 +43,14 @@ class PX_Object(BContainer.BContainer):
                 self.mainController = self
             else:
                 raise Exception("Error PX_Object.__init__: constructor called without parent")
-        self._BContainer__AttributesVirtual.extend([u"bHashById", u"ustrHash", u"keyHash"])
+#        self._BContainer__AttributesVirtual.extend([u"ustrHash", u"keyHash"])
     
-    # Method thhat initializes the class, executed once after all classes are defined
-    @staticmethod
-    def initialize():
-        
-        PX_Object.listHashedById = [PX_PlottableConnector,\
-                                    PX_PlottableVarDispElement]
+#     # Method thhat initializes the class, executed once after all classes are defined
+#     @staticmethod
+#     def initialize():
+#         
+#         PX_Object.listHashedById = [PX_PlottableConnector,\
+#                                     PX_PlottableVarDispElement]
     
         
     def delete(self, key):
@@ -75,20 +76,20 @@ class PX_Object(BContainer.BContainer):
         return _id
     
     def get(self, attr):
-        if attr == u"bHashById":
-            return (type(self) in PX_Object.listHashedById)
-        if attr == u"ustrHash":
-            if (type(self) in PX_Object.listHashedById):
-                return unicode(self.get(u"ID"))
-            else:
-                return self.get(u"Name")
-        if attr == u"keyHash":
-            if (type(self) in PX_Object.listHashedById):
-                return self.get(u"ID")
-            else:
-                return self.get(u"Name")            
-        else:
-            return super(PX_Object, self).get(attr)
+#         if attr == u"bHashById":
+#             return (type(self) in PX_Object.listHashedById)
+# #         if attr == u"ustrHash":
+# #             if (type(self) in PX_Object.listHashedById):
+# #                 return unicode(self.get(u"ID"))
+# #             else:
+# #                 return self.get(u"Name")
+# #         if attr == u"keyHash":
+# #             if (type(self) in PX_Object.listHashedById):
+# #                 return self.get(u"ID")
+# #             else:
+# #                 return self.get(u"Name")            
+#         else:
+        return super(PX_Object, self).get(attr)
     
     
     def set(self, attr, val, options = None):
@@ -105,6 +106,8 @@ class PX_IdObject(PX_Object):
     def __init__(self,parent, name,  *args):
         
         self._ID = PX_IdObject.__ID
+        if name == None:
+            name = unicode(self._ID)
         super(PX_IdObject, self).__init__(parent, name)
         
         
@@ -303,7 +306,7 @@ class PX_PlottableIdObject(PX_PlottableObject, PX_IdObject):
         if type(argsDelete) == list:    
             # removing the deleted connectors from the list of connected pins of the connected elements
             for _id in argsDelete:
-                element = self.getb(_id)
+                element = self.getb(unicode(_id))
                 types = inspect.getmro(type(element))
                 if PX_PlottableConnector in types:
                     idxInPin = element.idxInPin
@@ -326,11 +329,11 @@ class PX_PlottableIdObject(PX_PlottableObject, PX_IdObject):
             bDictionary = (DataDictionary != None)
             for element in argsDelete:
                 elementObject = self.getb(element)
-                keyHash = elementObject.get(u"keyHash")
+                Name = elementObject.get(u"Name")
                 if bDictionary:
-                    if keyHash in DataDictionary:
-                        DataDictionary.pop(keyHash)
-                super(PX_PlottableIdObject, self).delete(keyHash)
+                    if Name in DataDictionary:
+                        DataDictionary.pop(Name)
+                super(PX_PlottableIdObject, self).delete(Name)
 
 class PX_PlottableGraphicsContainer(PX_PlottableIdObject):
     
@@ -653,7 +656,6 @@ class PX_PlottableProxyElement(PX_PlottableElement):
         super(PX_PlottableProxyElement, self).__init__(parent, u"PX_PlottableProxyElement", X, Y, None)
         self.listInPins = [(0,0,0,0)]
         self.rootGraphics = self.mainController.getb(u"rootGraphics")
-        parent.paste(self)
     
     def isInFocus(self, X, Y):
         return []
@@ -1012,11 +1014,13 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
         listDataDispObj = mainController.get(u"listDataDispObj")
         
         idx = __getIdxDataDispObj(listDataDispObj)
-        super(PX_PlottableVarDispElement, self).__init__(parent, "DataDispObj" + u"_" + str(idx), float(X), float(Y))
+        #super(PX_PlottableVarDispElement, self).__init__(parent, u"DataDispObj" + u"_" + unicode(idx), float(X), float(Y))
+        super(PX_PlottableVarDispElement, self).__init__(parent, None, float(X), float(Y))
         self.set(u"setVars", set([]))
         self.set(u"idxDataDispObj", idx)
         self.set(u"bOnlyVisibleInSimMode", True)
         self.set(u"bExitMethod", True)
+        #self.set(u"Name", unicode(self.ID))
                             
         self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(self,self.get(u"idxDataDispObj"))
         self.__widgetGeometry = self.__widget.geometry() 
@@ -1302,10 +1306,10 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         super(PX_PlottableConnector, self).__init__(parent, mainController)
         
         
+        elem0_ID = int(elem0_ID)
         self.set(u"idxOutPinConnectorPloting", idxOutPinConnectorPloting)
         self.set(u"ID_0", elem0_ID)
 
-        #self._elem0 = parent.call(u"ID", elem0_ID)
         self._elem0 = self.mainController.activeFolder.call(u"ID", elem0_ID)
         self.set(u"bVisible", True)
         self._idxOutPin = idxOutPin
@@ -1690,7 +1694,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
             idxOutPinConnectorPloting = self.get(u"idxOutPinConnectorPloting")
             setIdxConnectedOutPins.add(idxOutPinConnectorPloting)
             self.elem0.set(u"setIdxConnectedOutPins", setIdxConnectedOutPins)
-            self.mv(u"/latentGraphics/"+self.get("ustrHash")+u"/", self.mainController.activeFolder, bHashById = True)
+            self.mv(u"/latentGraphics/"+self.get(u"Name")+u"/", self.mainController.activeFolder)
             self.set(u"idxOutPinConnectorPloting", None, options)       
             self.mainController.set(u"bConnectorPloting", False, options)
             
@@ -1777,4 +1781,4 @@ class PX_LatentPlottable_HighlightRect(PX_PlottableObject):
 
 # Initializint the class PX_Object. This cannot be done in the corresponding constrtuctor, since the  
 
-PX_Object.initialize()
+# PX_Object.initialize()
