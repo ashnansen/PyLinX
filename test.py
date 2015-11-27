@@ -1632,11 +1632,11 @@ Example signals, qthread, eventloops
 
 """PyQt4 port of the painting/svgviewer example from Qt v4.x"""
 
-# This is only needed for Python v2 but is harmless for Python v3.
+# #This is only needed for Python v2 but is harmless for Python v3.
 # import sys
 # from PyQt4.QtCore import *
 # from PyQt4.QtGui import *
-# 
+#   
 # class ImageView(QGraphicsView):
 #     def __init__(self, parent=None, origPixmap=None):
 #         """
@@ -1647,34 +1647,34 @@ Example signals, qthread, eventloops
 #         self.origPixmap = origPixmap
 #         QMetaObject.connectSlotsByName(self)
 #         self.scale(1.2, 1.2)
-#     
+#       
 #     def resizeEvent(self, event):
 #         """
 #         Handle the resize event.
 #         """
 #         size = event.size()
 #         item =  self.items()[0]
-#         
+#           
 #         # using current pixmap after n-resizes would get really blurry image
 #         #pixmap = item.pixmap()
 #         pixmap = self.origPixmap
-#         
+#           
 #         pixmap = pixmap.scaled(size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 #         self.centerOn(1.0, 1.0)
 #         item.setPixmap(pixmap)
-# 
-# 
+#   
+#   
 # app = QApplication(sys.argv)
-# 
+#   
 # pic = QPixmap('zappa.png')
 # grview = ImageView(origPixmap=pic)
-# 
+#   
 # scene = QGraphicsScene()
 # scene.addPixmap(pic)
-# 
+#   
 # grview.setScene(scene)
 # grview.show()
-# 
+#   
 # sys.exit(app.exec_())
 
 '''Class functions'''
@@ -1773,5 +1773,147 @@ Test programm for the mv function
 # 
 # con111.ls()
 
+'''Mausrad in PyQt'''
+# from PyQt4.QtCore import *
+# from PyQt4.QtGui import *
+# import sys
+# 
+# #############Define MyWindow Class Here ############
+# class MyWindow(QMainWindow):
+# ##-----------------------------------------
+#   def __init__(self):
+#     QMainWindow.__init__(self)
+#     self.label = QLabel("No data")
+#     self.label.setGeometry(100, 200, 100, 100)
+#     self.setCentralWidget(self.label)
+#     self.setWindowTitle("QMainWindow WheelEvent")
+#     self.x = 0
+# ##-----------------------------------------
+#   def wheelEvent(self,event):
+#     self.x =self.x + event.delta()/120
+#     print self.x
+#     self.label.setText("Total Steps: "+QString.number(self.x))
+# ##-----------------------------------------
+# ##########End of Class Definition ##################
+# 
+# 
+# def main():
+#   app = QApplication(sys.argv)
+#   window = MyWindow()
+#   window.show()
+#   return app.exec_()
+# 
+# if __name__ == '__main__':
+#  main()
+#! /usr/bin/env python
 
-print "Halo Hemander!"
+# Create a Qt application
+# from PyQt4 import QtCore, QtGui
+# 
+# 
+# app = QtGui.QApplication(sys.argv)
+#  
+# # Our main window will be a QListView
+# list = QtGui.QListView()
+# list.setWindowTitle('Honey-Do List')
+# list.setMinimumSize(600, 400)
+#  
+# # Create an empty model for the list's data
+# model = QtGui.QStandardItemModel(list)
+#  
+# # Add some textual items
+# foods = [
+#     'Cookie dough', # Must be store-bought
+#     'Hummus', # Must be homemade
+#     'Spaghetti', # Must be saucy
+#     'Dal makhani', # Must be spicy
+#     'Chocolate whipped cream' # Must be plentiful
+# ]
+#  
+# for food in foods:
+#     # Create an item with a caption
+#     item = QtGui.QStandardItem(food)
+#  
+#     # Add a checkbox to it
+#     item.setCheckable(True)
+#  
+#     # Add the item to the model
+#     model.appendRow(item)
+#  
+# def on_item_changed(item):
+#     print "on_item_changed"
+#     # If the changed item is not checked, don't bother checking others
+#     if not item.checkState():
+#         return
+#  
+#     # Loop through the items until you get None, which
+#     # means you've passed the end of the list
+#     i = 0
+#     while model.item(i):
+#         if not model.item(i).checkState():
+#             return
+#         i += 1
+#  
+#     app.quit()
+#  
+# model.itemChanged.connect(on_item_changed)
+#  
+# # Apply the model to the list view
+# list.setModel(model)
+#  
+# # Show the window and run the app
+# list.show()
+# app.exec_()
+
+#!/usr/bin/env python
+
+#!/usr/bin/env python
+
+############################################################################
+##
+## Copyright (C) 2005-2005 Trolltech AS. All rights reserved.
+##
+## This file is part of the example classes of the Qt Toolkit.
+##
+## This file may be used under the terms of the GNU General Public
+## License version 2.0 as published by the Free Software Foundation
+## and appearing in the file LICENSE.GPL included in the packaging of
+## this file.  Please review the following information to ensure GNU
+## General Public Licensing requirements will be met:
+## http://www.trolltech.com/products/qt/opensource.html
+##
+## If you are unsure which license is appropriate for your use, please
+## review the following information:
+## http://www.trolltech.com/products/qt/licensing.html or contact the
+## sales department at sales@trolltech.com.
+##
+## This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+## WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+##
+############################################################################
+
+from PyQt4 import QtCore
+class ColorFactory(object):
+    
+    def __init__(self):
+        super(ColorFactory, self).__init__()
+        self.listColor = [QtCore.Qt.red, \
+                          QtCore.Qt.green, \
+                          QtCore.Qt.lightGray,\
+                          QtCore.Qt.cyan, \
+                          QtCore.Qt.magenta, \
+                          QtCore.Qt.yellow]
+        
+        #self.listColorCount = [0,0,0,0,0,0]
+        self.idxColor = 0
+        
+        
+    def getColor(self):
+        idx = self.idxColor
+        self.idxColor = (self.idxColor + 1) % len(self.listColor)
+        return self.listColor[idx] 
+    
+fac = ColorFactory()
+for i in range(24):
+    print fac.getColor()
+    

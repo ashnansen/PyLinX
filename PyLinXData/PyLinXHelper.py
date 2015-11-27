@@ -7,10 +7,9 @@ class ToolSelected():
     none                = 0
     newVarElement       = 1
     newPlus             = 2
-    newVarDispObj       = 3
-    newMinus            = 4
-    newMultiplication   = 5
-    newDivision         = 6
+    newMinus            = 3
+    newMultiplication   = 4
+    newDivision         = 5
     max                 = newDivision
     
 # determine if a point is inside a given polygon or not

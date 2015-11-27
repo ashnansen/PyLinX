@@ -259,7 +259,14 @@ class DrawWidget (QtGui.QWidget):
             ustrCommand = u"new basicOperator " +  ustrOperator + " " + unicode(X) + " " + unicode(Y) 
             self.mainController.execCommand(ustrCommand)
             self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
-            self.mainWindow.ui.actionNewElement.setChecked(False)
+            if ustrOperator == u"+":
+                self.mainWindow.ui.actionNewPlus.setChecked(False)
+            elif ustrOperator == u"-":
+                self.mainWindow.ui.actionNewMinus.setChecked(False)                
+            elif ustrOperator == u"*":
+                self.mainWindow.ui.actionNewMultiplication.setChecked(False)                
+            elif ustrOperator == u"/":
+                self.mainWindow.ui.actionNewDivision.setChecked(False)                        
             
         def mousePressEvent_tool_newVarDispObj():
             ustrCommand = u"new varDispElement "+ unicode(X) + " " + unicode(Y)
@@ -305,11 +312,6 @@ class DrawWidget (QtGui.QWidget):
 
             elif toolSelected == helper.ToolSelected.newDivision:
                 mousePressEvent_tool_newBasicOperator("/")
-
-        else:
-            
-            if toolSelected == helper.ToolSelected.newVarDispObj:
-                mousePressEvent_tool_newVarDispObj()
             
         self.repaint()
                    
@@ -426,7 +428,7 @@ class DrawWidget (QtGui.QWidget):
                         break
             
             if bFocusStimulate:
-                PX_Dialogue_SimpleStimulate.PX_Dialogue_SimpleStimulate.getParams(self, element, self)
+                PX_Dialogue_SimpleStimulate.PX_Dialogue_SimpleStimulate.getParams(self, element, self.mainController,self)
                 return 
             if bFocusMeasure:
                 PX_Dialogue_SelectDataViewer.PX_Dialogue_SelectDataViewer.getParams(self,element,self.mainController,self)

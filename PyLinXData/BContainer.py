@@ -174,6 +174,11 @@ class BContainer(object):
     def getChildKeys(self):
         return self.__Body.keys()
     
+    ## Method for getting all childs 
+    
+    def getChilds(self):
+        return [self.__Body[key] for key in self.__Body]
+    
     ## gets key of an objekt in Body
     def key(self, obj):
         for key in self.__Body:

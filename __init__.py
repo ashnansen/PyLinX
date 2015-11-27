@@ -35,7 +35,7 @@ class PyLinXMain(QtGui.QMainWindow):
         
         uiString = u".//Recources//Ui//PyLinX_v0_3.ui"
         self.ui = uic.loadUi(uiString)
-        self.ui.setWindowIcon(QtGui.QIcon(r"pylinx_16.png"))
+        self.ui.setWindowIcon(QtGui.QIcon(r"icons/pylinx_16.png"))
         self.ui.setWindowTitle('PyLinX')
         self.runThreadMessageQueue = Queue.Queue()
         QtGui.QApplication.setStyle( QtGui.QStyleFactory.create('cleanlooks') )
@@ -57,16 +57,6 @@ class PyLinXMain(QtGui.QMainWindow):
         con  = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar.ID,plusOperator.ID,   idxInPin=1)
         con2 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar2.ID,plusOperator.ID,  idxInPin=0)
         con3 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, plusOperator.ID,testvar3.ID,  idxInPin=0)
-#         print con.ID
-#         print con2.ID
-#         print con3.ID
-#         
-#         _rootGraphics.ls()
-#         con.lsAttr()
-#         con2.lsAttr()
-#         con3.lsAttr()
-        
-        
                 
         self.mainController.set(u"bConnectorPloting", False)     
 
@@ -105,34 +95,29 @@ class PyLinXMain(QtGui.QMainWindow):
         
         self.mainController.set(u"bSimulationMode", False)
         
-        #drawWidget.setBaseSize(1500,480)
         horizongalLayout2.addWidget(drawWidget)
         scrollingArea.setLayout(horizongalLayout2)
         horizongalLayout2.setSizeConstraint(1)
-        #scrollingArea.setLineWidth(6)
         scrollingArea.setContentsMargins(-30,-30,-30,-30)
-        #scrollingArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        #scrollingArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         scrollingArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         scrollingArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
 
         
         # Has effect
-        #scrollingArea.setFixedWidth(1000)
         scrollingArea.setMinimumWidth(500)
+        
+        scrollingArea.setWidget(drawWidget)
+        
+        
         self.ui.horizontalLayout.addWidget(scrollingArea)
         scrollingArea.setWidgetResizable(True)
         scrollingArea.setAutoFillBackground(False)
-        #scrollingArea.setViewportMargins(0,0,0,0)
         self.ui.splitter.setStretchFactor(1,1)
 
         ## new UI
         if uiString == u"PyLinX_v0_4.ui":
             self.ui.tabWidget.setTabText(0,u"Elements")
             self.ui.tabWidget.setTabText(1,u"Libraries")
-        
-        #self.scene.addWidget(self.drawWidget)
-        #self.ui.graphicsView.setScene(self.scene)
 
         self.ui.show()
         
@@ -156,19 +141,16 @@ class PyLinXMain(QtGui.QMainWindow):
         
         self.ui.actionNewElement.triggered.connect(self.on_actionNewElement)
         self.ui.actionNewElement.setCheckable(True)
-        self.ui.actionOsci.setCheckable(True)
         self.ui.actionNewPlus.triggered.connect(self.on_actionNewPlus)
         self.ui.actionNewMinus.triggered.connect(self.on_actionNewMinus)
         self.ui.actionNewMultiplication.triggered.connect(self.on_actionNewMultiplication)
         self.ui.actionNewDivision.triggered.connect(self.on_actionNewDivision)
         
-        self.ui.actionOsci.triggered.connect(self.on_actionOsci)
         self.ui.actionNewPlus.setCheckable(True)
         self.ui.actionNewMinus.setCheckable(True)
         self.ui.actionNewMultiplication.setCheckable(True)
         self.ui.actionNewDivision.setCheckable(True)
         self.ui.actionRun.setEnabled(False)
-        self.ui.actionOsci.setEnabled(False)
         self.ui.actionActivate_Simulation_Mode.triggered.connect(self.on_Activate_Simulation_Mode)
         self.ui.actionRun.triggered.connect(self.on_run)
         self.ui.actionStop.triggered.connect(self.on_stop)

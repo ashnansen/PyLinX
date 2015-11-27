@@ -1109,9 +1109,6 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
                         self.y + 0.62 *   self.elementHeigth                 \
                         , strIdx)
         
-    def sync(self):
-        self.__widget.update()
-    
     def set(self, attr, value, options = None):
         
         if attr == u"bVarDispVisible":
@@ -1129,6 +1126,12 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
                         self.__widget.hide()
 
         return super(PX_PlottableVarDispElement, self).set(attr, value, options)
+
+    def stop_run(self):
+        self.__widget.stop_run()
+
+    def sync(self):
+        self.__widget.updateValues()
 
     def widgetShow(self):
         bVarDispVisible = self.get(u"bVarDispVisible")

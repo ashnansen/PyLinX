@@ -84,6 +84,7 @@
    <addaction name="actionNewDivision"/>
    <addaction name="separator"/>
    <addaction name="actionActivate_Simulation_Mode"/>
+   <addaction name="actionOsci"/>
    <addaction name="actionRun"/>
    <addaction name="actionStop"/>
   </widget>
@@ -110,7 +111,7 @@
   <action name="actionNewConnector">
    <property name="icon">
     <iconset>
-     <normaloff>../../../icons/conector32.png</normaloff>../../../icons/conector32.png</iconset>
+     <normaloff>../../../../icons/conector32.png</normaloff>../../../../icons/conector32.png</iconset>
    </property>
    <property name="text">
     <string>neuer Konnector</string>
@@ -215,6 +216,21 @@
    </property>
    <property name="text">
     <string>Stimulate</string>
+   </property>
+  </action>
+  <action name="actionOsci">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../Icons/oszi24.png</normaloff>../Icons/oszi24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Oscilloscope</string>
+   </property>
+   <property name="toolTip">
+    <string>Oscilloscope</string>
    </property>
   </action>
   <action name="actionStop">

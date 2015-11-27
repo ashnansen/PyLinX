@@ -30,12 +30,11 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
         PyLinXData.PyLinXDataObjects.PX_Object.mainController = self
         
         self.__mainWindow  = mainWindow
-        #self._activeFolder = rootGraphics
         self._activeFolder = PyLinXDataObjects.PX_PlottableGraphicsContainer(self, u"rootGraphics")
         self._latentGraphics = PyLinXDataObjects.PX_PlottableLatentGraphicsContainer(self, name="latentGraphics")
         self.set(u"LogLevel", 0)
         self.__listActions = [None, mainWindow.ui.actionNewElement, mainWindow.ui.actionNewPlus,\
-                              mainWindow.ui.actionOsci, mainWindow.ui.actionNewMinus, \
+                              mainWindow.ui.actionNewMinus, \
                               mainWindow.ui.actionNewMultiplication, mainWindow.ui.actionNewDivision]
         self.set(u"listDataDispObj", [])
         
@@ -263,7 +262,7 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
                 pal.setColor(QtGui.QPalette.Background,PX_Templ.color.backgroundSim)
                 self.__mainWindow.drawWidget.setPalette(pal)                
                 self.__mainWindow.ui.actionRun.setEnabled(True)
-                self.__mainWindow.ui.actionOsci.setEnabled(True)
+                #self.__mainWindow.ui.actionOsci.setEnabled(True)
                 self.__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(True)
                 self.__mainWindow.ui.actionNewElement.setEnabled(False)
                 self.__mainWindow.ui.actionNewPlus.setEnabled(False)
@@ -280,7 +279,7 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
                 pal.setColor(QtGui.QPalette.Background,PX_Templ.color.background)
                 self.__mainWindow.drawWidget.setPalette(pal)
                 self.__mainWindow.ui.actionRun.setEnabled(False)
-                self.__mainWindow.ui.actionOsci.setEnabled(False)
+                #self.__mainWindow.ui.actionOsci.setEnabled(False)
                 self.__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(False)
                 self.__mainWindow.ui.actionNewElement.setEnabled(True)
                 self.__mainWindow.ui.actionNewPlus.setEnabled(True)
@@ -316,4 +315,10 @@ class PyLinXMainController(PyLinXData.PyLinXDataObjects.PX_Object):
       
     
     def sync(self):
-        self.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"sync", ())                
+        self.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"sync", ())       
+        
+    # Method that is executed when a run is stopped
+    def stop_run(self):
+        print "stop_run"
+        self.recur(PyLinXDataObjects.PX_PlottableVarDispElement, u"stop_run", ())       
+       

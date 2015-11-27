@@ -162,6 +162,10 @@ class PX_CodeGenerator(BContainer.BContainer):
 
     def __writeCode(self):
         
+        # TODO: The code generator should get two modes: Simulation Mode and Productive Mode. In the simulation Mode all 
+        # values should be directly read from the DataDictionary, so that no  exec at the beginning and the end of one calculation
+        # circle is neccessary. In the Prodictive Mode the code is generated using single variable names without the Data-Dictionary.
+        
         self.__Code.append(u"def main():\n")
         self.__Code.append(u"    global DataDictionary")
         self.__Code.append(u"    Variables = DataDictionary.keys()")
@@ -225,6 +229,7 @@ class PX_CodeGenerator(BContainer.BContainer):
                 # Maybe some day we have to implement a more sophisticated protocoll
                 if message != None:
                     self.__runThreadMessageQueue.task_done()
+                    self.emit(QtCore.SIGNAL(u"signal_stop_run"))
                     return
                 
         
@@ -236,15 +241,20 @@ class PX_CodeGenerator(BContainer.BContainer):
         self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"),\
                                                    PyLinXDataObjects.PX_Object.mainController.mainController.sync,\
                                                    QtCore.Qt.BlockingQueuedConnection)
+        self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),
+                                                   PyLinXDataObjects.PX_Object.mainController.mainController.stop_run)
         self.__runThread.start()
         
-    def stopRun(self):
-        
-        self.__runThread.exit(0)
+#     def stopRun(self):
+#         
+#         print "stopRun"
+#         self.emit(QtCore.SIGNAL(u"signal_stop_run"))
+#         self.__runThread.exit(0)
 
     def runInit(self):
-        self.t = 0
+        
         self.delta_t = 0.02
+        self.t = - self.delta_t
         global DataDictionary
         DataDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"DataDictionary")
         
@@ -262,6 +272,8 @@ class PX_CodeGenerator(BContainer.BContainer):
            
     def run_(self):
         global DataDictionary
+        self.t+= self.delta_t
+        RunConfigDictionary[u"t"] = self.t        
         self.__rootGraphics.updateDataDictionary()
         try:
             exec(self.__CodeStr)
@@ -269,8 +281,8 @@ class PX_CodeGenerator(BContainer.BContainer):
             strExp = str(exc)
             print "Error executing code! -- " + strExp 
          
-        self.t+= self.delta_t
-        DataDictionary[u"*bGuiToUpdate"] = True
-        RunConfigDictionary[u"t"] = self.t
- 
+        
+        #DataDictionary[u"*bGuiToUpdate"] = True
+        
+        
         self.i +=1

@@ -26,8 +26,7 @@ class EasyWidget(QtGui.QWidget):
         else:
             idxEdit  = 1
             idxLabel = 0
-              
-        
+
         for valDict in init_list:
             
             keys        = valDict.keys()
