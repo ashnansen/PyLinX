@@ -24,17 +24,11 @@ import PyLinXGui
 ## Meta-Class for all PyLinX data Objects,
 
 class PX_Object(BContainer.BContainer):
-    
-    #listHashedById = []
-        
+
     def __init__(self, parent, name, mainController = None,  *args):
         
         super(PX_Object, self).__init__( name, *args)
         if parent != None:
-#             if type(self) in PX_Object.listHashedById:
-#                 parent.paste(self, bHashById=True)
-#             else:
-#                 parent.paste(self, bHashById=False)
             parent.paste(self)
             self.mainController = parent.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
         else:
@@ -43,23 +37,17 @@ class PX_Object(BContainer.BContainer):
                 self.mainController = self
             else:
                 raise Exception("Error PX_Object.__init__: constructor called without parent")
-#        self._BContainer__AttributesVirtual.extend([u"ustrHash", u"keyHash"])
-    
-#     # Method thhat initializes the class, executed once after all classes are defined
-#     @staticmethod
-#     def initialize():
-#         
-#         PX_Object.listHashedById = [PX_PlottableConnector,\
-#                                     PX_PlottableVarDispElement]
+
     
         
-    def delete(self, key):
+    def delete(self, key = None):
         # This is not nice. But usint "__del__" method or using of contexts did it not for me
         
-        obj = self.getb(key)
-        if obj.isAttrTrue(u"bExitMethod"):
-            obj._exit_()
-        superObj = super(BContainer.BContainer, self)
+        if key != None:
+            obj = self.getb(key)
+            if obj.isAttrTrue(u"bExitMethod"):
+                obj._exit_()
+            #superObj = super(BContainer.BContainer, self)
         BContainer.BContainer.delete(self, key)
          
     def getMaxID(self, _id = 0):
@@ -76,19 +64,6 @@ class PX_Object(BContainer.BContainer):
         return _id
     
     def get(self, attr):
-#         if attr == u"bHashById":
-#             return (type(self) in PX_Object.listHashedById)
-# #         if attr == u"ustrHash":
-# #             if (type(self) in PX_Object.listHashedById):
-# #                 return unicode(self.get(u"ID"))
-# #             else:
-# #                 return self.get(u"Name")
-# #         if attr == u"keyHash":
-# #             if (type(self) in PX_Object.listHashedById):
-# #                 return self.get(u"ID")
-# #             else:
-# #                 return self.get(u"Name")            
-#         else:
         return super(PX_Object, self).get(attr)
     
     
@@ -110,7 +85,7 @@ class PX_IdObject(PX_Object):
             name = unicode(self._ID)
         super(PX_IdObject, self).__init__(parent, name)
         
-        
+        #print "CREATING OBJECT WITH ID   ",PX_IdObject.__ID  
         PX_IdObject.__ID += 1
         self._BContainer__AttributesVirtual.extend([u"ID"])
         
@@ -127,6 +102,17 @@ class PX_IdObject(PX_Object):
             return self._ID
         else:
             return super(PX_IdObject, self).get(attr)
+        
+    def get_ID_from_Phrase(self, phrase):
+        try:
+            elem_ID = int(phrase)
+        except:
+            try:
+                elem_ID_string = unicode(phrase)
+            except:
+                raise Exception("Error PX_PlottableConnector.__init__(): Invalid Constructor argument.")
+            elem_ID = self.mainController.activeFolder.call(u"Name", elem_ID_string).ID
+        return elem_ID
   
 
 ## Meta-Class for all objects that can be plotted in the main drawing area
@@ -158,7 +144,6 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
             return  False
     
     ## Method that gets an hulling polygon 
-    
     def __getPolygon(self, x0,y0, x1, y1):
             delta = PX_Templ.Template.Gui.px_CONNECTOR_activeZone()
             # vertical
@@ -177,14 +162,12 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
                 return None
             
     # general write method
-    
     def write(self, obj, para = None):
         types = inspect.getmro(type(obj))
         if QtGui.QWidget in types:
             self.__plotHierarchyLevel(obj, para)
     
     # Method that plots one hierarchy level
-    
     def __plotHierarchyLevel(self, target, templ):
         paint = QtGui.QPainter()
         paint.begin(target)
@@ -204,7 +187,6 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         paint.end()    
         
     # Method that plots an element
-    
     def plot(self, paint, templ):
         pass
 
@@ -227,7 +209,6 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
             return super(PX_PlottableObject, self).get(attr)       
     
     # Method that returns the object, that is in focus or none
-    
     def getObjectInFocus(self, coord):
         x = coord.x()
         y = coord.y()
@@ -243,7 +224,6 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         return returnVal
     
     # method that return the object and it's clicked pinIndex. Convention: negative index: inPin, posiive index: outPin
-    
     def getPinInFocus(self, X, Y):
         keys = self._BContainer__Body
         for key in keys:
@@ -271,7 +251,7 @@ class PX_PlottableLatentGraphicsContainer(PX_PlottableObject):
             return super(PX_PlottableLatentGraphicsContainer, self).get(attr)
         
     def set(self, attr, val, options = None):
-        if attr == "bHasProxyElement":
+        if attr == u"bHasProxyElement":
             if val == False:
                 keys = self.getChildKeys()
                 for key in keys:        
@@ -1011,6 +991,7 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
             return i
                 
         mainController = parent.getRoot()
+        self.mainController = mainController
         listDataDispObj = mainController.get(u"listDataDispObj")
         
         idx = __getIdxDataDispObj(listDataDispObj)
@@ -1021,8 +1002,10 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
         self.set(u"bOnlyVisibleInSimMode", True)
         self.set(u"bExitMethod", True)
         #self.set(u"Name", unicode(self.ID))
+        
+        print "DataViewerGui"
                             
-        self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(self,self.get(u"idxDataDispObj"))
+        self.__widget = PyLinXGui.PX_DataViewerGui.DataViewerGui(self,self.get(u"idxDataDispObj"), mainController = self.mainController)
         self.__widgetGeometry = self.__widget.geometry() 
         self.__widgetPos      = self.__widget.pos()
         
@@ -1154,9 +1137,12 @@ class PX_PlottableBasicOperator(PX_PlottableElement):
     brushSpecifier = QtGui.QBrush(PX_Templ.color.blueTransp)
     dictSyllabes   = {u"+": "plus", u"-": "minus", u"*": "mult", u"/": "div"} 
     
-    def __init__(self,parent, value,  X, Y):
+    def __init__(self,parent, value,  X, Y, name = None):
         n = PX_IdObject._PX_IdObject__ID + 1
-        name = u"Operator_" + PX_PlottableBasicOperator.dictSyllabes[value] + u"_id" + str(n)
+        if name == None:
+            name = u"Operator_" + PX_PlottableBasicOperator.dictSyllabes[value] + u"_id" + str(n)
+        elif name[1:12] ==  u"Operator_id":
+            raise Exception(u"Error PyLinXDataObjects.PX_PlottableBasicOperator.__init__: Name of Object might not be unique!")
         stdPinDistance =  PX_Templ.Template.Gui.px_ELEMENT_stdPinDistance()
         stdPinDistance_half = 0.5 * stdPinDistance 
         tupleInPins  = ((-stdPinDistance_half, u""), (stdPinDistance_half, u""))
@@ -1301,7 +1287,10 @@ class PX_PlottableBasicOperator(PX_PlottableElement):
 
 class PX_PlottableConnector(PX_PlottableIdObject):
     
-    def __init__(self, parent, elem0_ID, elem1_ID = None, listPoints = [], \
+    def __init__(self, parent, \
+                 elem0_ID_phrase, \
+                 elem1_ID_phrase = None, \
+                 listPoints = [], \
                  idxOutPin = 0, idxInPin = -1,\
                  mainController = None,\
                  idxOutPinConnectorPloting = None):
@@ -1309,7 +1298,9 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         super(PX_PlottableConnector, self).__init__(parent, mainController)
         
         
-        elem0_ID = int(elem0_ID)
+        #elem0_ID may also be a string of the element
+        elem0_ID = self.get_ID_from_Phrase(elem0_ID_phrase)
+          
         self.set(u"idxOutPinConnectorPloting", idxOutPinConnectorPloting)
         self.set(u"ID_0", elem0_ID)
 
@@ -1318,22 +1309,20 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         self._idxOutPin = idxOutPin
         self._idxInPin = idxInPin
         
-        bElem1Connected = (elem1_ID != None)
+        bElem1Connected = (elem1_ID_phrase != None)
         if bElem1Connected:
+            elem1_ID = self.get_ID_from_Phrase(elem1_ID_phrase)
             self.set(u"ID_1", elem1_ID)
             elem1 = parent.call(u"ID", elem1_ID)
             if elem1 == None:
                 raise Exception("Error!")
-            self._elem1 = parent.call(u"ID", elem1_ID)
+            self._elem1 = elem1 
             
         else:
             self.mainController.set(u"bConnectorPloting", True)
-            self.mainController.set(u"ConnectorPloting", self)   
+            self.mainController.set(u"ConnectorPloting", self)
             self.getParent().set(u"bHasProxyElement", True)
-            proxyElement = self.mainController.latentGraphics.getb(u"PX_PlottableProxyElement")               
-            x = self.mainController.get(u"px_mousePressedAt_x")
-            y = self.mainController.get(u"px_mousePressedAt_y")    
-            self.set(u"ID_1", proxyElement.ID)
+            proxyElement = self.mainController.latentGraphics.getb(u"PX_PlottableProxyElement")
             self._elem1 = proxyElement
             
         # list points saves for odd indices x-values and for even indices y-values of the corresponding corners of the connector
@@ -1374,7 +1363,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         try: 
             return self._elem1
         except:
-            print "Fehler"
+            print "Error!"
     
     def set_elem1(self, elem1):
         id_1 = elem1.ID

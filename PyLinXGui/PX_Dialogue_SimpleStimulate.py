@@ -5,9 +5,9 @@ Created on 12.03.2015
 '''
 import copy
 from PyQt4 import QtGui, QtCore
-from PyLinXData import * 
+#from PyLinXData import * 
 from PyLinXGui import BEasyWidget
-
+from PyLinXData import PyLinXHelper as helper
 
 import PX_Templates as PX_Templ
 
@@ -69,10 +69,13 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         self.hide()
         
     def on_accept(self):
-        self.result = True
-        values = self.formWidget.getValues()
-        #self.variable._BContainer__Attributes.update(values)
-        #print "values", values
+        try:
+            values = self.formWidget.getValues()
+            self.result = True
+        except:
+            helper.error(u"Invalid Input! Please Try again!")
+            self.result = False
+            return 
         strValues = repr(values).replace(" ", "")
         ustrExec = u"set " + self.variable.get(u"Name") + u". " + unicode(strValues)
         self.mainController.execCommand(ustrExec)

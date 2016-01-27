@@ -1,7 +1,7 @@
 import os
 import xml.sax as sax
 cur_path = os.getcwd()
-ignore_set = set(["LineCount.py",  "test.py", "testLabelBus2.py", "testLabelBus.py", "TestOsci.py", "testQScintilla.py", "TestQScintilla.py", "testHemender.py"])
+ignore_set = set(["LineCount.py",  "test.py", "testLabelBus2.py", "testLabelBus.py", "TestOsci.py", "testQScintilla.py", "TestQScintilla.py", "testHemender.py", "testConfigWidget.py"])
 
 loclist = []
 

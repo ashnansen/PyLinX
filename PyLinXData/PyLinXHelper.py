@@ -3,6 +3,12 @@ Created on 13.11.2014
 
 @author: wplaum
 '''
+
+from   PyQt4 import QtGui
+import inspect
+import string
+
+
 class ToolSelected():
     none                = 0
     newVarElement       = 1
@@ -44,4 +50,21 @@ def point_inside_polygon(x,y,polygons):
             
     return idxPolygons
 
+def error(strErrorMessage):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setIcon(QtGui.QMessageBox.Critical)
+    msgBox.setText(strErrorMessage)
+    msgBox.addButton(QtGui.QPushButton('OK'), QtGui.QMessageBox.YesRole)
+    msgBox.setWindowTitle("Error")
+    msgBox.exec_()
+    
+def checkType(obj, _type):
+    types = inspect.getmro(type(obj))
+    return _type in types
 
+def getAttributeAndValue(stri):
+    listStri = string.split(stri)
+    if len(listStri) == 0:
+        return None
+    else:
+        return listStri[0], listStri[2]

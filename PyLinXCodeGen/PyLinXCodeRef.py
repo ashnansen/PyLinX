@@ -5,6 +5,7 @@ Created on 02.09.2015
 '''
 
 from PyLinXData import PyLinXDataObjects
+import PyLinXRunEngine 
 
 ################################################
 # internal classes used for code-generation
@@ -34,8 +35,8 @@ class PX_CodeRefObject(PyLinXDataObjects.PX_IdObject):
 
 class PX_CodableBasicOperator(PX_CodeRefObject):
     
-    def __init__(self,*param):
-        super(PX_CodableBasicOperator, self).__init__(*param)
+    def __init__(self,parent, knot, CodingVariant):
+        super(PX_CodableBasicOperator, self).__init__(parent, knot)
         
     def getCode(self,Code):
         lenBody = len(self._BContainer__Body)
@@ -51,9 +52,10 @@ class PX_CodableBasicOperator(PX_CodeRefObject):
 
 
 class PX_CodableVarElement(PX_CodeRefObject):
-        
-    def __init__(self,*param):
-        super(PX_CodableVarElement, self).__init__(*param)
+            
+    def __init__(self,parent, knot, CodingVariant):
+        super(PX_CodableVarElement, self).__init__(parent, knot)
+        self.CodingVariant = CodingVariant
         
     def getCode(self, Code):
 
@@ -61,7 +63,13 @@ class PX_CodableVarElement(PX_CodeRefObject):
         name = self.ref.get(u"Name") 
         if lenBody == 1:
             input = self.getb(self.getChildKeys()[0])
-            code_to_add = name + u" = " + input.getCode(Code)
-            #print "APPEND!"
+            if self.CodingVariant == PyLinXRunEngine.PX_CodeGenerator.CodingVariant.ReadSingleVars: 
+                code_to_add = name + u" = " + input.getCode(Code)
+            elif self.CodingVariant == PyLinXRunEngine.PX_CodeGenerator.CodingVariant.ReadVarsFromDataDict:
+                code_to_add = u"DataDictionary[u\"" + name + u"\"]" + u" = " + input.getCode(Code)
             Code.appendLine(code_to_add)
-        return name
+        if self.CodingVariant == PyLinXRunEngine.PX_CodeGenerator.CodingVariant.ReadSingleVars: 
+            return name
+        elif self.CodingVariant == PyLinXRunEngine.PX_CodeGenerator.CodingVariant.ReadVarsFromDataDict:
+            return u"DataDictionary[u\"" + name + u"\"]"
+        

@@ -97,9 +97,10 @@ class DrawWidget (QtGui.QWidget):
                     
                     self.repaint() 
 
-    def newProject(self, rootGraphics):
-        self.rootGraphics   = rootGraphics
-        self.activeGraphics = rootGraphics
+    def newProject(self, mainController):
+        self.rootGraphics   = mainController.rootGraphics
+        self.activeGraphics = mainController.activeFolder
+        self.mainController = mainController
     
     def paintEvent(self, event = None):
         self.activeGraphics.write(self,PX_Templ.Plot_Target.Gui)
@@ -376,12 +377,49 @@ class DrawWidget (QtGui.QWidget):
             self.repaint()
      
     def mouseReleaseEvent(self,coord):
+
+        def __mouseReleaseEvent_ToolSelNone():
+            
+            X = coord.x()
+            Y = coord.y()
+            px_mousePressedAt_X = self.mainController.get(u"px_mousePressedAt_X")
+            px_mousePressedAt_Y = self.mainController.get(u"px_mousePressedAt_Y")
+            objectsInFocus = []   
+            if px_mousePressedAt_X != sys.maxint and px_mousePressedAt_Y != sys.maxint: 
+                polygons = [[(X,Y), (X,px_mousePressedAt_Y ), (px_mousePressedAt_X,px_mousePressedAt_Y),(px_mousePressedAt_X,Y)]]
+                keys = self.activeGraphics.getChildKeys()  
+                for key in keys:
+                    element = self.activeGraphics.getb(key)
+                    if element.isAttr(u"Shape"):
+                        bFocus = True
+                        shape = element.get(u"Shape")
+
+                        for polygon in shape:
+                            if polygon != None:
+                                for point in polygon:
+                                    idxCorner = helper.point_inside_polygon(point[0], point[1],polygons)
+                                    if len(idxCorner) == 0:
+                                        bFocus = False
+                        if bFocus:
+                            if element.get(u"bUnlock"):
+                                objectsInFocus.append(element)
+            
+            command = u"select "
+            for element in objectsInFocus:
+                command += ( element.get("Name") + u" ")
+            if len(objectsInFocus) > 0:
+                self.mainController.execCommand(command)
+#             self.activeGraphics.set(u"ConnectorToModify", None )
+#             self.activeGraphics.set(u"idxPointModified" , None )   
+
         
         keys = self.latentGraphics.getChildKeys()       
         toolSelected = self.mainController.get(u"idxToolSelected")        
 
         # selecting Elements
         if toolSelected == helper.ToolSelected.none:
+            __mouseReleaseEvent_ToolSelNone()
+            
             for key in keys:
                 if self.latentGraphics.getb(key).isAttrTrue(u"bLatent"):
                     self.latentGraphics.delete(key)

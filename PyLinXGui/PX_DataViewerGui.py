@@ -9,7 +9,7 @@ from PyLinXData import PyLinXDataObjects
 
 class DataViewerGui(QtGui.QMainWindow):
     
-    def __init__(self, varDispObj, idx = 0, t_max = 1.,  mainGui = None):
+    def __init__(self, varDispObj, idx = 0, t_max = 1.,  mainGui = None, mainController = None):
         super (DataViewerGui, self).__init__()
         
         global DataDictionary
@@ -17,20 +17,19 @@ class DataViewerGui(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(r"pylinx_16.png"))
         
         self.varDispObj = varDispObj
+        self.mainController = mainController
          
         self.idx = idx        
         
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
         
-
-
         ###########################
         ### Toolbar
         toolbar = QtGui.QToolBar()
         toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.addToolBar(toolbar)
-        self.plotterWidget = PlotterWidget(self.varDispObj)
+        self.plotterWidget = PlotterWidget(self.varDispObj, self, self.mainController)
         self.setCentralWidget(self.plotterWidget)
 
         ###########################
@@ -60,7 +59,6 @@ class DataViewerGui(QtGui.QMainWindow):
         self.setWindowTitle("Data-Viewer " + str(self.idx))
         
         self.listVars = list(self.varDispObj.get(u"setVars"))
-        print "self.listVars (0)", self.listVars         
 
     def __onActionAdjust(self):
         self.plotterWidget.adjust()    
@@ -93,10 +91,12 @@ class DataViewerGui(QtGui.QMainWindow):
 
 class PlotterWidget(QtGui.QWidget):
     
-    def __init__(self, varDispObj,  parent = None ):
+    def __init__(self, varDispObj,  mainWidget = None, mainController = None, parent = None ):
         super(PlotterWidget, self).__init__(parent)
         
         #Members
+        self.mainController = mainController
+        self.DataDictionary = self.mainController.getb("DataDictionary")
         self.margin = 50
         self.zoomStack = []
         self.curveMap = {}    #QMap<int, QVector<QPointF>>
@@ -129,8 +129,6 @@ class PlotterWidget(QtGui.QWidget):
                 self.curveMapMemory[var] = []
           
         self.RunConfigDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"RunConfigDictionary")
-        print "self.listVars ", self.listVars 
-        print "self.curveMapMemory", self.curveMapMemory        
         
     def adjust(self):
         self.zoomStack[self.curZoom].adjust()
@@ -160,7 +158,7 @@ class PlotterWidget(QtGui.QWidget):
                     if len(self.curveMap[var]) > 200:
                         self.curveMapMemory[var].append(self.curveMap[var].pop(0))
                     self.curveMap[var].append(QtCore.QPointF(self.settings.maxX,\
-                                                  PyLinXRunEngine.DataDictionary[var]))
+                                                  self.DataDictionary[var]))
                     #print "PyLinXRunEngine.DataDictionary[" + str(var) + "]", PyLinXRunEngine.DataDictionary[var]             
                 self.refreshPixmap()
                 #self.repaint()

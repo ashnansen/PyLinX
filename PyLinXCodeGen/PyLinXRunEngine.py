@@ -13,9 +13,11 @@ from PyLinXData import *
 from PyLinXCode import Code
 from PyLinXCodeRef import PX_CodeRefObject, PX_CodableBasicOperator, PX_CodableVarElement
 
-global DataDictionary
-
 class PX_CodeGenerator(BContainer.BContainer):
+    
+    class CodingVariant:
+        ReadSingleVars = 0
+        ReadVarsFromDataDict = 1
  
     def __init__(self, parent, PyLinXMainObject):
         
@@ -46,6 +48,10 @@ class PX_CodeGenerator(BContainer.BContainer):
         
         self.__Code = Code()
         self.__CodeStr = u""
+        
+        # Setting Coding-Variant           
+        self.set(u"CodingVariant", PX_CodeGenerator.CodingVariant.ReadVarsFromDataDict)
+        # self.set(u"CodingVariant", PX_CodeGenerator.CodingVariant.ReadSingleVars)
 
         # Processing
         ############
@@ -60,16 +66,12 @@ class PX_CodeGenerator(BContainer.BContainer):
         RunConfigDictionary.set(u"Name", u"RunConfigDictionary")
         RunConfigDictionary.set(u"DisplayName", u"RunConfigDictionary")
         RunConfigDictionary[u"t"] = 0.0
-        PyLinXDataObjects.PX_Object.mainController.paste(RunConfigDictionary, bForceOverwrite = True)  
-        global DataDictionary      
-        DataDictionary = BContainer.BDict({})
-        DataDictionary.set(u"Name", u"DataDictionary")
-        DataDictionary.set(u"DisplayName", u"DataDictionary")    
-        # initializing values
+        PyLinXDataObjects.PX_Object.mainController.paste(RunConfigDictionary, bForceOverwrite = True)
+        self.__RunConfigDictionary = RunConfigDictionary 
+
+        self.__DataDictionary = PyLinXDataObjects.PX_Object.mainController.getb("DataDictionary") 
         for element in self.__listVarElements:
-            DataDictionary[element.get(u"Name")] = 0.0
-        PyLinXDataObjects.PX_Object.mainController.paste(DataDictionary, bForceOverwrite = True)                
-        # setting values to predefined defaults (e.g. constant stimulations should be displayed)         
+            self.__DataDictionary[element.get(u"Name")] = 0.0                 
         self.__rootGraphics.updateDataDictionary()
             
     def __genCode(self):
@@ -112,12 +114,13 @@ class PX_CodeGenerator(BContainer.BContainer):
     def __getSyntaxTree(self):
         
         def __createSingleBranch(parent, knot):
-
+            
+            CodingVariant = self.get(u"CodingVariant")
             types = inspect.getmro(type(knot))
             if PyLinXDataObjects.PX_PlottableVarElement in types:
-                knotRefObj = PX_CodableVarElement(parent,knot)
+                knotRefObj = PX_CodableVarElement(parent,knot, CodingVariant)
             elif PyLinXDataObjects.PX_PlottableBasicOperator in types:
-                knotRefObj = PX_CodableBasicOperator(parent,knot)                  
+                knotRefObj = PX_CodableBasicOperator(parent,knot, CodingVariant)                  
             for connector in self.__listConnectors:
                 if connector.elem1 == knot:
                     __createSingleBranch(knotRefObj,connector.elem0)
@@ -166,14 +169,16 @@ class PX_CodeGenerator(BContainer.BContainer):
         # values should be directly read from the DataDictionary, so that no  exec at the beginning and the end of one calculation
         # circle is neccessary. In the Prodictive Mode the code is generated using single variable names without the Data-Dictionary.
         
-        self.__Code.append(u"def main():\n")
-        self.__Code.append(u"    global DataDictionary")
-        self.__Code.append(u"    Variables = DataDictionary.keys()")
-        self.__Code.append(u"    execStr = u\"\"")
-        self.__Code.append(u"    for variable in Variables:")
-        self.__Code.append(u"        if variable[0] != u\"*\":")
-        self.__Code.append(u"            execStr += (variable + u\" = DataDictionary[\\\"\" + variable +\"\\\"]\\n\")")   
-        self.__Code.append(u"    exec(execStr)\n")
+        self.__Code.append(u"def main(DataDictionary):\n")
+        CodingVariant = self.get(u"CodingVariant")
+        
+        if CodingVariant == PX_CodeGenerator.CodingVariant.ReadSingleVars:
+            self.__Code.append(u"    Variables = DataDictionary.keys()")
+            self.__Code.append(u"    execStr = u\"\"")
+            self.__Code.append(u"    for variable in Variables:")
+            self.__Code.append(u"        if variable[0] != u\"*\":")
+            self.__Code.append(u"            execStr += (variable + u\" = DataDictionary[\\\"\" + variable +\"\\\"]\\n\")")   
+            self.__Code.append(u"    exec(execStr)\n")
         
         self.__Code.changeIndent(1)
         
@@ -181,13 +186,15 @@ class PX_CodeGenerator(BContainer.BContainer):
         for key in keys:
             child = self.__syntaxTree.getb(key)
             child.getCode(self.__Code)
-          
-        self.__Code.append(u"\n    execStr = u\"\"")
-        self.__Code.append(u"    for variable in Variables:")
-        self.__Code.append(u"        if variable[0] != \"*\":")
-        self.__Code.append(u"            execStr += (u\"DataDictionary[\\\"\" + variable + \"\\\"] = \" + variable + u\"\\n\" )")
-        self.__Code.append(u"    exec(execStr)\n")
-        self.__Code.append(u"\nmain()")
+            
+        if CodingVariant == PX_CodeGenerator.CodingVariant.ReadSingleVars:          
+            self.__Code.append(u"\n    execStr = u\"\"")
+            self.__Code.append(u"    for variable in Variables:")
+            self.__Code.append(u"        if variable[0] != \"*\":")
+            self.__Code.append(u"            execStr += (u\"DataDictionary[\\\"\" + variable + \"\\\"] = \" + variable + u\"\\n\" )")
+            self.__Code.append(u"    exec(execStr)\n")
+            
+        self.__Code.append(u"\nmain(DataDictionary)")
 
         self.__CodeStr = self.__Code.getCodeStr()
         print "BEGIN---------------"
@@ -208,8 +215,6 @@ class PX_CodeGenerator(BContainer.BContainer):
             
         def run(self):
             
-            #RunConfigDictionary = self.__mainController.getb(u"RunConfigDictionary")
-            RunConfigDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"RunConfigDictionary")
             self.__CodeGenerator.runInit()
             while 1:
                 self.__CodeGenerator.run()
@@ -243,46 +248,30 @@ class PX_CodeGenerator(BContainer.BContainer):
                                                    QtCore.Qt.BlockingQueuedConnection)
         self.__PyLinXMainObject.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),
                                                    PyLinXDataObjects.PX_Object.mainController.mainController.stop_run)
+        
         self.__runThread.start()
         
-#     def stopRun(self):
-#         
-#         print "stopRun"
-#         self.emit(QtCore.SIGNAL(u"signal_stop_run"))
-#         self.__runThread.exit(0)
 
     def runInit(self):
         
         self.delta_t = 0.02
         self.t = - self.delta_t
-        global DataDictionary
-        DataDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"DataDictionary")
-        
-        global RunConfigDictionary
-        RunConfigDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"RunConfigDictionary")
-        RunConfigDictionary[u"t"] = self.t
-        RunConfigDictionary[u"delta_t"] = self.delta_t
+        self.__RunConfigDictionary[u"t"] = self.t
+        self.__RunConfigDictionary[u"delta_t"] = self.delta_t
         bSimulationRuning = True
-        RunConfigDictionary[u"bSimulationRuning"] = bSimulationRuning
-        self.i = 0
+        self.__RunConfigDictionary[u"bSimulationRuning"] = bSimulationRuning
             
     def run(self): 
         import cProfile 
         cProfile.runctx("self.run_()", globals(), locals(), "profile.stat")
            
     def run_(self):
-        global DataDictionary
-        self.t+= self.delta_t
-        RunConfigDictionary[u"t"] = self.t        
+        self.t+= self.delta_t    
+        self.__RunConfigDictionary[u"t"] = self.t
         self.__rootGraphics.updateDataDictionary()
+        DataDictionary = self.__DataDictionary 
         try:
-            exec(self.__CodeStr)
+            exec(self.__CodeStr, globals(), locals())
         except Exception as exc:
             strExp = str(exc)
             print "Error executing code! -- " + strExp 
-         
-        
-        #DataDictionary[u"*bGuiToUpdate"] = True
-        
-        
-        self.i +=1

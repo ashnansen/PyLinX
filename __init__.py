@@ -44,31 +44,31 @@ class PyLinXMain(QtGui.QMainWindow):
         # Main Data Structures
 
         self.mainController = PyLinXMainController.PyLinXMainController(mainWindow = self )
-        self.mainController.set(u"LogLevel",1)
-        self.mainController._BContainer__Attributes[u"bSimulationMode"] = False
+
         _rootGraphics = self.mainController.getb(u"rootGraphics")
         
         # ExampleData
 
-        testvar  = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"TestVar_0", 150,90, 15)
-        testvar2 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id4", 150,140, 15)
-        testvar3 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id3", 400,100, 15)
-        plusOperator = PyLinXDataObjects.PX_PlottableBasicOperator(_rootGraphics , u"+",  300,100 )
-        con  = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar.ID,plusOperator.ID,   idxInPin=1)
-        con2 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar2.ID,plusOperator.ID,  idxInPin=0)
-        con3 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, plusOperator.ID,testvar3.ID,  idxInPin=0)
-                
-        self.mainController.set(u"bConnectorPloting", False)     
+#        OLD STYLE
+#         testvar  = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"TestVar_0", 150,90, 15)
+#         testvar2 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id4", 150,140, 15)
+#         testvar3 = PyLinXDataObjects.PX_PlottableVarElement(_rootGraphics, u"Variable_id3", 400,100, 15)
+#         plusOperator = PyLinXDataObjects.PX_PlottableBasicOperator(_rootGraphics , u"+",  300,100 )
+#         con  = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar.ID,plusOperator.ID,   idxInPin=1)
+#         con2 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, testvar2.ID,plusOperator.ID,  idxInPin=0)
+#         con3 = PyLinXDataObjects.PX_PlottableConnector(_rootGraphics, plusOperator.ID,testvar3.ID,  idxInPin=0)
 
-        # Configuration
-        
-        # idx that indicates the selected tool
-        self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
-        # ID of the connector which is actually drawn
-        self.mainController.set(u"ID_activeConnector", -1)
-        # idx of the last selected Data-Viewer
-        self.mainController.set(u"idxLastSelectedDataViewer", -1)
-        self.mainController.set(u"idxOutPinConnectorPloting", None)
+        # NEW STYLE
+        script = u"new varElement TestVar_0 150 90 15\n\
+new varElement Variable_id4 150 140 15\n\
+new varElement Variable_id3 400.0 100.0 15\n\
+new basicOperator + 300.0 100.0 name=u\"Operator_1\"\n\
+new connector TestVar_0 Operator_1 idxInPin=1\n\
+new connector Variable_id4 Operator_1 idxInPin=0\n\
+new connector Operator_1 Variable_id3 idxInPin=0"
+            
+        self.mainController.execScript(script)
+                
 
         # run Engine
         
@@ -213,7 +213,7 @@ class PyLinXMain(QtGui.QMainWindow):
             
     def on_actionSave(self):
         rootGraphics = self.mainController.getb(u"rootGraphics")
-        if rootGraphics .isAttr(u"strSavePath"):
+        if rootGraphics.isAttr(u"strSavePath"):
             strSavePath = rootGraphics.get(u"strSavePath")
             self.__saveProject(strSavePath)
         else:
@@ -226,38 +226,57 @@ class PyLinXMain(QtGui.QMainWindow):
             (strPath, strSavePath_old_file) = os.path.split(strSavePath_old)
         else:
             strPath = os.getcwd()
-        strSavePath= self.__showFileSaveSelectionDialog(strPath, bDir = False, strExt = u"pson", strHeader =u"Select File to save Project...")
+        strSavePath= self.__showFileSaveSelectionDialog(strPath, bDir = False, strExt = u"*.pyp", strHeader =u"Select File to save Project...")
         (strSavePath_base,strSavePath_ext) = os.path.splitext(strSavePath)
-        if not  strSavePath_ext == u".pson":
-            strSavePath = strSavePath_base + u".pson"
+        if not  strSavePath_ext == u"pyp":
+            strSavePath = strSavePath_base + u".pyp"
         self.__saveProject(strSavePath)
 
      
     def __saveProject(self, strSavePath):    
         
         _file = codecs.open(strSavePath, encoding='utf-8', mode='w')
-        project = self.mainController.getb(u"rootGraphics")
-        project._BContainer__parent = None
-        pickledObject = jsonpickle.encode(project, keys=True, unpicklable=False)
-        _file.write(pickledObject)
+        
+        listCommands = self.mainController.get(u"listCommands")
+        strCommands = u""
+        for command in listCommands:
+            strCommands += command
+            strCommands += u"\n"
+        _file.write(strCommands)
         _file.close()
         rootGraphics = self.mainController.getb(u"rootGraphics")
         rootGraphics.set(u"strSavePath", strSavePath)  
 
-   
+  
     def on_actionLoadProject(self):
-        strPath = os.getcwd()
-        strSavePath= self.__showFileSelectionLoadDialog(strPath, bDir = False,strHeader ="Select File to load Project...")  
-        _file = open(strSavePath)
         
-        newProject = jsonpickle.decode(_file.read(), keys=True)
-        oldProject = self.mainController.getb(u"rootGraphics")
-        self.mainController.paste(newProject,u"rootGraphics",  bForceOverwrite = True)
-        self.drawWidget.newProject(newProject)
-        del oldProject
-        self.mainController.set(u"bSimulationMode", False)
+        strPath = os.getcwd()
+        strSavePath= self.__showFileSelectionLoadDialog(strPath, bDir = False,strHeader ="Select File to load Project...")
+        if len(strSavePath):
+            try:
+                _file = open(strSavePath)
+            except:
+                helper.error(u"Error openint file " + strSavePath)
+                return
+        else:
+            return
+        
+        old_Controller = self.mainController
+
+        self.mainController = PyLinXMainController.PyLinXMainController(mainWindow = self )
+        _file_read = _file.read()
+
+        self.mainController.execScript(_file_read)
+        
+        old_Controller.delete()
+        newProject = self.mainController.getb(u"rootGraphics")
+        self.drawWidget.newProject(self.mainController)
+        
+        rootGraphics = self.mainController.getb(u"rootGraphics")
+        rootGraphics.set(u"strSavePath", strSavePath)          
+        
         maxID = newProject.getMaxID()
-        PyLinXDataObjects.PX_IdObject._PX_IdObject__ID = maxID + 1
+        #PyLinXDataObjects.PX_IdObject._PX_IdObject__ID = maxID + 1
         self.drawWidget.repaint()
     
     def on_actionNewProject(self):
@@ -299,12 +318,8 @@ class PyLinXMain(QtGui.QMainWindow):
         
         bSimulationMode = self.mainController.get(u"bSimulationMode")
         if bSimulationMode:
-            #self.mainController.set(u"bSimulationMode", False)
             self.mainController.execCommand(u"set @mainController.bSimulationMode False")
         else:
-#             runEngine = PyLinXRunEngine.PX_CodeGenerator(self.mainController, self)
-#             self.mainController.paste(runEngine, bForceOverwrite=True)
-            #self.mainController.set(u"bSimulationMode", True)
             self.mainController.execCommand(u"set @mainController.bSimulationMode True")
         self.drawWidget.repaint()
         

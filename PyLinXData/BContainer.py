@@ -40,6 +40,19 @@ class BContainer(object):
         self.__Attributes[u"DisplayName"] = name
         
        
+    ## print method
+    
+    def __str__(self):
+        print u"================================="
+        print list.__str__(self)
+        print u"---------------------------------"
+        self.lsAttr()
+        print u"---------------------------------"
+        self.ls()
+        print u"================================="
+        return ""
+    
+    
     ## Method to get the attribute of an element uniquely identificied by the value of another attribute
     
     def call(self, attributeKey, value, attrubuteReturn = None):
@@ -50,7 +63,7 @@ class BContainer(object):
     
     ## Method for deleting BContainers
     
-    def delete(self, name):
+    def delete(self, name = None):
         
         if name in self.__Body:
             obj = self.__Body.pop(name)
@@ -58,6 +71,11 @@ class BContainer(object):
             for childKey in keys:
                 obj.delete(childKey)
             del obj
+        elif name == None:
+            keys = self.__Body.keys()
+            for childKey in keys:
+                self.delete(childKey)
+            
 
     ## Method that gets the value of an label
     
@@ -95,6 +113,8 @@ class BContainer(object):
         if self.__parent == None:
             return u"/" + path
         else:
+#             print "self.__parent.key(self): ", self.__parent.key(self)
+#             print "self.__parent", self.__parent
             return self.__parent.__get_path( self.__parent.key(self) + u"/" +  path)
         
     def getb(self,name):
@@ -200,7 +220,7 @@ class BContainer(object):
         for attr in self.__Attributes:
             listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )
         for attr in self.__AttributesVirtual:
-            print "attr: ", attr
+            #print "attr: ", attr
             listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
         if len(listLsAttr) > 0:
             self.__printLsList(sorted(listLsAttr))
@@ -289,7 +309,10 @@ class BContainer(object):
                 # so far a quick and dirty workaround
                 #if path.isdigit():
                 #    path = int(path)
-                obj = self.getb(path)
+                try:
+                    obj = self.getb(path)
+                except:
+                    print "Error!"
                 return obj
             else:
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
@@ -393,8 +416,18 @@ class BList(BContainer, list):
     def __init__(self, *args, **kwargs):
         
         list.__init__(self, *args)
-        BContainer.__init__(self, *args, **kwargs)
-
+        #BContainer.__init__(self, *args, **kwargs)
+        BContainer.__init__(self, **kwargs)
+        
+#     def __str__(self):
+#         print u"================================="
+#         self.lsAttr()
+#         print u"---------------------------------"
+#         self.ls()
+#         print u"---------------------------------"
+#         print list.__str__(self)
+#         print u"================================="
+#         return ""
 
 class BDict(BContainer, dict):
     

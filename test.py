@@ -1,7 +1,7 @@
 '''
 Some PySide stuff - disorganized
 '''
-import sys
+#import sys
 # from PySide import QtCore, QtGui, QtUiTools
 # 
 # 
@@ -1892,28 +1892,498 @@ Test programm for the mv function
 ##
 ############################################################################
 
-from PyQt4 import QtCore
-class ColorFactory(object):
-    
+'''Test Color Factory'''
+
+# from PyQt4 import QtCore
+# class ColorFactory(object):
+#     
+#     def __init__(self):
+#         super(ColorFactory, self).__init__()
+#         self.listColor = [QtCore.Qt.red, \
+#                           QtCore.Qt.green, \
+#                           QtCore.Qt.lightGray,\
+#                           QtCore.Qt.cyan, \
+#                           QtCore.Qt.magenta, \
+#                           QtCore.Qt.yellow]
+#         
+#         #self.listColorCount = [0,0,0,0,0,0]
+#         self.idxColor = 0
+#         
+#         
+#     def getColor(self):
+#         idx = self.idxColor
+#         self.idxColor = (self.idxColor + 1) % len(self.listColor)
+#         return self.listColor[idx] 
+#     
+# fac = ColorFactory()
+# for i in range(24):
+#     print fac.getColor()
+
+'''
+Test Diamond Problem
+'''
+  
+# class BaseClass(object):
+#     def __init__(self):
+#         self.__testVariable = {"name": "TestName"}
+# 
+#     def set(self, attr, val):
+#         self._BaseClass__testVariable[attr] = val
+#         
+#     def prt(self):
+#         print self.__testVariable
+#         
+# class ChildClass1(BaseClass):
+#     def __init__(self):
+#         super(ChildClass1, self).__init__()
+#         self._BaseClass__testVariable["name2"] =  "TestName2"
+# 
+#     def set(self, attr, val):
+#         if attr == "attr":
+#             print "attr ChildClass1"
+#         super(ChildClass1, self).set(attr, val)
+# 
+#         
+# class ChildClass2(BaseClass):
+#     def __init__(self):
+#         super(ChildClass2, self).__init__()
+#         self._BaseClass__testVariable["name3"] =  "TestName3"
+# 
+#     def set(self, attr, val):
+#         if attr == "attr":
+#             print "attr ChildClass2"
+#         super(ChildClass2, self).set(attr, val)
+# 
+#         
+# class ChildClass3(ChildClass1, ChildClass2):
+#     def __init__(self):
+#         super(ChildClass3, self).__init__()
+#     def set(self, attr, val):
+#         super(ChildClass3, self).set("attr", val)
+#         
+# obj = ChildClass3()
+# obj.set("attr", 15)
+# obj.prt()
+
+'''
+Example Treeview'''
+# import sys
+# import PyQt4.QtGui as QtGui
+# import PyQt4.QtCore as QtCore
+# 
+# 
+# ################################################################################
+# # Underlying data
+# # ----------------
+# # - RuntimeItems hold the data. They come from a database.
+# # - ViewItems are the objects, that are given to the model indexes of 
+# #Qt. They
+# #   are constructed according to some rules like filters and configuration.
+# # - DummieViewItemFactory processes the rules and configurations. The 
+# #example
+# #   here is simplfied. An instance of the factory is given to each ViewItem.
+# #   The view item calls the DummieViewItemFactory.get_view_item_children 
+# #method
+# #   to request calculation of its children on demand.
+# # - For this demo-version, the number of items is controlled by
+# #   DummieViewItemFactory.max_items. It's passed in by the constructor.
+# # - Nesting as high as possible: One child per parent.
+# ################################################################################
+# 
+# 
+# class RuntimeItem(object):
+#     """Represent the real world business items. These objects have a 
+# lot of
+#      relations.
+#      """
+# 
+#     def __init__(self, name, ident, item_type):
+#         self.name = name
+#         self.ident = ident
+#         self.item_type = item_type
+# 
+# 
+# class ViewItem(object):
+#     """Represent items that are to be shown to the user in a QTreeView.
+#      Those items do only occur one time in a view. They have a corresponding
+#      runtime_item.
+#      The children are calculated by the view_item_factory on demand.
+#      """
+# 
+#     def __init__(self, view_item_factory, runtime_item=None, parent=None,
+#                   hidden_runtime_items=None):
+#         self.view_item_factory = view_item_factory
+#         self.runtime_item = runtime_item
+#         self.parent = parent
+#         self.hidden_runtime_items = hidden_runtime_items
+# 
+#     @property
+#     def children(self):
+#         try:
+#             return self._children
+#         except AttributeError:
+#             self._children = self.view_item_factory.get_view_item_children(self)
+#             return self._children
+# 
+#     @children.setter
+#     def children(self, children):
+#         self._children = children
+# 
+# 
+# class DummieViewItemFactory(object):
+#     """Creates the view_items. This is a dumb dummie as a simple example.
+#      Normally a lot of things happen here like filtering and configuration.
+#      But once the view_item hierachy is build, this shouldn't be called 
+# at all.
+#      """
+# 
+#     def __init__(self, runtime_item, max_items):
+#         self.runtime_item = runtime_item
+#         self.max_items = max_items
+#         self.item_counter = 0
+#         self.aux_root_view_item = ViewItem(self)
+# 
+#     def get_view_item_children(self, view_item_parent):
+#         if self.item_counter > self.max_items:
+#             return []
+#         self.item_counter += 1
+#         view_item = ViewItem(self, self.runtime_item, view_item_parent)
+#         return [view_item]
+# 
+# 
+# ################################################################################
+# # Qt classes
+# # ----------------
+# # - This should be standard stuff. I've got most of it from the Rapid GUI
+# #   Programming book.
+# # - The ActiveColums class tells the model which colums to use.
+# # - The TreeView has a context menu with navigation actions.
+# # - The expand_all calls the Qt slot. Here is the surprise for the 
+# # performance.
+# ################################################################################
+# 
+# 
+# class ActiveColumns(object):
+# 
+#     def __init__(self, columns):
+#         self.columns = columns
+# 
+# 
+# class TreeView(QtGui.QTreeView):
+# 
+#     def __init__(self, aux_root_view_item, active_columns, parent=None,
+#                   header_hidden=False):
+#         super(TreeView, self).__init__(parent)
+#         self.setIndentation(10)
+#         self.active_columns = active_columns
+#         self.setAlternatingRowColors(True)
+#         self.setHeaderHidden(header_hidden)
+#         self.setAllColumnsShowFocus(True)
+#         self.setUniformRowHeights(True)
+#         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+# 
+#         model = TreeModel(aux_root_view_item, self)
+#         self.setModel(model)
+# 
+#         e_a_action = QtGui.QAction("Expand all", self)
+#         e_a_action.setToolTip("Expands all items of the tree.")
+#         e_a_action.triggered.connect(self.expand_all)
+#         e_a_b_action = QtGui.QAction("Expand all below", self)
+#         e_a_b_action.setToolTip("Expands all items under the selection.")
+#         e_a_b_action.triggered.connect(self.expand_all_below)
+# 
+#         c_a_action = QtGui.QAction("Collapse all", self)
+#         c_a_action.setToolTip("Collapses all items of the tree.")
+#         c_a_action.triggered.connect(self.collapse_all)
+#         c_a_b_action = QtGui.QAction("Collapse all below", self)
+#         c_a_b_action.setToolTip("Collapses all items under the selection.")
+#         c_a_b_action.triggered.connect(self.collapse_all_below)
+# 
+#         for action in (e_a_action, c_a_action, e_a_b_action, c_a_b_action):
+#             self.addAction(action)
+# 
+#     def expand_all(self):
+#         self.expandAll()
+# 
+#     def collapse_all(self):
+#         self.collapseAll()
+# 
+#     def expand_all_below(self):
+#         def expand_all_below_recursive(parent_index):
+#             self.expand(parent_index)
+#             children_indexes = self.tree_itemmodel.get_children_indexes(parent_index)
+#             for child_index in children_indexes:
+#                 expand_all_below_recursive(child_index)
+# 
+#         indexes = self.selectedIndexes()
+#         if indexes:
+#             index = indexes[0]
+#             expand_all_below_recursive(index)
+# 
+#     def collapse_all_below(self):
+#         def collapse_all_below_recursive(parent_index):
+#             self.collapse(parent_index)
+#             children_indexes = self.tree_itemmodel.get_children_indexes(parent_index)
+#             for child_index in children_indexes:
+#                 collapse_all_below_recursive(child_index)
+# 
+#         indexes = self.selectedIndexes()
+#         if indexes:
+#             index = indexes[0]
+#             collapse_all_below_recursive(index)
+# 
+# class TreeModel(QtCore.QAbstractItemModel):
+# 
+#     def __init__(self, aux_root_view_item, parent):
+#         super(TreeModel, self).__init__(parent)
+#         self.aux_root_view_item = aux_root_view_item
+#         self.active_columns = parent.active_columns
+# 
+#     def rowCount(self, parent_index):
+#         parent_view_item = self.view_item_from_index(parent_index)
+#         if parent_view_item is None:
+#             return 0
+#         return len(parent_view_item.children)
+# 
+#     def get_children_indexes(self, parent_index):
+#         children_indexes = []
+#         for row_no in range(self.rowCount(parent_index)):
+#             children_indexes.append(self.index(row_no, 0, parent_index))
+#         return children_indexes
+# 
+#     def columnCount(self, parent):
+#         return len(self.active_columns.columns)
+# 
+#     def data(self, index, role):
+#         if role == QtCore.Qt.TextAlignmentRole:
+#             return int(QtCore.Qt.AlignTop|QtCore.Qt.AlignLeft)
+#         if role != QtCore.Qt.DisplayRole:
+#             return None
+#         view_item = self.view_item_from_index(index)
+#         try:
+#             data = getattr(view_item.runtime_item,self.active_columns.columns[index.column()])
+#         except AttributeError:
+#             data = ""
+#         return data
+# 
+#     def headerData(self, section, orientation, role):
+#         if (orientation == QtCore.Qt.Horizontal and
+#             role == QtCore.Qt.DisplayRole):
+#             assert 0 <= section <= len(self.active_columns.columns)
+#             return self.active_columns.columns[section]
+#         return QtCore.QVariant()
+# 
+#     def index(self, row, column, parent_index):
+#         View_item_parent = self.view_item_from_index(parent_index)
+#         return self.createIndex(row, column, View_item_parent.children[row])
+# 
+#     def parent(self, child_index):
+#         child_view_item = self.view_item_from_index(child_index)
+#         if child_view_item is None:
+#             return QtCore.QModelIndex()
+#         parent_view_item = child_view_item.parent
+#         if parent_view_item is None:
+#             return QtCore.QModelIndex()
+#         grandparent_view_item = parent_view_item.parent
+#         if grandparent_view_item is None:
+#             return QtCore.QModelIndex()
+#         grandparent_view_item
+#         row = grandparent_view_item.children.index(parent_view_item)
+#         assert row != -1
+#         return self.createIndex(row, 0, parent_view_item)
+# 
+#     def view_item_from_index(self, index):
+#         return (index.internalPointer() if index.isValid() else self.aux_root_view_item)
+# 
+# 
+# if __name__ == "__main__":
+# 
+#     run_time_item = RuntimeItem("Test", "test_12", "Test Item")
+#     view_factory = DummieViewItemFactory(run_time_item, max_items=5000)
+#     active_colums = ActiveColumns(["name", "id", "item_type"])
+# 
+#     app = QtGui.QApplication(sys.argv)
+#     tree_view = TreeView(view_factory.aux_root_view_item, active_colums)
+#     app.setApplicationName("IPDM")
+#     tree_view.show()
+#     app.exec_()
+
+
+''' Combo-Box '''
+
+# from PyQt4 import QtGui, QtCore
+# 
+# class Window(QtGui.QWidget):
+#     def __init__(self):
+#         QtGui.QWidget.__init__(self)
+#         layout = QtGui.QVBoxLayout(self)
+#         self.combo = QtGui.QComboBox()
+#         self.combo.setEditable(True)
+#         self.combo.addItems('One Two Three Four Five'.split())
+#         self.buttonOne = QtGui.QPushButton('Change (Default)', self)
+#         self.buttonOne.clicked.connect(self.handleButtonOne)
+#         self.buttonTwo = QtGui.QPushButton('Change (Blocked)', self)
+#         self.buttonTwo.clicked.connect(self.handleButtonTwo)
+#         layout.addWidget(self.combo)
+#         layout.addWidget(self.buttonOne)
+#         layout.addWidget(self.buttonTwo)
+#         self.changeIndex()
+#         self.combo.activated['QString'].connect(self.handleActivated)
+#         self.combo.currentIndexChanged['QString'].connect(self.handleChanged)
+#         self.changeIndex()
+# 
+#     def handleButtonOne(self):
+#         self.changeIndex()
+# 
+#     def handleButtonTwo(self):
+#         self.combo.blockSignals(True)
+#         self.changeIndex()
+#         self.combo.blockSignals(False)
+# 
+#     def changeIndex(self):
+#         index = self.combo.currentIndex()
+#         if index < self.combo.count() - 1:
+#             self.combo.setCurrentIndex(index + 1)
+#         else:
+#             self.combo.setCurrentIndex(0)
+# 
+#     def handleActivated(self, text):
+#         print('handleActivated: %s' % text)
+# 
+#     def handleChanged(self, text):
+#         print('handleChanged: %s' % text)
+# 
+# if __name__ == '__main__':
+# 
+#     import sys
+#     app = QtGui.QApplication(sys.argv)
+#     window = Window()
+#     window.show()
+#     sys.exit(app.exec_())
+
+# -*- coding: utf-8 -*-
+
+'''QGraphicsView'''
+
+"""The user interface for our app"""
+
+import os,sys,time
+
+# Import Qt modules
+from PyQt4 import QtCore,QtGui, QtOpenGL
+
+# Import the compiled UI module
+from ui_clock import Ui_Form
+
+from random import randint, shuffle
+
+# Create a class for our main window
+class Main(QtGui.QWidget):
     def __init__(self):
-        super(ColorFactory, self).__init__()
-        self.listColor = [QtCore.Qt.red, \
-                          QtCore.Qt.green, \
-                          QtCore.Qt.lightGray,\
-                          QtCore.Qt.cyan, \
-                          QtCore.Qt.magenta, \
-                          QtCore.Qt.yellow]
+        QtGui.QWidget.__init__(self)
+
+        # This is always the same
+        self.ui=Ui_Form()
+        self.ui.setupUi(self)
+
+        self.scene=QtGui.QGraphicsScene()
+        self.scene.setSceneRect(0,0,600,400)
+        self.ui.view.setScene(self.scene)
+        #self.ui.view.setViewport(QtOpenGL.QGLWidget())
+        self.populate()
+        self.setWindowState(QtCore.Qt.WindowMaximized)
+
+        self.animator=QtCore.QTimer()
+        self.animator.timeout.connect(self.animate)
+        self.animate()
+
+    def populate(self):
+        self.digits=[]
+        self.animations=[]
+        font=QtGui.QFont('White Rabbit')
+        font.setPointSize(120)
+
+        self.dot1=QtGui.QGraphicsTextItem(':')
+        self.dot1.setFont(font)
+        self.dot1.setPos(140,0)
+        self.scene.addItem(self.dot1)
+        self.dot2=QtGui.QGraphicsTextItem(':')
+        self.dot2.setFont(font)
+        self.dot2.setPos(410,0)
+        self.scene.addItem(self.dot2)
+
+        for i in range(60):
+            l = QtGui.QGraphicsTextItem(str(i%10))
+            l.setFont(font)
+            l.setZValue(-100)
+            l.setPos(randint(0,500),randint(150,300))
+            l.setOpacity(.3)
+            #l.setDefaultTextColor(QtGui.QColor('lightgray'))
+            self.scene.addItem(l)
+            self.digits.append(l)
+
+    def animate(self):
+        self.animations=range(0,60)
+
+        def animate_to(t,item,x,y,angle):
+            animation=QtGui.QGraphicsItemAnimation()
+            timeline=QtCore.QTimeLine(1000)
+            timeline.setFrameRange(0,100)
+            animation.setPosAt(t,QtCore.QPointF(x,y))
+            animation.setRotationAt(t,angle)
+            animation.setItem(item)
+            animation.setTimeLine(timeline)
+            return animation
+
+        offsets=range(6)
+        shuffle(offsets)
+
+        # Some, animate with purpose
+        h1,h2=map(int,'%02d'%time.localtime().tm_hour)
+        h1+=offsets[0]*10
+        h2+=offsets[1]*10
+        self.animations[h1]=animate_to(0.2,self.digits[h1],-40,0,0)
+        self.animations[h2]=animate_to(0.2,self.digits[h2],50,0,0)
+
+        m1,m2=map(int,'%02d'%time.localtime().tm_min)
+        m1+=offsets[2]*10
+        m2+=offsets[3]*10
+        self.animations[m1]=animate_to(0.2,self.digits[m1],230,0,0)
+        self.animations[m2]=animate_to(0.2,self.digits[m2],320,0,0)
+
+        s1,s2=map(int,'%02d'%time.localtime().tm_sec)
+        s1+=offsets[4]*10
+        s2+=offsets[5]*10
+        self.animations[s1]=animate_to(0.2,self.digits[s1],500,0,0)
+        self.animations[s2]=animate_to(0.2,self.digits[s2],590,0,0)
+
+        # Random animations
+        for i in range(60):
+            l = self.digits[i]
+            if i in [h1,h2,m1,m2,s1,s2]:
+                l.setOpacity(1)
+                continue
+            l.setOpacity(.3)
+            self.animations[i]=animate_to(1,l,randint(0,500),randint(0,300),randint(0,0))
+
+        [ animation.timeLine().start() for animation in self.animations ]
+
+
+        self.animator.start(1000)
         
-        #self.listColorCount = [0,0,0,0,0,0]
-        self.idxColor = 0
-        
-        
-    def getColor(self):
-        idx = self.idxColor
-        self.idxColor = (self.idxColor + 1) % len(self.listColor)
-        return self.listColor[idx] 
-    
-fac = ColorFactory()
-for i in range(24):
-    print fac.getColor()
-    
+
+def main():
+    # Again, this is boilerplate, it's going to be the same on
+    # almost every app you write
+    app = QtGui.QApplication(sys.argv)
+    window=Main()
+    window.show()
+
+
+    # It's exec_ because exec is a reserved word in Python
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
+
