@@ -4,7 +4,7 @@ Created on 02.09.2015
 @author: Waetzold Plaum
 '''
 
-from PyLinXData import PyLinXDataObjects
+from PyLinXData import PyLinXCoreDataObjects
 import PyLinXRunEngine 
 
 ################################################
@@ -13,7 +13,7 @@ import PyLinXRunEngine
 # of the run-engine
 ################################################
 
-class PX_CodeRefObject(PyLinXDataObjects.PX_IdObject):
+class PX_CodeRefObject(PyLinXCoreDataObjects.PX_IdObject):
     '''
     classdocs
     '''
@@ -60,7 +60,7 @@ class PX_CodableVarElement(PX_CodeRefObject):
     def getCode(self, Code):
 
         lenBody = len(self._BContainer__Body)
-        name = self.ref.get(u"Name") 
+        name = self.ref.get(u"DisplayName") 
         if lenBody == 1:
             input = self.getb(self.getChildKeys()[0])
             if self.CodingVariant == PyLinXRunEngine.PX_CodeGenerator.CodingVariant.ReadSingleVars: 

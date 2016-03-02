@@ -22,16 +22,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710682"
-     inkscape:cx="509.7525"
-     inkscape:cy="318.0184"
+     inkscape:zoom="8.0000004"
+     inkscape:cx="45.800112"
+     inkscape:cy="114.57304"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1105"
-     inkscape:window-height="583"
-     inkscape:window-x="509"
-     inkscape:window-y="172"
+     inkscape:window-width="779"
+     inkscape:window-height="423"
+     inkscape:window-x="100"
+     inkscape:window-y="100"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -124,7 +124,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -132,6 +132,50 @@
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Ebene 1">
+    <rect
+       inkscape:export-ydpi="61"
+       inkscape:export-xdpi="61"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       transform="scale(-1,1)"
+       y="932.3587"
+       x="-76.572571"
+       height="23.099138"
+       width="23.099138"
+       id="rect4455"
+       style="fill:none;stroke:none" />
+    <rect
+       inkscape:export-ydpi="95"
+       inkscape:export-xdpi="95"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\delMap16.png"
+       transform="scale(-1,1)"
+       y="899.83105"
+       x="-154.12387"
+       height="19.724138"
+       width="19.724138"
+       id="rect4433"
+       style="fill:#ffffff;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       inkscape:export-ydpi="63.38377"
+       inkscape:export-xdpi="63.38377"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\bitmap.png"
+       transform="scale(-1,1)"
+       y="899.20605"
+       x="-189.99887"
+       height="19.724138"
+       width="19.724138"
+       id="rect4411"
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       inkscape:export-ydpi="79.05349"
+       inkscape:export-xdpi="79.05349"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\mappedTo16.png"
+       transform="scale(-1,1)"
+       y="965.31842"
+       x="-57.389267"
+       height="13.661638"
+       width="13.661638"
+       id="rect3580"
+       style="fill:#f4b7ce;fill-opacity:0;stroke:none" />
     <rect
        inkscape:export-ydpi="67.533554"
        inkscape:export-xdpi="67.533554"
@@ -4394,16 +4438,16 @@
          sodipodi:nodetypes="cccccccc" />
     </g>
     <rect
-       inkscape:export-ydpi="67.533554"
-       inkscape:export-xdpi="67.533554"
-       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-ydpi="95.075653"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
        transform="scale(-1,1)"
-       y="848.71539"
-       x="-104.57246"
+       y="900.91248"
+       x="-46.999607"
        height="19.724138"
        width="19.724138"
        id="rect4391"
-       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none" />
     <rect
        inkscape:export-ydpi="67.533554"
        inkscape:export-xdpi="67.533554"
@@ -4746,5 +4790,390 @@
            id="tspan4376"
            sodipodi:role="line">1</tspan></text>
     </g>
+    <rect
+       style="fill:#b3b3b3;fill-opacity:0;stroke:none"
+       id="rect5454"
+       width="31.74317"
+       height="31.984089"
+       x="-103.42387"
+       y="795.75763"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\divide24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect5456"
+       width="19.724138"
+       height="19.724138"
+       x="-97.369659"
+       y="802.05273"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\divide24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 29.709339,917.63286 14.913379,-0.0103"
+       id="path5458"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-ydpi="95.075653" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\divide24.png"
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="path5460"
+       sodipodi:cx="80.328522"
+       sodipodi:cy="658.93268"
+       sodipodi:rx="0.84134614"
+       sodipodi:ry="0.88141024"
+       d="m 81.169868,658.93268 a 0.84134614,0.88141024 0 1 1 -1.682692,0 0.84134614,0.88141024 0 1 1 1.682692,0 z"
+       transform="matrix(1.4981888,0,0,1.4981888,-33.132783,-180.07899)" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\divide24.png"
+       transform="matrix(1.4981888,0,0,1.4981888,-32.96321,-170.58706)"
+       d="m 81.169868,658.93268 a 0.84134614,0.88141024 0 1 1 -1.682692,0 0.84134614,0.88141024 0 1 1 1.682692,0 z"
+       sodipodi:ry="0.88141024"
+       sodipodi:rx="0.84134614"
+       sodipodi:cy="658.93268"
+       sodipodi:cx="80.328522"
+       id="path5462"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="95.075653"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
+       inkscape:connector-curvature="0"
+       id="path5464"
+       d="m 36.573461,916.47302 -0.02425,-9.92089"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       transform="matrix(0.83619514,-1.3082358,-1.3287067,-0.84511315,84.71856,1162.1458)"
+       inkscape:transform-center-y="-1.2777524"
+       inkscape:transform-center-x="0.0082113038"
+       d="m 124.64286,114.50504 -2.9161,-0.10211 -2.91609,-0.10211 1.54647,-2.47435 1.54648,-2.47436 1.36962,2.57646 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="false"
+       sodipodi:arg2="1.6057969"
+       sodipodi:arg1="0.55859932"
+       sodipodi:r2="1.6846395"
+       sodipodi:r1="3.3692789"
+       sodipodi:cy="112.71932"
+       sodipodi:cx="121.78571"
+       sodipodi:sides="3"
+       id="path5466"
+       style="fill:#000000;stroke:#000000;stroke-width:0.69309902;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="star"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-ydpi="95.075653" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none"
+       id="rect3567"
+       width="19.724138"
+       height="19.724138"
+       x="-75.249603"
+       y="902.41248"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 84.284508,872.37251 -0.02425,-9.92089"
+       id="path3571"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-ydpi="95.075653" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       sodipodi:type="star"
+       style="fill:#000000;stroke:#000000;stroke-width:0.77960008;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3573"
+       sodipodi:sides="3"
+       sodipodi:cx="121.78571"
+       sodipodi:cy="112.71932"
+       sodipodi:r1="3.3692789"
+       sodipodi:r2="1.6846395"
+       sodipodi:arg1="0.55859932"
+       sodipodi:arg2="1.6057969"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 124.64286,114.50504 -2.9161,-0.10211 -2.91609,-0.10211 1.54647,-2.47435 1.54648,-2.47436 1.36962,2.57646 z"
+       inkscape:transform-center-x="-1.0269773"
+       inkscape:transform-center-y="0.035005412"
+       transform="matrix(0.02890565,-1.5522132,-1.2443589,-0.03358064,202.18216,1104.8002)" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:connector-curvature="0"
+       id="path4404"
+       d="m 54.07154,921.43102 6.515202,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 54.092353,915.12197 6.515202,-0.0125"
+       id="path4406"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:connector-curvature="0"
+       id="path4408"
+       d="m 54.102006,908.57232 6.515204,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 54.07154,902.07613 6.515202,-0.0125"
+       id="path4410"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 70.379189,921.43102 6.427225,-0.0125"
+       id="path4412"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:connector-curvature="0"
+       id="path4414"
+       d="m 70.399721,915.12197 6.427225,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 70.409244,908.57232 6.427227,-0.0125"
+       id="path4416"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\SignalMapping16.png"
+       inkscape:connector-curvature="0"
+       id="path4418"
+       d="m 70.379189,902.07613 6.427225,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       transform="matrix(0.02890565,-1.5522132,-1.2443589,-0.03358064,229.43216,1104.0502)"
+       inkscape:transform-center-y="0.035005412"
+       inkscape:transform-center-x="-1.0269773"
+       d="m 124.64286,114.50504 -2.9161,-0.10211 -2.91609,-0.10211 1.54647,-2.47435 1.54648,-2.47436 1.36962,2.57646 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="false"
+       sodipodi:arg2="1.6057969"
+       sodipodi:arg1="0.55859932"
+       sodipodi:r2="1.6846395"
+       sodipodi:r1="3.3692789"
+       sodipodi:cy="112.71932"
+       sodipodi:cx="121.78571"
+       sodipodi:sides="3"
+       id="path3578"
+       style="fill:#000000;stroke:#000000;stroke-width:0.77960008;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="star"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\mappedTo16.png"
+       inkscape:export-xdpi="79.05349"
+       inkscape:export-ydpi="79.05349" />
+    <path
+       inkscape:export-ydpi="67.533554"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:connector-curvature="0"
+       id="path3580"
+       d="m 110.23242,916.15864 13.14207,-12.92519"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 123.37449,916.15864 110.23242,903.23345"
+       id="path3582"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\icons\multiply24.png"
+       inkscape:export-xdpi="67.533554"
+       inkscape:export-ydpi="67.533554" />
+    <rect
+       style="fill:#000000;fill-opacity:0;stroke:none"
+       id="rect3584"
+       width="19.724138"
+       height="19.724138"
+       x="-126.9996"
+       y="899.66248"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\Signal24.png"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-ydpi="95.075653" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 137.73242,915.90864 13.14207,-12.92519"
+       id="path4396"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\delMap16.png"
+       inkscape:export-xdpi="95"
+       inkscape:export-ydpi="95" />
+    <path
+       inkscape:export-ydpi="95"
+       inkscape:export-xdpi="95"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\delMap16.png"
+       inkscape:connector-curvature="0"
+       id="path4398"
+       d="M 150.87449,915.90864 137.73242,902.98345"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <rect
+       inkscape:export-ydpi="95.075653"
+       inkscape:export-xdpi="95.075653"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\delMap16.png"
+       transform="scale(-1,1)"
+       y="899.41248"
+       x="-154.4996"
+       height="19.724138"
+       width="19.724138"
+       id="rect4400"
+       style="fill:#000000;fill-opacity:0;stroke:none" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4404"
+       width="19.724138"
+       height="19.724138"
+       x="-189.99887"
+       y="899.20605"
+       transform="scale(-1,1)"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\bitmap.png"
+       inkscape:export-xdpi="63.38377"
+       inkscape:export-ydpi="63.38377" />
+    <path
+       inkscape:export-ydpi="63.38377"
+       inkscape:export-xdpi="63.38377"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\bitmap.png"
+       inkscape:connector-curvature="0"
+       id="path4407"
+       d="m 169.88675,913.45992 10.46941,-4.41784"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.00000023999999990;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 183.69925,912.28135 6.21941,-7.60816"
+       id="path4409"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\bitmap.png"
+       inkscape:export-xdpi="63.38377"
+       inkscape:export-ydpi="63.38377" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:2.99999976000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 185.35616,912.10981 -6.21941,-3.08371"
+       id="path4420"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\bitmap.png"
+       inkscape:export-xdpi="63.38377"
+       inkscape:export-ydpi="63.38377" />
+    <rect
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       transform="scale(-1,1)"
+       y="934.58582"
+       x="-74.896049"
+       height="19.724138"
+       width="19.724138"
+       id="rect4435"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none" />
+    <path
+       transform="matrix(-0.02890565,-1.5522132,1.2443589,-0.03358064,-69.603433,1136.9736)"
+       inkscape:transform-center-y="0.035005412"
+       inkscape:transform-center-x="1.0269777"
+       d="m 124.64286,114.50504 -2.9161,-0.10211 -2.91609,-0.10211 1.54647,-2.47435 1.54648,-2.47436 1.36962,2.57646 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="false"
+       sodipodi:arg2="1.6057969"
+       sodipodi:arg1="0.55859932"
+       sodipodi:r2="1.6846395"
+       sodipodi:r1="3.3692789"
+       sodipodi:cy="112.71932"
+       sodipodi:cx="121.78571"
+       sodipodi:sides="3"
+       id="path4437"
+       style="fill:#000000;stroke:#000000;stroke-width:0.77960008;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="star"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 53.717987,953.60438 6.515202,-0.0125"
+       id="path4439"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       inkscape:connector-curvature="0"
+       id="path4441"
+       d="m 53.7388,947.29533 6.515202,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 53.748453,940.74568 6.515204,-0.0125"
+       id="path4443"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-ydpi="61.769436" />
+    <path
+       inkscape:export-ydpi="61.769436"
+       inkscape:export-xdpi="61.769436"
+       inkscape:export-filename="D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Icons\deleteMap16.png"
+       inkscape:connector-curvature="0"
+       id="path4445"
+       d="m 53.717987,934.24949 6.515202,-0.0125"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

@@ -6,7 +6,8 @@ Created on 11.03.2015
 import copy
 from PyQt4 import QtGui, QtCore
 
-from PyLinXData import * 
+# from PyLinXData import BContainer, PyLinXCoreDataObjects, \
+#            PyLinXHelper,PX_Signals,PX_DataDictionary
 import PX_Templates as PX_Templ
 from PyLinXGui import BEasyWidget
 
@@ -92,9 +93,16 @@ class PX_Dialogue_SelectDataViewer(QtGui.QDialog):
             idx = newVarDispObj.get(u"idxDataDispObj")
             listSelectedDispObj_new.append(idx)
       
-        execStr = u"set ./" + self.variable.get(u"Name") + u".listSelectedDispObj " +\
-                unicode(repr(listSelectedDispObj_new).replace(u" ", u""))
+        #execStr = u"set ./" + self.variable.get(u"Name") + u".listSelectedDispObj " +\
+        #        unicode(repr(listSelectedDispObj_new).replace(u" ", u""))
+        #execStr = u"set ." + self.variable.get(u"objPath") + u".listSelectedDispObj " +\
+        #        unicode(repr(listSelectedDispObj_new).replace(u" ", u""))
+        #execStr = u"set ." + self.variable.get(u"objPath")[:-1] + u".listSelectedDispObj " +\
+        #        unicode(repr(listSelectedDispObj_new).replace(u" ", u""))
+        execStr = u"set " + self.variable.get(u"objPath")[:-1] + u".listSelectedDispObj " +\
+                unicode(repr(listSelectedDispObj_new).replace(u" ", u""))                  
         self.mainController.execCommand(execStr)
+
         self.mainController.set(u"idxLastSelectedDataViewer", idx)
         self.hide()
         

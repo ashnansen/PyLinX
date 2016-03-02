@@ -24,10 +24,10 @@ class BContainer(object):
 
     ## Constructor
     
-    def __init__(self, name = u"<no Name>", parent = None):
+    def __init__(self, name = u"<no Name>", parent = None, headObject = None):
         
         # Element for saving the main or global information ot the knot
-        self.__Head = None
+        self.__Head = headObject
         # Dict of Elements indexed by "name"
         self.__Body = {}
         # reference to the root knot
@@ -56,6 +56,7 @@ class BContainer(object):
     ## Method to get the attribute of an element uniquely identificied by the value of another attribute
     
     def call(self, attributeKey, value, attrubuteReturn = None):
+        
         listElements = self.getbCond(attributeKey, value, attrubuteReturn)
         if len(listElements) != 1:
             raise Exception("Fatal Error BContainer.call: inconsistent IDs!")
@@ -113,17 +114,12 @@ class BContainer(object):
         if self.__parent == None:
             return u"/" + path
         else:
-#             print "self.__parent.key(self): ", self.__parent.key(self)
-#             print "self.__parent", self.__parent
             return self.__parent.__get_path( self.__parent.key(self) + u"/" +  path)
         
     def getb(self,name):
         if name in self.__Body:
             return self.__Body.get(name)
         else:
-            print "name: ", name
-            print "type(name): ", type(name)
-            print "body: ", self.__Body
             self.ls()
             raise Exception(u"Error BContainer.getb: Element \"" + name +"\" in " + unicode(type(self)) + u" does not exist.")
     
@@ -220,7 +216,6 @@ class BContainer(object):
         for attr in self.__Attributes:
             listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )
         for attr in self.__AttributesVirtual:
-            #print "attr: ", attr
             listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
         if len(listLsAttr) > 0:
             self.__printLsList(sorted(listLsAttr))
@@ -271,12 +266,19 @@ class BContainer(object):
             parentTarget = path1
         parentTarget.paste(objSource)
 
+    
     def getObjFromPath(self,path):
         
-        if not (type(path) == list):
-            path = path.split(u"/")
+        bFolder = False 
+        if not ( type(path)  in (list, QtCore.QStringList)):
+            path = str(path).split(u"/")
+            if type(path) == QtCore.QStringList:
+                path = list(path)
             if path[-1] == u"":
                 path.pop(-1)
+                bFolder = True
+            
+                
         
         len_path = len(path)   
          
@@ -296,7 +298,7 @@ class BContainer(object):
                 return root.getObjFromPath(path[1:])
             else:
                 raise Exception("Error BContainer.getObjFromPath: Syntax Error 2")
-        elif path_0 == u".":
+        elif path_0 == u"." and len_path > 1:
             return self.getObjFromPath(path[1:])
         else:
             if len_path == 1:
@@ -305,14 +307,14 @@ class BContainer(object):
                     path = ".".join(path[0:-1])
                 else:
                     path = path[0]
-                #TODO Chance hasByID mechanism. Hash by unicoe(ID)
-                # so far a quick and dirty workaround
-                #if path.isdigit():
-                #    path = int(path)
+                if path == self.get("Name"):
+                    return self                
                 try:
                     obj = self.getb(path)
                 except:
-                    print "Error!"
+                    print "Error BContainer.getObjFromPath"
+                    print "path: ", path , "len(path)", len(path)
+                    print "self.ls():" , self.ls()
                 return obj
             else:
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
