@@ -5,7 +5,6 @@ Created on 07.01.2015
 '''
 import sys
 from PyQt4 import QtGui, QtCore
-import PyLinXData.PyLinXHelper as helper 
 
 #from PyLinXData import BContainer
 

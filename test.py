@@ -2267,659 +2267,123 @@ Example Treeview'''
 
 """The user interface for our app"""
 
-# import os,sys,time
-# 
-# # Import Qt modules
-# from PyQt4 import QtCore,QtGui, QtOpenGL
-# 
-# # Import the compiled UI module
-# from ui_clock import Ui_Form
-# 
-# from random import randint, shuffle
-# 
-# # Create a class for our main window
-# class Main(QtGui.QWidget):
-#     def __init__(self):
-#         QtGui.QWidget.__init__(self)
-# 
-#         # This is always the same
-#         self.ui=Ui_Form()
-#         self.ui.setupUi(self)
-# 
-#         self.scene=QtGui.QGraphicsScene()
-#         self.scene.setSceneRect(0,0,600,400)
-#         self.ui.view.setScene(self.scene)
-#         #self.ui.view.setViewport(QtOpenGL.QGLWidget())
-#         self.populate()
-#         self.setWindowState(QtCore.Qt.WindowMaximized)
-# 
-#         self.animator=QtCore.QTimer()
-#         self.animator.timeout.connect(self.animate)
-#         self.animate()
-# 
-#     def populate(self):
-#         self.digits=[]
-#         self.animations=[]
-#         font=QtGui.QFont('White Rabbit')
-#         font.setPointSize(120)
-# 
-#         self.dot1=QtGui.QGraphicsTextItem(':')
-#         self.dot1.setFont(font)
-#         self.dot1.setPos(140,0)
-#         self.scene.addItem(self.dot1)
-#         self.dot2=QtGui.QGraphicsTextItem(':')
-#         self.dot2.setFont(font)
-#         self.dot2.setPos(410,0)
-#         self.scene.addItem(self.dot2)
-# 
-#         for i in range(60):
-#             l = QtGui.QGraphicsTextItem(str(i%10))
-#             l.setFont(font)
-#             l.setZValue(-100)
-#             l.setPos(randint(0,500),randint(150,300))
-#             l.setOpacity(.3)
-#             #l.setDefaultTextColor(QtGui.QColor('lightgray'))
-#             self.scene.addItem(l)
-#             self.digits.append(l)
-# 
-#     def animate(self):
-#         self.animations=range(0,60)
-# 
-#         def animate_to(t,item,x,y,angle):
-#             animation=QtGui.QGraphicsItemAnimation()
-#             timeline=QtCore.QTimeLine(1000)
-#             timeline.setFrameRange(0,100)
-#             animation.setPosAt(t,QtCore.QPointF(x,y))
-#             animation.setRotationAt(t,angle)
-#             animation.setItem(item)
-#             animation.setTimeLine(timeline)
-#             return animation
-# 
-#         offsets=range(6)
-#         shuffle(offsets)
-# 
-#         # Some, animate with purpose
-#         h1,h2=map(int,'%02d'%time.localtime().tm_hour)
-#         h1+=offsets[0]*10
-#         h2+=offsets[1]*10
-#         self.animations[h1]=animate_to(0.2,self.digits[h1],-40,0,0)
-#         self.animations[h2]=animate_to(0.2,self.digits[h2],50,0,0)
-# 
-#         m1,m2=map(int,'%02d'%time.localtime().tm_min)
-#         m1+=offsets[2]*10
-#         m2+=offsets[3]*10
-#         self.animations[m1]=animate_to(0.2,self.digits[m1],230,0,0)
-#         self.animations[m2]=animate_to(0.2,self.digits[m2],320,0,0)
-# 
-#         s1,s2=map(int,'%02d'%time.localtime().tm_sec)
-#         s1+=offsets[4]*10
-#         s2+=offsets[5]*10
-#         self.animations[s1]=animate_to(0.2,self.digits[s1],500,0,0)
-#         self.animations[s2]=animate_to(0.2,self.digits[s2],590,0,0)
-# 
-#         # Random animations
-#         for i in range(60):
-#             l = self.digits[i]
-#             if i in [h1,h2,m1,m2,s1,s2]:
-#                 l.setOpacity(1)
-#                 continue
-#             l.setOpacity(.3)
-#             self.animations[i]=animate_to(1,l,randint(0,500),randint(0,300),randint(0,0))
-# 
-#         [ animation.timeLine().start() for animation in self.animations ]
-# 
-# 
-#         self.animator.start(1000)
-#         
-# 
-# def main():
-#     # Again, this is boilerplate, it's going to be the same on
-#     # almost every app you write
-#     app = QtGui.QApplication(sys.argv)
-#     window=Main()
-#     window.show()
-# 
-# 
-#     # It's exec_ because exec is a reserved word in Python
-#     sys.exit(app.exec_())
-# 
-# 
-# if __name__ == "__main__":
-#     main()
+import os,sys,time
 
-'''QSplitter'''
+# Import Qt modules
+from PyQt4 import QtCore,QtGui, QtOpenGL
 
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+# Import the compiled UI module
+from ui_clock import Ui_Form
 
-"""
-ZetCode PyQt4 tutorial 
+from random import randint, shuffle
 
-This example shows
-how to use QtGui.QSplitter widget.
- 
-author: Jan Bodnar
-website: zetcode.com 
-last edited: September 2011
-"""
+# Create a class for our main window
+class Main(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
 
-# import sys
-# from PyQt4 import QtGui, QtCore
-# 
-# class Example(QtGui.QWidget):
-#     
-#     def __init__(self):
-#         super(Example, self).__init__()
-#         
-#         self.initUI()
-#         
-#     def initUI(self):      
-# 
-#         hbox = QtGui.QHBoxLayout(self)
-# 
-#         topleft = QtGui.QFrame(self)
-#         topleft.setFrameShape(QtGui.QFrame.StyledPanel)
-#  
-#         topright = QtGui.QFrame(self)
-#         topright.setFrameShape(QtGui.QFrame.StyledPanel)
-# 
-#         bottom = QtGui.QFrame(self)
-#         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
-# 
-#         splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
-#         splitter1.addWidget(topleft)
-#         splitter1.addWidget(topright)
-# 
-#         splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
-#         splitter2.addWidget(splitter1)
-#         splitter2.addWidget(bottom)
-# 
-#         hbox.addWidget(splitter2)
-#         self.setLayout(hbox)
-#         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
-#         
-#         self.setGeometry(300, 300, 300, 200)
-#         self.setWindowTitle('QtGui.QSplitter')
-#         self.show()
-#         
-# def main():
-#     
-#     app = QtGui.QApplication(sys.argv)
-#     ex = Example()
-#     sys.exit(app.exec_())
-# 
-# 
-# if __name__ == '__main__':
-#     main()
+        # This is always the same
+        self.ui=Ui_Form()
+        self.ui.setupUi(self)
 
-'''TreeView und TreeModel '''   
-    
+        self.scene=QtGui.QGraphicsScene()
+        self.scene.setSceneRect(0,0,600,400)
+        self.ui.view.setScene(self.scene)
+        #self.ui.view.setViewport(QtOpenGL.QGLWidget())
+        self.populate()
+        self.setWindowState(QtCore.Qt.WindowMaximized)
 
-# from PyQt4 import QtGui, QtCore
-# 
-# HORIZONTAL_HEADERS = ("Surname", "Given Name")
-#     
-# class person_class(object):
-#     '''
-#     a trivial custom data object
-#     '''
-#     def __init__(self, sname, fname, isMale):
-#         self.sname = sname
-#         self.fname = fname
-#         self.isMale = isMale
-# 
-#     def __repr__(self):
-#         return "PERSON - %s %s"% (self.fname, self.sname)
-#     
-# class TreeItem(object):
-#     '''
-#     a python object used to return row/column data, and keep note of
-#     it's parents and/or children
-#     '''
-#     def __init__(self, person, header, parentItem):
-#         self.person = person
-#         self.parentItem = parentItem
-#         self.header = header
-#         self.childItems = []
-# 
-#     def appendChild(self, item):
-#         self.childItems.append(item)
-# 
-#     def child(self, row):
-#         return self.childItems[row]
-# 
-#     def childCount(self):
-#         return len(self.childItems)
-# 
-#     def columnCount(self):
-#         return 2
-#     
-#     def data(self, column):
-#         if self.person == None:
-#             if column == 0:
-#                 return QtCore.QVariant(self.header)
-#             if column == 1:
-#                 return QtCore.QVariant("")                
-#         else:
-#             if column == 0:
-#                 return QtCore.QVariant(self.person.sname)
-#             if column == 1:
-#                 return QtCore.QVariant(self.person.fname)
-#         return QtCore.QVariant()
-# 
-#     def parent(self):
-#         return self.parentItem
-#     
-#     def row(self):
-#         if self.parentItem:
-#             return self.parentItem.childItems.index(self)
-#         return 0
-# 
-# class treeModel(QtCore.QAbstractItemModel):
-#     '''
-#     a model to display a few names, ordered by sex
-#     '''
-#     def __init__(self, parent=None):
-#         super(treeModel, self).__init__(parent)
-#         self.people = []
-#         for fname, sname, isMale in (("John","Brown", 1), 
-#         ("Fred", "Bloggs", 1), ("Sue", "Smith", 0)):
-#             person = person_class(sname, fname, isMale)
-#             self.people.append(person)
-#             
-#         self.rootItem = TreeItem(None, "ALL", None)
-#         self.parents = {0 : self.rootItem}
-#         self.setupModelData()
-# 
-#     def columnCount(self, parent=None):
-#         if parent and parent.isValid():
-#             return parent.internalPointer().columnCount()
-#         else:
-#             return len(HORIZONTAL_HEADERS)
-# 
-#     def data(self, index, role):
-#         if not index.isValid():
-#             return QtCore.QVariant()
-# 
-#         item = index.internalPointer()
-#         if role == QtCore.Qt.DisplayRole:
-#             return item.data(index.column())
-#         if role == QtCore.Qt.UserRole:
-#             if item:
-#                 return item.person
-# 
-#         return QtCore.QVariant()
-# 
-#     def headerData(self, column, orientation, role):
-#         if (orientation == QtCore.Qt.Horizontal and
-#         role == QtCore.Qt.DisplayRole):
-#             try:
-#                 return QtCore.QVariant(HORIZONTAL_HEADERS[column])
-#             except IndexError:
-#                 pass
-# 
-#         return QtCore.QVariant()
-# 
-#     def index(self, row, column, parent):
-#         if not self.hasIndex(row, column, parent):
-#             return QtCore.QModelIndex()
-# 
-#         if not parent.isValid():
-#             parentItem = self.rootItem
-#         else:
-#             parentItem = parent.internalPointer()
-# 
-#         childItem = parentItem.child(row)
-#         if childItem:
-#             return self.createIndex(row, column, childItem)
-#         else:
-#             return QtCore.QModelIndex()
-# 
-#     def parent(self, index):
-#         if not index.isValid():
-#             return QtCore.QModelIndex()
-# 
-#         childItem = index.internalPointer()
-#         if not childItem:
-#             return QtCore.QModelIndex()
-#         
-#         parentItem = childItem.parent()
-# 
-#         if parentItem == self.rootItem:
-#             return QtCore.QModelIndex()
-# 
-#         return self.createIndex(parentItem.row(), 0, parentItem)
-# 
-#     def rowCount(self, parent=QtCore.QModelIndex()):
-#         if parent.column() > 0:
-#             return 0
-#         if not parent.isValid():
-#             p_Item = self.rootItem
-#         else:
-#             p_Item = parent.internalPointer()
-#         return p_Item.childCount()
-#     
-#     def setupModelData(self):
-#         for person in self.people:
-#             if person.isMale:
-#                 sex = "MALES"
-#             else:
-#                 sex = "FEMALES"
-#             
-#             if not self.parents.has_key(sex):                
-#                 newparent = TreeItem(None, sex, self.rootItem)
-#                 self.rootItem.appendChild(newparent)
-# 
-#                 self.parents[sex] = newparent
-# 
-#             parentItem = self.parents[sex]
-#             newItem = TreeItem(person, "", parentItem)
-#             parentItem.appendChild(newItem)
-#         
-#     def searchModel(self, person):
-#         '''
-#         get the modelIndex for a given appointment
-#         '''
-#         def searchNode(node):
-#             '''
-#             a function called recursively, looking at all nodes beneath node
-#             '''
-#             for child in node.childItems:
-#                 if person == child.person:
-#                     index = self.createIndex(child.row(), 0, child)
-#                     return index
-#                     
-#                 if child.childCount() > 0:
-#                     result = searchNode(child)
-#                     if result:
-#                         return result
-#         
-#         retarg = searchNode(self.parents[0])
-#         print retarg
-#         return retarg
-#             
-#     def find_GivenName(self, fname):
-#         app = None
-#         for person in self.people:
-#             if person.fname == fname:
-#                 app = person
-#                 break
-#         if app != None:
-#             index = self.searchModel(app)
-#             return (True, index)            
-#         return (False, None)
-# 
-# if __name__ == "__main__":    
-# 
-#     def row_clicked(index):
-#         '''
-#         when a row is clicked... show the name
-#         '''
-#         print tv.model().data(index, QtCore.Qt.UserRole)
-#         
-#     def but_clicked():
-#         '''
-#         when a name button is clicked, I iterate over the model, 
-#         find the person with this name, and set the treeviews current item
-#         '''
-#         name = dialog.sender().text()
-#         print "BUTTON CLICKED:", name
-#         result, index = model.find_GivenName(name)
-#         if result:
-#             if index:
-#                 tv.setCurrentIndex(index)
-#                 return
-#         tv.clearSelection()
-#         
-#     app = QtGui.QApplication([])
-#     
-#     model = treeModel()
-#     dialog = QtGui.QDialog()
-# 
-#     dialog.setMinimumSize(300,150)
-#     layout = QtGui.QVBoxLayout(dialog)
-# 
-#     tv = QtGui.QTreeView(dialog)
-#     tv.setModel(model)
-#     tv.setAlternatingRowColors(True)
-#     layout.addWidget(tv)
-#     
-#     label = QtGui.QLabel("Search for the following person")
-#     layout.addWidget(label)
-#     
-#     buts = []
-#     frame = QtGui.QFrame(dialog)
-#     layout2 = QtGui.QHBoxLayout(frame)
-#     
-#     for person in model.people:
-#         but = QtGui.QPushButton(person.fname, frame)
-#         buts.append(but)
-#         layout2.addWidget(but)
-#         QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), but_clicked)
-#         
-#     layout.addWidget(frame)
-# 
-#     but = QtGui.QPushButton("Clear Selection")
-#     layout.addWidget(but)
-#     QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), tv.clearSelection)
-# 
-#     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
-#         row_clicked)
-# 
-#     dialog.exec_()
-# 
-#     app.closeAllWindows()
+        self.animator=QtCore.QTimer()
+        self.animator.timeout.connect(self.animate)
+        self.animate()
 
-'''TreeView 2'''
-# from PyQt4 import QtGui, QtCore
-# import sys
-# 
-# class SI(object):
-# 
-# 
-#     def __init__(self, group=None, parent=None):
-#         self.parent = parent
-#         self.group = group
-#         self.children = []
-# 
-#     def data(self, column):
-#         return self.group[column]
-# 
-#     def appendChild(self, group):
-#         self.children.append(SI(group, self))
-# 
-#     def child(self, row):
-#         return self.children[row]
-# 
-#     def childrenCount(self):
-#         return len(self.children)
-# 
-#     def hasChildren(self):
-#         if len(self.children) > 0 :
-#             return True
-#         return False
-# 
-#     def row(self):
-#         if self.parent:
-#             return self.parent.children.index(self)
-#         return 0
-# 
-#     def columnCount(self):
-#         return len(self.group)
-# 
-# class SM(QtCore.QAbstractItemModel):
-# 
-#     root = SI(["First", "Second"])
-# 
-#     def __init__(self, parent=None):
-#         super(SM, self).__init__(parent)
-#         self.createData()
-# 
-#     def createData(self):
-#         for x in [["a", "A"], ["b","B"], ["c", "C"]]:
-#             self.root.appendChild(x)
-#         for y in [["aa", "AA"], ["ab", "AB"], ["ac","AC"]]:
-#             self.root.child(0).appendChild(y)
-# 
-#     def columnCount(self, index=QtCore.QModelIndex()):
-#         if index.isValid():
-#             return index.internalPointer().columnCount()
-#         else:
-#             return self.root.columnCount()
-# 
-#     def rowCount(self, index=QtCore.QModelIndex()):
-#         if index.isValid():
-#             item = index.internalPointer()
-#         else:
-#             item = self.root
-#         return item.childrenCount()
-# 
-#     def index(self, row, column, index=QtCore.QModelIndex()):
-#         if not self.hasIndex(row, column, index):
-#             return QtCore.QModelIndex()
-#         if not index.isValid():
-#             item = self.root
-#         else:
-#             item = index.internalPointer()
-# 
-#         child = item.child(row)
-#         if child:
-#             return self.createIndex(row, column, child)
-#         return QtCore.QModelIndex()
-# 
-#     def parent(self, index):
-#         if not index.isValid():
-#             return QtCore.QModelIndex()
-#         item = index.internalPointer()
-#         if not item:
-#             return QtCore.QModelIndex()
-# 
-#         parent = item.parent
-#         if parent == self.root:
-#             return QtCore.QModelIndex()
-#         else:
-#             return self.createIndex(parent.row(), 0, parent)
-# 
-#     def hasChildren(self, index):
-#         if not index.isValid():
-#             item = self.root
-#         else:
-#             item = index.internalPointer()
-#         return item.hasChildren()
-# 
-#     def data(self, index, role=QtCore.Qt.DisplayRole):
-#         if index.isValid() and role == QtCore.Qt.DisplayRole:
-#             return index.internalPointer().data(index.column())
-#         elif not index.isValid():
-#             return self.root.getData()
-# 
-#     def headerData(self, section, orientation, role):
-#         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-#             return self.root.data(section)
-# 
-# class MyTree(QtGui.QTreeView):
-#     def __init__(self, parent=None, model=SM):
-#         super(MyTree, self).__init__(parent)
-#         self.setModel(model())
-# 
-# 
-# class Window(QtGui.QWidget):
-#     def __init__(self, parent=None):
-#         super(Window, self).__init__(parent)
-#         self.initGui()
-# 
-#     def initGui(self):
-#         vlo = QtGui.QVBoxLayout()
-#         tree = MyTree(self)
-#         vlo.addWidget(tree)
-#         self.setLayout(vlo)
-#         self.show()
-# 
-# def main():
-#     app = QtGui.QApplication(sys.argv)
-#     win = Window()
-#     exit(app.exec_())
-# 
-# if __name__ == '__main__':
-#     main()
+    def populate(self):
+        self.digits=[]
+        self.animations=[]
+        font=QtGui.QFont('White Rabbit')
+        font.setPointSize(120)
 
-'''Drag and Drop Example'''
+        self.dot1=QtGui.QGraphicsTextItem(':')
+        self.dot1.setFont(font)
+        self.dot1.setPos(140,0)
+        self.scene.addItem(self.dot1)
+        self.dot2=QtGui.QGraphicsTextItem(':')
+        self.dot2.setFont(font)
+        self.dot2.setPos(410,0)
+        self.scene.addItem(self.dot2)
+
+        for i in range(60):
+            l = QtGui.QGraphicsTextItem(str(i%10))
+            l.setFont(font)
+            l.setZValue(-100)
+            l.setPos(randint(0,500),randint(150,300))
+            l.setOpacity(.3)
+            #l.setDefaultTextColor(QtGui.QColor('lightgray'))
+            self.scene.addItem(l)
+            self.digits.append(l)
+
+    def animate(self):
+        self.animations=range(0,60)
+
+        def animate_to(t,item,x,y,angle):
+            animation=QtGui.QGraphicsItemAnimation()
+            timeline=QtCore.QTimeLine(1000)
+            timeline.setFrameRange(0,100)
+            animation.setPosAt(t,QtCore.QPointF(x,y))
+            animation.setRotationAt(t,angle)
+            animation.setItem(item)
+            animation.setTimeLine(timeline)
+            return animation
+
+        offsets=range(6)
+        shuffle(offsets)
+
+        # Some, animate with purpose
+        h1,h2=map(int,'%02d'%time.localtime().tm_hour)
+        h1+=offsets[0]*10
+        h2+=offsets[1]*10
+        self.animations[h1]=animate_to(0.2,self.digits[h1],-40,0,0)
+        self.animations[h2]=animate_to(0.2,self.digits[h2],50,0,0)
+
+        m1,m2=map(int,'%02d'%time.localtime().tm_min)
+        m1+=offsets[2]*10
+        m2+=offsets[3]*10
+        self.animations[m1]=animate_to(0.2,self.digits[m1],230,0,0)
+        self.animations[m2]=animate_to(0.2,self.digits[m2],320,0,0)
+
+        s1,s2=map(int,'%02d'%time.localtime().tm_sec)
+        s1+=offsets[4]*10
+        s2+=offsets[5]*10
+        self.animations[s1]=animate_to(0.2,self.digits[s1],500,0,0)
+        self.animations[s2]=animate_to(0.2,self.digits[s2],590,0,0)
+
+        # Random animations
+        for i in range(60):
+            l = self.digits[i]
+            if i in [h1,h2,m1,m2,s1,s2]:
+                l.setOpacity(1)
+                continue
+            l.setOpacity(.3)
+            self.animations[i]=animate_to(1,l,randint(0,500),randint(0,300),randint(0,0))
+
+        [ animation.timeLine().start() for animation in self.animations ]
 
 
-import sys
-from PyQt4 import QtGui
-from PyQt4 import QtCore
-from PyQt4.QtCore import Qt
- 
- 
-class DragFromWidget(QtGui.QDockWidget):
- 
-    def __init__(self, parent=None):
-        super(DragFromWidget, self).__init__(parent=parent)
-        self.layout().addWidget(QtGui.QLabel("Label!"))
- 
-    def dragEnterEvent(self, event):
-        print("dragEnterEvent")
- 
-    def mousePressEvent(self, event):
-        label = self.childAt(event.pos())
-        if not label:
-            return # nothing was selected
-        hotSpot = event.pos() - label.pos()
-        mimeData = QtCore.QMimeData()
-        mimeData.setText(label.text())
-        mimeData.setData("application/x-hotspot", str(hotSpot.x()))
-        pixmap = QtGui.QPixmap(label.size())
-        label.render(pixmap)
- 
-        drag = QtGui.QDrag(self)
-        drag.setMimeData(mimeData)
-        drag.setPixmap(pixmap)
-        drag.setHotSpot(hotSpot)
- 
-        dropAction = drag.exec_(Qt.CopyAction|Qt.MoveAction, Qt.CopyAction)
-        if dropAction == Qt.MoveAction:
-            label.close()
- 
- 
-class DragToWidget(QtGui.QDockWidget):
- 
-    def __init__(self, parent=None):
-        super(DragToWidget, self).__init__(parent=parent)
-        self.setAcceptDrops(True)
- 
-    def dragEnterEvent(self, event):
-        event.accept()
- 
-    def dropEvent(self, event):
-        print("'%s' was dropped onto me." % event)
- 
- 
-class SandboxApp(QtGui.QApplication):
- 
-    def __init__(self, *args, **kwargs):
-        super(SandboxApp, self).__init__(*args)
-        self.mainwindow = MainWindow()
-        self.mainwindow.show()
- 
- 
-class MainWindow(QtGui.QMainWindow):
- 
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent=parent)
-        self.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AnimatedDocks)
-        self.addDockWidget(Qt.LeftDockWidgetArea, DragFromWidget())
-        self.addDockWidget(Qt.RightDockWidgetArea, DragToWidget())
- 
- 
+        self.animator.start(1000)
+        
+
 def main():
-    app = SandboxApp(sys.argv)
+    # Again, this is boilerplate, it's going to be the same on
+    # almost every app you write
+    app = QtGui.QApplication(sys.argv)
+    window=Main()
+    window.show()
+
+
+    # It's exec_ because exec is a reserved word in Python
     sys.exit(app.exec_())
-     
- 
- 
+
+
 if __name__ == "__main__":
     main()
-
-
 
