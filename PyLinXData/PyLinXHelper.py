@@ -7,7 +7,6 @@ Created on 13.11.2014
 from   PyQt4 import QtGui
 import inspect
 import string
-import os
 
 
 class ToolSelected():
@@ -32,6 +31,7 @@ def point_inside_polygon(x,y,polygons):
         for l in range(len(polygons)):
             inside = False
             poly = polygons[l]
+            #print "poly: ",  poly
             if poly != None:
                 n = len(poly)
                 p1x,p1y = poly[0]
@@ -68,51 +68,3 @@ def getAttributeAndValue(stri):
         return None
     else:
         return listStri[0], listStri[2]
-    
-
-
-def showFileSelectionDialog(ui, strPath = None, bDir = False, strExt= u"", strHeader = None, \
-                              dialogType = u"load", bFileObject = True):
-    # ui          widget from which the dialog is called
-    # strPath     path to the directory shown when dialog is opened
-    # strExt      An expression like "*.doc" to restrict the display to special file endings
-    # strHeader   header of the dialog
-    # dialogTyoe  "load" for load dialogs and "save for save dialogs
-    # bFileObject if true the function returns the file object if false only the string of the path is returned
-    
-    if strPath == None:
-        strPath = os.getcwd()
-    if strHeader == None:
-        if bDir:
-            strHeader = u"Select Directory..."
-        else:
-            strHeader = u"Select File..."
-    if bDir:
-        strExt = strPath,QtGui.QFileDialog.ShowDirsOnly
-    if dialogType == u"save":            
-        strSavePath = unicode(QtGui.QFileDialog.getSaveFileName(ui,strHeader,strPath,strExt))
-    elif dialogType == u"load":
-        strSavePath = unicode(QtGui.QFileDialog.getOpenFileName(ui,strHeader,strPath,strExt))
-    else:
-        strSavePath = u""
-    
-    if len(strSavePath):
-        try:
-            if bFileObject:
-                _file = open(strSavePath)
-                return _file, strSavePath
-            else:
-                return strSavePath
-        except:
-            error(u"Error opening " + strSavePath)
-            return None
-    else:
-            return None
-        
-def loadAction(widget= None, IconPath = u"", ToolTip = u"", ShortCut = u"", Callback = None, ToolBar = None):     
-
-    action = QtGui.QAction(QtGui.QIcon(IconPath), ToolTip, widget)
-    action.setShortcut(ShortCut)
-    action.triggered.connect(Callback)
-    ToolBar.addAction(action)
-    return action
