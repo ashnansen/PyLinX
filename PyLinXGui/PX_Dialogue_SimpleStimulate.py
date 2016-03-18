@@ -5,7 +5,6 @@ Created on 12.03.2015
 '''
 import copy
 from PyQt4 import QtGui, QtCore
-#from PyLinXData import * 
 from PyLinXGui import BEasyWidget
 from PyLinXData import PyLinXHelper as helper
 
@@ -27,9 +26,11 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         # Get Data 
         for dictVar in init_list:
             attr = dictVar[u"Name"]
-            if variable.isAttr(attr):
-                value = variable.get(attr)
+            if variable.getRefObject().isAttr(attr):
+                value = variable.getRefObject().get(attr)
             else:
+                variable.getRefObject().ls()
+                variable.getRefObject().lsAttr()
                 value = 0.0
             dictVar[u"Value"] = unicode(value)
                         
@@ -77,8 +78,10 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             self.result = False
             return 
         strValues = repr(values).replace(" ", "")
-        ustrExec = u"set " + self.variable.get(u"Name") + u". " + unicode(strValues)
-        self.mainController.execCommand(ustrExec)
+        objPath = self.variable.get(u"objPath")
+        #ustrExec2 =  u"set " + objPath + u". " + unicode(strValues)
+        ustrExec2 =  u"set " + objPath  + u" " + unicode(strValues)
+        self.mainController.execCommand(ustrExec2)
         self.hide()
     
     def onActivated(self, text):
