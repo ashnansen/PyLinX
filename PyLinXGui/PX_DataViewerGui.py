@@ -4,8 +4,8 @@ import numpy as np
 import copy
 
 from PyQt4 import QtGui, QtCore
-from PyLinXCodeGen import PyLinXRunEngine
-from PyLinXData import PyLinXDataObjects
+from PyLinXCompiler import PyLinXRunEngine
+from PyLinXData import PyLinXCoreDataObjects
 
 class DataViewerGui(QtGui.QMainWindow):
     
@@ -99,7 +99,7 @@ class PlotterWidget(QtGui.QWidget):
         self.DataDictionary = self.mainController.getb("DataDictionary")
         self.margin = 50
         self.zoomStack = []
-        self.curveMap = {}    #QMap<int, QVector<QPointF>>
+        self.curveMap = {}    
         self.curveMapMemory = {}                                                            
         self.curZoom = 0      #int
         self.rubberBandIsShown = False
@@ -128,7 +128,7 @@ class PlotterWidget(QtGui.QWidget):
                 self.curveMap[var]=[]
                 self.curveMapMemory[var] = []
           
-        self.RunConfigDictionary = PyLinXDataObjects.PX_Object.mainController.getb(u"RunConfigDictionary")
+        self.RunConfigDictionary = self.mainController.getb(u"RunConfigDictionary")
         
     def adjust(self):
         self.zoomStack[self.curZoom].adjust()
@@ -159,6 +159,7 @@ class PlotterWidget(QtGui.QWidget):
                         self.curveMapMemory[var].append(self.curveMap[var].pop(0))
                     self.curveMap[var].append(QtCore.QPointF(self.settings.maxX,\
                                                   self.DataDictionary[var]))
+                    
                     #print "PyLinXRunEngine.DataDictionary[" + str(var) + "]", PyLinXRunEngine.DataDictionary[var]             
                 self.refreshPixmap()
                 #self.repaint()

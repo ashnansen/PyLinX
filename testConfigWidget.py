@@ -24,7 +24,6 @@ class PropertyEditor(QtGui.QMainWindow):
         self.model = QtGui.QStandardItemModel()
         self.__activeWidget = None
         
-        
         self.treeView.setUniformRowHeights(True)
         self.treeView.setAnimated(True)
         self.treeView.header().hide() 
@@ -110,9 +109,7 @@ class ConfigTable(BContainer.BList):
     def getWidget(self):
         if self.__widget == None:
             self.__widget = BEasyWidget.EasyWidget(self)
-            return self.__widget
-        else:
-            return self.__widget
+        return self.__widget
         
     def write(self, arg):
         types = inspect.getmro(type(arg))
