@@ -97,7 +97,8 @@ class DrawWidget (QtGui.QWidget):
         var = self.__variableInSimMOde(e.pos())
         if var:
             signal = e.mimeData().text()
-            command = u"set @objects/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal) 
+            #command = u"set @objects/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal) 
+            command = u"set @objects/variables/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal)
             self.mainController.execCommand(command)
             self.repaint()
             self.emit(QtCore.SIGNAL(u"signal_repaint_Tab_SignalSelect"))

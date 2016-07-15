@@ -142,12 +142,9 @@ class PlotterWidget(QtGui.QWidget):
         self.listVars = list(self.varDispObj.get(u"setVars"))
         self.t = np.append(self.t, self.RunConfigDictionary[u"t"])
         self.settings.minX = self.t[-1] - 201 * self.RunConfigDictionary[u"delta_t"]
-        self.settings.maxX = self.t[-1]
-        #print "self.t[-1] ", self.t[-1]          
+        self.settings.maxX = self.t[-1] 
         if self.listVars != None:
             if len(self.listVars) > 0:
-            #if self.t[-1] > 0:  
-                
                 for var in self.listVars:
                     if self.t[-1] == 0:
                         self.curveMap[var]=   []
@@ -159,10 +156,8 @@ class PlotterWidget(QtGui.QWidget):
                         self.curveMapMemory[var].append(self.curveMap[var].pop(0))
                     self.curveMap[var].append(QtCore.QPointF(self.settings.maxX,\
                                                   self.DataDictionary[var]))
-                    
-                    #print "PyLinXRunEngine.DataDictionary[" + str(var) + "]", PyLinXRunEngine.DataDictionary[var]             
+
                 self.refreshPixmap()
-                #self.repaint()
                 QtGui.QWidget.update(self)
     
     def setPlotSettings(self,settings):                         
@@ -463,6 +458,7 @@ class PlotterWidget(QtGui.QWidget):
             painter.setPen(color) 
             painter.drawPolyline(polyline)
             i += 1
+
             
     def stop_run(self):
         for var in self.listVars: 

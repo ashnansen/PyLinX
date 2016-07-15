@@ -109,10 +109,17 @@ def showFileSelectionDialog(ui, strPath = None, bDir = False, strExt= u"", strHe
     else:
             return None
         
-def loadAction(widget= None, IconPath = u"", ToolTip = u"", ShortCut = u"", Callback = None, ToolBar = None):     
+def loadAction(widget= None, \
+               IconPath = u"", \
+               ToolTip = u"", \
+               ShortCut = u"", \
+               Callback = None, \
+               ToolBar = None, \
+               checkable = False):     
 
     action = QtGui.QAction(QtGui.QIcon(IconPath), ToolTip, widget)
     action.setShortcut(ShortCut)
+    action.setCheckable(checkable)
     action.triggered.connect(Callback)
     ToolBar.addAction(action)
     return action

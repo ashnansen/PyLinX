@@ -1,0 +1,12 @@
+LICENSE FOR THE PYLINX-PROJECT HOSTED UNTER
+
+https://github.com/PyLinX-Project/PyLinX
+
+(1) It is to any time allowed to fork this software project as long as the source code of the fork is published under the       
+    GPL 2.0 or later or a compatible license.
+    
+(2) It is not allowed to publish the source code of this software under any other licence to anybody except the IAV GmbH        
+    Berlin or Waetzold Plaum.
+    
+Further Contributors:
+Aymeric Rateau and his great library mdfreader: https://github.com/ratal/mdfreader

@@ -3044,86 +3044,47 @@ last edited: September 2011
 # 
 # _file.write("Tesetoutput3.mdf")
 # print "ENDE"
+#
+# from mpl_toolkits.mplot3d import axes3d
+# import matplotlib.pyplot as plt
+# from matplotlib import cm
+# 
+# fig = plt.figure()
+# ax = fig.gca(projection='3d')
+# X, Y, Z = axes3d.get_test_data(0.05)
+# ax.plot_surface(X, Y, Z, rstride=8, cstride=8, alpha=0.3)
+# #cset = ax.contour(X, Y, Z, zdir='z', offset=-100, cmap=cm.coolwarm)
+# #cset = ax.contour(X, Y, Z, zdir='x', offset=-40, cmap=cm.coolwarm)
+# #cset = ax.contour(X, Y, Z, zdir='y', offset=40, cmap=cm.coolwarm)
+# 
+# ax.set_xlabel('X')
+# #ax.set_xlim(-40, 40)
+# ax.set_ylabel('Y')
+# #ax.set_ylim(-40, 40)
+# ax.set_zlabel('Z')
+# #ax.set_zlim(-100, 100)
+# 
+# plt.show()
 
+import csv
 
-from PyQt4 import QtGui, QtCore
-  
-class Widget1(QtGui.QWidget):
-      
-    def __init__(self,parent = None):
-        super(Widget1, self).__init__(parent)
-          
-    def paintEvent(self, event):
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        qp.drawRect(100,100,600,600)
-        qp.end()
-          
-    def sizeHint(self):
-        return QtCore.QSize(800,800)
-  
-class MainWindow(QtGui.QMainWindow):
-      
-    def __init__(self, val, parent = None):
-          
-        #super(MainWindow, self).__init__(parent)
-        QtGui.QMainWindow.__init__(self,parent) 
-        myform = QtGui.QFormLayout()
-        widget = Widget1()
-        widget.setLayout(myform)
-        scroll = QtGui.QScrollArea()
-        scroll.setWidget(widget)
-        #scroll.setWidgetResizable(True)
-        self.setCentralWidget(scroll)
-        scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-  
-if __name__ == '__main__':
-  
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    window = MainWindow(25)
-    window.setGeometry(500, 300, 300, 400)
-    window.show()
-    sys.exit(app.exec_())
+with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:
+    #Heuristic for determining the deliminiter
+    strCSVFile = csvfile.read()
+    Chars =[';', '\t']
+    numChars = []
+    maxNumChars = 0
+    idxMaxNumChars = 0
+    for i,char in enumerate(Chars):
+        count = strCSVFile.count(char)
+        if maxNumChars > count:
+            idxMaxNumChars = i
+            maxNumChars = count 
+    delimiter = Chars[idxMaxNumChars]
 
-# from PyQt4 import QtGui, QtCore
-# import sys
-# 
-# class Widget1(QtGui.QWidget):
-# 
-#     def __init__(self,parent = None):
-#         super(Widget1, self).__init__(parent)
-# 
-#     def paintEvent(self, event):
-#         qp = QtGui.QPainter()
-#         qp.begin(self)
-#         qp.drawRect(100,100,600,600)
-#         qp.end()
-# 
-#     def sizeHint(self):
-#         return QtCore.QSize(800,800)
-# 
-# class MainWin(QtGui.QMainWindow):    
-#     def __init__(self,parent=None):
-#         QtGui.QMainWindow.__init__(self,parent)       
-#         w = Widget1()
-#         self.sc = QtGui.QScrollArea()
-#         self.sc.setWidget(w)
-#         self.setCentralWidget(self.sc)
-# 
-#     
-#     
-# #     def resizeEvent(self,event):
-# #         self.table.resize(self.sc.width(),self.sc.height())
-# #     
-#     
-# 
-# 
-# def main():
-#     app=QtGui.QApplication(sys.argv)
-#     win=MainWin()
-#     win.show()
-#     sys.exit(app.exec_())
-# 
-# main()
+with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:    
+    print "delimiter", delimiter 
+    spamreader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+    for row in spamreader:
+        print row #', '
+    

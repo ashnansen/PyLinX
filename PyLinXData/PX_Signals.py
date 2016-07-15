@@ -7,6 +7,7 @@ import inspect
 
 import PyLinXCoreDataObjects 
 import PyLinXData.PyLinXHelper as helper
+import PyLinXData.PX_CSVObject as csvlib
 
 # This is quite unusual, bus this class has to be built in this way, because
 # we want to to prepare for a dual license distribution model. It might be clever
@@ -78,21 +79,35 @@ class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
 
 class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
     
+    class fileType:
+        mdf = "mdf"
+        csv = "csv"
+    
     def __init__(self, parent, path):
-
+        
         try:
-            mdfObject = mdflib.mdf(path)
-            
+            dataObject = mdflib.mdf(path)
+            fileType = PX_Signals.fileType.mdf
+             
+        
         except Exception as exc:
-            strExp = str(exc)
-            strText = u"Unable to open MDF-file - " + strExp 
-            helper.error(strText)
-            return
+            
+            try:
+                dataObject = csvlib.CSVObject(path).data()
+                fileType = PX_Signals.fileType.csv
+            
+            except Exception as exc2:
+            
+                strExp = str(exc)
+                strExp2 = str(exc2)
+                strText = u"Unable to open file - " + strExp + " - " + strExp2  
+                helper.error(strText)
+                return
 
         name = u"Signal"
-        super(PX_Signals, self).__init__(parent, name, bIdSuffix = True, headObject = mdfObject)
-        #self._BContainer__Head = mdfObject 
-
+        super(PX_Signals, self).__init__(parent, name, bIdSuffix = True, headObject = dataObject)
+        self.set("fileType", fileType)
+        
         self._BContainer__Attributes[u"pathMdfFile"] = path
         listVirtualAttributes = [u"signals", u"signalsFullData"]
         for key in self._BContainer__Head:
@@ -102,7 +117,7 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
         
     def set(self, attr, val, options = None):
         
-        if attr in self._BContainer__AttributesVirtua:
+        if attr in self._BContainer__AttributesVirtual:
             return u"Message:SignalReadOnly"
         else:
             return super(PX_Signals, self).set(attr, val, options = None)
@@ -128,8 +143,16 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
             return listMasterSignals
         else:
             return super(PX_Signals, self).get(attr)
-
+        
     def __get_signal(self, signalName):
+  
+        fileType = self.get(u"fileType")
+        if fileType  == PX_Signals.fileType.mdf:
+            return self.__get_signal_mdf(signalName)
+        elif fileType  == PX_Signals.fileType.csv:
+            return self.__get_signal_csv(signalName)
+    
+    def __get_signal_mdf(self, signalName):
         
         signalDict = None
         if signalName in self._BContainer__Head:
@@ -152,5 +175,9 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
                 else: 
                     signalDict[u"ylabel"] = signalName + u" [" + self._BContainer__Head.getChannelUnit(signalName) + u"]"
         return signalDict
+    
+    def __get_signal_csv(self, signalName):
+        
+        return self._BContainer__Head[signalName]
         
         

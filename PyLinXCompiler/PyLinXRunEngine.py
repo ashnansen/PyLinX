@@ -24,17 +24,17 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         ReadSingleVars = 0
         ReadVarsFromDataDict = 1
  
-    def __init__(self, parent, PyLinXMainObject):
+    def __init__(self, parent, PyLinXMainWindow):
         
         super(PX_CodeAnalyser, self).__init__(u"PX_CodeGeerator")
         QtCore.QObject.__init__(self)    
         self.__runThread = None
-        self.__runThreadMessageQueue = PyLinXMainObject.runThreadMessageQueue
+        self.__runThreadMessageQueue = PyLinXMainWindow.runThreadMessageQueue
         
         # Object Data
         ###############
         
-        self.__PyLinXMainObject  = PyLinXMainObject
+        self.__PyLinXMainWindow  = PyLinXMainWindow
         self.__mainController    = parent
         self.__rootGraphics      = self.__mainController.getb(u"rootGraphics")
         self.__objectHandler     = self.__mainController.getb(u"ObjectHandler")
@@ -236,7 +236,6 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
             
         def run(self):
 
-            self.__runInit_prepareRecorderInRunThread()
             #i = 0
             while 1:
                 #i += 1
@@ -246,8 +245,6 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
                 self.emit(QtCore.SIGNAL(u"signal_sync"))
                 # Trigger Repaint
                 self.emit(QtCore.SIGNAL(u"signal_repaint"))
-                if self.__bRecord:
-                    self.__record()
                 
                 if not self.__runThreadMessageQueue.empty():
                     try:
@@ -262,88 +259,26 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
                         self.__runExitInTread()
                     self.__runThreadMessageQueue.task_done()
                     self.emit(QtCore.SIGNAL(u"signal_stop_run"))
-                    return
-
-        ###############################################
-        # Methods used for the recording functionality
-        ###############################################
-        
-        def __runInit_prepareRecorderInRunThread(self):
-            self.__bRecord = self.__RunConfigDictionary["bRecord"]
-            if self.__bRecord:
-                self.__mdfObject = mdfreader.mdf()
-            else: 
-                self.__mdfObject = None
-                return
-            self.__dataDict = {}
-            
-            self.__dataDict[u"time_1"] = {}
-            self.__dataDict["time_1"]["data"] = np.array([], np.float64)
-            self.__dataDict["time_1"]["description"] = "Time"
-            self.__dataDict["time_1"]["master"] = u"time_1"
-            self.__dataDict["time_1"]["masterType"] = 1 
-            self.__dataDict["time_1"]["unit"] = u"s"
-            
-            
-            recorder_VariablesToRecordProcessed = self.__RunConfigDictionary[u"recorder_VariablesToRecordProcessed"]
-            for var in recorder_VariablesToRecordProcessed:
-                self.__dataDict[var] = {}
-                self.__dataDict[var]["data"] = np.array([], np.float64)
-                self.__dataDict[var]["description"] = u""
-                self.__dataDict[var]["master"] = u"time_1"
-                self.__dataDict[var]["masterType"] = 1 
-                self.__dataDict[var]["unit"] = u""
-       
-        def __record(self):
-            
-            time = self.__RunConfigDictionary[u"t"]
-            self.__dataDict[u"time_1"][u"data"] = np.append(self.__dataDict[u"time_1"][u"data"], time)
-            for var in self.__RunConfigDictionary[u"recorder_VariablesToRecordProcessed"]:
-                val = self.__DataDictionary[var]
-                self.__dataDict[var][u"data"] = np.append(self.__dataDict[var]["data"], val)
-
-        def __runExitInTread(self):
-            
-            recorder_VariablesToRecordProcessed = self.__RunConfigDictionary[u"recorder_VariablesToRecordProcessed"]
-            listVarsToSave = [u"time_1"]
-            listVarsToSave.extend(recorder_VariablesToRecordProcessed)
-            for var in listVarsToSave :          
-                self.__mdfObject.add_channel(0, str(var),\
-                           self.__dataDict[var][u"data"],\
-                           master_channel   = str("time_1"), \
-                           master_type      = self.__dataDict[var][u"masterType"],\
-                           unit             = str(self.__dataDict[var][u"unit"]),\
-                           description      = str(self.__dataDict[var][u"description"]),\
-                           conversion       = None)
-        
-            recorder_BaseFileName = self.__RunConfigDictionary[u"recorder_BaseFileName"]
-            recorder_SaveFolder = self.__RunConfigDictionary[u"recorder_SaveFolder"]
-            dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            filename = str(os.path.join(recorder_SaveFolder,recorder_BaseFileName + u"_" + dt + u".dat"))
-            self.__mdfObject.write(filename)                           
+                    return                      
                 
         
     def startRun(self, drawWQidget, stopEvent, repaintEvent):
         
-        
         # connecting the signal "signal_runInit" to the main controller
         ###############################################################
         
-        self.__PyLinXMainObject.ui.drawWidget.connect(self, QtCore.SIGNAL(u"signal_runInit"),self.__mainController.runInit)
-        
-        
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self, QtCore.SIGNAL(u"signal_runInit"),self.__mainController.runInit)
+              
         # initializing the Run
         ######################
         
         self.__runInit()
-        self.emit(QtCore.SIGNAL(u"signal_runInit"))
-        self.__runInit_prepareRecorder()        
-        
+        self.emit(QtCore.SIGNAL(u"signal_runInit"))        
         
         # creatubg tge run thread
         #########################
         
-        self.__runThread = PX_CodeAnalyser.SimulationThread(self, self.__PyLinXMainObject.ui.drawWidget, self.__RunConfigDictionary,\
+        self.__runThread = PX_CodeAnalyser.SimulationThread(self, self.__PyLinXMainWindow.ui.drawWidget, self.__RunConfigDictionary,\
                                                                             self.__DataDictionary)
 
 # speziell
@@ -351,11 +286,11 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         # Connecting signals to the run thread
         ######################################
         
-        self.__PyLinXMainObject.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_repaint"), self.__PyLinXMainObject.ui.drawWidget.repaint,\
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_repaint"), self.__PyLinXMainWindow.ui.drawWidget.repaint,\
                                                                             QtCore.Qt.BlockingQueuedConnection)
-        self.__PyLinXMainObject.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"),\
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"),\
                                                    self.__mainController.sync,QtCore.Qt.BlockingQueuedConnection)
-        self.__PyLinXMainObject.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),self.__mainController.stop_run)
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),self.__mainController.stop_run)
         
 
 # allgemein
@@ -363,9 +298,7 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         # Starting the run thread
         #########################
         
-        self.__runThread.start()
-
-        
+        self.__runThread.start()       
 
     def __runInit(self):
         
@@ -373,23 +306,6 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         self.t = - self.delta_t
         self.__RunConfigDictionary[u"t"] = self.t
         self.__RunConfigDictionary[u"delta_t"] = self.delta_t
-        
-    def __runInit_prepareRecorder(self):
-
-        recorder_BaseFileName = self.__objectHandler.get(u"recorder_BaseFileName")
-        recorder_FileExtension = self.__objectHandler.get(u"recorder_FileExtension")
-        recorder_SaveFolder = self.__objectHandler.get(u"recorder_SaveFolder")
-        recorder_RecordState = self.__objectHandler.get(u"recorder_RecordState")
-        bRecord = self.__objectHandler.get(u"bRecord")
-        recorder_VariablesToRecordProcessed = self.__objectHandler.get(u"recorder_VariablesToRecordProcessed")
-        
-        self.__RunConfigDictionary[u"recorder_BaseFileName"] =  recorder_BaseFileName
-        self.__RunConfigDictionary[u"recorder_FileExtension"] = recorder_FileExtension
-        self.__RunConfigDictionary[u"recorder_SaveFolder"] = recorder_SaveFolder
-        self.__RunConfigDictionary[u"recorder_RecordState"] = recorder_RecordState
-        self.__RunConfigDictionary[u"bRecord"] = bRecord
-        self.__RunConfigDictionary[u"recorder_VariablesToRecordProcessed"] = recorder_VariablesToRecordProcessed
-
 
     def run(self): 
         import cProfile 

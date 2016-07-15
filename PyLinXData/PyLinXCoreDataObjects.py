@@ -16,7 +16,6 @@ import PyLinXGui.PX_Templates as PX_Templ
 import PyLinXHelper
 import PyLinXCtl
 
-
 import PyLinXGui
 
 
@@ -32,10 +31,12 @@ class PX_Object(BContainer.BContainer):
             self.mainController = parent.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
         else:
             types = inspect.getmro(type(self))
+            #if PyLinXCtl.PyLinXMainController.PyLinXMainController in types:
             if PyLinXCtl.PyLinXMainController.PyLinXMainController in types:
                 self.mainController = self
             else:
-                raise Exception("Error PX_Object.__init__: constructor called without parent")
+                print("Warning: PX_Object.__init__ called without parent!")
+                self.mainController = None
 
     
         
