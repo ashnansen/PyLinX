@@ -264,6 +264,7 @@ class PyLinXMainController(PyLinXData.PyLinXCoreDataObjects.PX_Object):
             # case of a path bevore the "."
             if len(pathList[0]) > 0:
                 pathTarget = u"." + pathList[0]
+                print "pathTarget", pathTarget
                 target = target.getObjFromPath(pathTarget)
                 
             return  target.set(pathList[1],command[-1])
@@ -566,12 +567,14 @@ class PyLinXMainController(PyLinXData.PyLinXCoreDataObjects.PX_Object):
 
     # Method that synchronizes the DataDictionary with the data hold for graphical representation in the DataViewer
     def sync(self):
-        self.recur(PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"sync", ())       
+        self.recur(PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"sync", ())
+        self.objectHandler.recorder.record()
         
     # Method that is executed when a run is stopped
     def stop_run(self):
         print "stop_run"
         self.recur(PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"stop_run", ())
+        self.objectHandler.recorder.exit()
         
     # Method to change the active folder
     def cd(self, path):

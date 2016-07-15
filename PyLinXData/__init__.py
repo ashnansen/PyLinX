@@ -3,4 +3,5 @@ __all__ = ["BContainer",\
            "PyLinXCoreDataObjects", \
            "PyLinXHelper",\
            "PX_Signals",\
-           "PX_DataDictionary"]
+           "PX_DataDictionary",\
+           "CSVObject"]

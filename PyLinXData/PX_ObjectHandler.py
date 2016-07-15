@@ -9,11 +9,13 @@ import math
 import os
 import mdfreader
 import numpy as np
+import inspect
+from datetime import datetime
 
-import BContainer
+#import BContainer
 import PyLinXCtl
 import PyLinXCoreDataObjects
-
+from PyLinXData import PX_CSVObject as PX_CSVObject 
 
 
 # The object handler handles the problem that each variable, class pp. may occur several times in the code. But these instances correspond to single
@@ -53,11 +55,15 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         self.set(u"recorder_SaveFolder", os.path.join(os.getcwd(), u"Measurements"))
         self.set(u"recorder_RecordState", PX_ObjectHandler.recorderState.off)
         self.set(u"recorder_VariablesToRecord", [])
+        self.set(u"recorder_fileFormat", PX_Recorder.FileFormat.mdf)
         self.__mdfObject = None
         self.__dataDict = None
         self.__runConfigDictionary = None
         self.__bRecord = False
         self.__mainController = self.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
+        self.recorder = PX_Recorder(self)
+        self.__variables = PyLinXCoreDataObjects.PX_Object(self, "variables")
+        
     
     def register(self, variable):
         
@@ -65,12 +71,12 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
 
         #  Attributes with the prefix "var." correspond to variables of the models
 
-        if (varName in self._BContainer__Body):
+        if (varName in self.__variables._BContainer__Body):
             self._BContainer__Attributes[u"Var." + varName] += 1
-            objectVar = self._BContainer__Body[varName]
+            objectVar = self.__variables._BContainer__Body[varName]
             objectVar.get(u"listRefInstances").append(variable) 
         else:
-            objectVar = PX_ObjectVariable(self, variable)
+            objectVar = PX_ObjectVariable(self.__variables, variable)
             self._BContainer__Attributes[u"Var." + varName] = 1
         
         return objectVar
@@ -81,15 +87,17 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
     
     def runInit(self):
 
-        for variable in self.getChildKeys():
-            obj = self.getb(variable)
+        for variable in self.__variables.getChildKeys():
+            obj = self.__variables.getb(variable)
             obj.runInit()
+            # NEU
+            self.recorder.init()
 
 
     def updateDataDictionary(self):
         
-        for variable in self.getChildKeys():
-            obj = self.getb(variable)
+        for variable in self.__variables.getChildKeys():
+            obj = self.__variables.getb(variable)
             obj.updateDataDictionary()
 
    
@@ -100,16 +108,16 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
     def get(self, attr):
         
         if attr == u"listObjects":
-            return self._BContainer__Body.keys()
+            return self.__variables._BContainer__Body.keys()
         elif attr == u"mapping":
             return self.__get_mapping()
         elif attr == u"bRecord":
             recorder_VariablesToRecord = self.get(u"recorder_VariablesToRecordProcessed")
             return (len(recorder_VariablesToRecord ) > 0)
         elif attr == u"recorder_VariablesToRecordProcessed":
-            recorederState = self._BContainer__Attributes[u"recorder_RecordState"]
+            recorederState = self._BContainer__Attributes[u"recorder_RecordState"]<
             if  recorederState == PX_ObjectHandler.recorderState.logAll:
-                return self._BContainer__Body.keys()
+                return self.__variables._BContainer__Body.keys()
             elif recorederState == PX_ObjectHandler.recorderState.logSelected:
                 return self._BContainer__Attributes[u"recorder_VariablesToRecord"]
             else:
@@ -120,8 +128,8 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
     
     def __get_mapping(self):
         mapping = {}
-        for key in self.getChildKeys():
-            element = self.getb(key) 
+        for key in self.__variables.getChildKeys():
+            element = self.__variables.getb(key)
             nameSignal= element.get(u"signalMapped")
             if nameSignal!= None:
                 nameVariable = element.get(u"Name")
@@ -136,7 +144,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
             return super (PX_ObjectHandler, self).set(attr, obj, options = None)
         
     def set_mapping(self, mapping):
-        keys = self.getChildKeys()
+        keys = self.__variables.getChildKeys()
         for variable in mapping:
             if variable in keys:
                 varObject = self.getb(variable)
@@ -358,3 +366,109 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
                 break
             
         self.__DataDictionary[ self.get(u"DisplayName") ] =  self.__signal[self.__iteratorSignal]
+     
+        
+#############################################
+## Recorder Class
+#############################################
+
+class PX_Recorder(PyLinXCoreDataObjects.PX_Object): 
+    
+    class FileFormat:
+        mdf = "mdf"
+        csv = "csv"
+    
+    def __init__(self, parent, name = "recorder"): 
+        super(PX_Recorder, self).__init__(parent, name)
+        self.__DataDictionary = None
+        self.__RunConfigDictionary = None
+        self.__bRecord = False
+        
+    def init(self):
+
+        self.__DataDictionary = self.mainController.getb(u"DataDictionary")
+        self.__RunConfigDictionary = self.mainController.getb(u"RunConfigDictionary")
+        self.__objectHandler = self.getRoot(PX_ObjectHandler)
+        
+        # The data would be accessible in self.__parent, but they should be copied before the run is started due to 
+        # data consistency
+        self.__recorder_BaseFileName                = self.__objectHandler.get(u"recorder_BaseFileName")
+        self.__recorder_FileExtension               = self.__objectHandler.get(u"recorder_FileExtension")
+        self.__recorder_fileFormat                  = self.__objectHandler.get(u"recorder_fileFormat")
+        self.__recorder_SaveFolder                  = self.__objectHandler.get(u"recorder_SaveFolder")
+        self.__recorder_RecordState                 = self.__objectHandler.get(u"recorder_RecordState")
+        self.__bRecord                              = self.__objectHandler.get(u"bRecord")
+        self.__recorder_VariablesToRecordProcessed  = self.__objectHandler.get(u"recorder_VariablesToRecordProcessed")
+        
+        self.__dataDict = {}
+        
+        # Preparomg time signal
+        self.__dataDict[u"time_1"] = {}
+        self.__dataDict["time_1"]["data"] = np.array([], np.float64)
+        self.__dataDict["time_1"]["description"] = "Time"
+        self.__dataDict["time_1"]["master"] = u"time_1"
+        self.__dataDict["time_1"]["masterType"] = 1 
+        self.__dataDict["time_1"]["unit"] = u"s"
+        
+        # Preparing each variable to record
+        for var in self.__recorder_VariablesToRecordProcessed:
+            self.__dataDict[var] = {}
+            self.__dataDict[var]["data"] = np.array([], np.float64)
+            self.__dataDict[var]["description"] = u""
+            self.__dataDict[var]["master"] = u"time_1"
+            self.__dataDict[var]["masterType"] = 1 
+            self.__dataDict[var]["unit"] = u""
+
+    def record(self):
+        
+        if self.__bRecord: 
+            time = self.__RunConfigDictionary[u"t"]
+            self.__dataDict[u"time_1"][u"data"] = np.append(self.__dataDict[u"time_1"][u"data"], time)
+            for var in self.__recorder_VariablesToRecordProcessed:
+                val = self.__DataDictionary[var]
+                self.__dataDict[var][u"data"] = np.append(self.__dataDict[var]["data"], val)
+            
+    def exit(self):
+        
+        if self.__bRecord:
+            if self.__recorder_fileFormat == self.FileFormat.mdf:
+                self.__exit_mdf()
+            elif self.__recorder_fileFormat == self.FileFormat.csv:
+                self.__exit_csv()
+        
+        
+    def __exit_csv(self):
+        
+        csvObject = PX_CSVObject.CSVObject()
+        
+        listVarsToSave = [u"time_1"]
+        listVarsToSave.extend(self.__recorder_VariablesToRecordProcessed)
+        for var in listVarsToSave:
+            csvObject.addChannel({u"values": self.__dataDict[var][u"data"], \
+                                  u"label": str(var), \
+                                  u"unit": str(self.__dataDict[var][u"unit"]), \
+                                  u"type": "f16"})
+            
+        dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filename = str(os.path.join(self.__recorder_SaveFolder,self.__recorder_BaseFileName + u"_" + dt + u".csv"))
+        csvObject.write(filename, ["PyLinXItemFile", "record", "CrLf", "Tab"])
+    
+    
+    def __exit_mdf(self):        
+        mdfObject = mdfreader.mdf()
+        
+        listVarsToSave = [u"time_1"]
+        listVarsToSave.extend(self.__recorder_VariablesToRecordProcessed)
+        for var in listVarsToSave :          
+            mdfObject.add_channel(0, str(var),\
+                       self.__dataDict[var][u"data"],\
+                       master_channel   = str("time_1"), \
+                       master_type      = self.__dataDict[var][u"masterType"],\
+                       unit             = str(self.__dataDict[var][u"unit"]),\
+                       description      = str(self.__dataDict[var][u"description"]),\
+                       conversion       = None)
+    
+        dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filename = str(os.path.join(self.__recorder_SaveFolder,self.__recorder_BaseFileName + u"_" + dt + u".dat"))
+        mdfObject.write(filename)        
+        

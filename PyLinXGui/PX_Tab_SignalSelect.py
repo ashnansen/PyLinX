@@ -124,7 +124,6 @@ class PX_Tab_SignalSelect_TreeView(QtGui.QTreeView):
                 links.append(str(url.toLocalFile()))
             self.emit(QtCore.SIGNAL("dropped"), links)
         else:
-             
             event.ignore()
  
     def getSignal(self):
@@ -294,6 +293,7 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
     def plotSignal(self, labelName):
         
         signal = self.mainController.get(u"@signals." + unicode(labelName)) 
+        print "signal", signal
         if (u"xlabel" in signal) and (u"time" in signal):
             pyplot.plot(signal[u"time"], signal[u"values"])
             pyplot.xlabel(signal[u"xlabel"])

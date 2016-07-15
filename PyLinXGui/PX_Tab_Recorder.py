@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui
 import PyLinXData.PyLinXHelper as helper
 import PyLinXCtl.PyLinXMainController as ctl
 import PyLinXData.PX_ObjectHandler as PX_ObjectHandler 
+#import PyLinXData.PX_ObjectHandler.PX_Recorder as PX_Recorder
 
 class PX_Tab_Recorder_TreeView(QtGui.QTreeView):
     def __init__(self, parent=None, listItems={}, mainDrawingWidget = None):
@@ -103,6 +104,7 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.model = treeModel_Recorder(self,objects, self.widget )
         self.__recorder_RecordState =  PX_ObjectHandler.PX_ObjectHandler.recorderState.off
         self.__recorder_VariablesToRecord = self.__objectHandler.get(u"recorder_VariablesToRecord")
+        self.__recorder_fileFormat = self.__objectHandler.get(u"recorder_fileFormat")
 
         self.listItems = {}
         
@@ -123,18 +125,45 @@ class PX_Tab_Recorder(QtGui.QWidget):
         
         # Add Action to Toolbar
         
-        self.__actionRecordFull = helper.loadAction(widget=self,  IconPath =u"./Recources/Icons/recordFull16.png", ToolTip=u"Record all Variables",\
-                                        ShortCut=u"Ctrl+L", Callback=self.recordAll, ToolBar=self.toolbar)
-        self.__actionRecordPart = helper.loadAction(widget=self,  IconPath =u"./Recources/Icons/recordPart16.png", ToolTip=u"Record selected Variables",\
-                                        ShortCut=u"Ctrl+M", Callback=self.recordPart, ToolBar=self.toolbar)
-        self.__actionRecordFull.setCheckable(True)
-        self.__actionRecordPart.setCheckable(True)
+        self.__actionRecordFull = helper.loadAction(widget=self,\
+                                                    IconPath =u"./Recources/Icons/recordFull16.png",\
+                                                    ToolTip=u"Record all Variables",\
+                                                    ShortCut=u"Ctrl+L", \
+                                                    Callback=self.recordAll, \
+                                                    ToolBar=self.toolbar, \
+                                                    checkable = True)
+        self.__actionRecordPart = helper.loadAction(widget=self,  \
+                                                    IconPath =u"./Recources/Icons/recordPart16.png", \
+                                                    ToolTip=u"Record selected Variables",\
+                                                    ShortCut=u"Ctrl+M", \
+                                                    Callback=self.recordPart, \
+                                                    ToolBar=self.toolbar, \
+                                                    checkable = True)
+        
+        emptyWidget = QtGui.QWidget()
+        emptyWidget.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Preferred)
+        self.toolbar.addWidget(emptyWidget)
+        
+        
+        # Selector for output file format
+        self.__comboBoxFileFormat = QtGui.QComboBox()
+        self.__comboBoxFileFormat.addItem(u"mdf")
+        self.__comboBoxFileFormat.addItem(u"csv")
+        self.__comboBoxFileFormat.setToolTip(u"Select Output FIle Format")
+        self.__comboBoxFileFormat.currentIndexChanged.connect(self.__onIndexComboFileForamtChangeed)
+        self.toolbar.addWidget(self.__comboBoxFileFormat)
 
         
         self.toolbar.setStyleSheet(u".QToolBar {border: 0px;}")
         self.SignalFileName = None
         self.repaint()
 
+    def __onIndexComboFileForamtChangeed(self, index):
+        if index == 0:
+            self.__recorder_fileFormat = PX_ObjectHandler.PX_Recorder.FileFormat.mdf
+        elif index == 1:
+            self.__recorder_fileFormat = PX_ObjectHandler.PX_Recorder.FileFormat.csv
+    
     def updateWidget(self):
         listObjects = self.__objectHandler.get(u"listObjects")
         self.model.loadObjects(listObjects, self.__recorder_VariablesToRecord)
@@ -162,10 +191,13 @@ class PX_Tab_Recorder(QtGui.QWidget):
     def runInit(self):
         command = u"set @objects.recorder_RecordState " + unicode(self.__recorder_RecordState)
         self.mainController.execCommand(command)
-        #listSignals = self.model.get_recorder_VariablesToRecord()
+        
         command2 = u"set @objects.recorder_VariablesToRecord " + unicode(repr(self.__recorder_VariablesToRecord)\
-                                                                         .replace(u" ", u""))
+                                                                 .replace(u" ", u""))
         self.mainController.execCommand(command2)
+        
+        command3 = u"set @objects.recorder_fileFormat " + unicode(self.__recorder_fileFormat)
+        self.mainController.execCommand(command3)
         
     
     def repaint(self):
