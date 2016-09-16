@@ -31,14 +31,16 @@ class BContainer(object):
         # Dict of Elements indexed by "name"
         self.__Body = {}
         # reference to the root knot
-        self.__parent = parent
+        #self.__parent = parent
         self.__AttributesVirtual = [u"path"]
 
         self.__Attributes                 = {} 
         self.__Attributes[u"Type"]        = 0
         self.__Attributes[u"Name"]        = name
         self.__Attributes[u"DisplayName"] = name
-        
+        self.__parent = None
+        if parent != None:
+            parent.paste(self)        
        
     ## print method
     
@@ -114,7 +116,10 @@ class BContainer(object):
         if self.__parent == None:
             return u"/" + path
         else:
-            return self.__parent.__get_path( self.__parent.key(self) + u"/" +  path)
+            try:
+                return self.__parent.__get_path( self.__parent.key(self) + u"/" +  path)
+            except:
+                print u"Error!"
         
     def getb(self,name):
         if name in self.__Body:
@@ -216,7 +221,10 @@ class BContainer(object):
         for attr in self.__Attributes:
             listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )
         for attr in self.__AttributesVirtual:
-            listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
+            try:
+                listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
+            except:
+                print "Error! (2)"
         if len(listLsAttr) > 0:
             self.__printLsList(sorted(listLsAttr))
           
@@ -311,10 +319,11 @@ class BContainer(object):
                     return self                
                 try:
                     obj = self.getb(path)
-                except:
+                except Exception as exc:
                     print "Error BContainer.getObjFromPath"
                     print "path: ", path , "len(path)", len(path)
                     print "self.ls():" , self.ls()
+                    print str(exc)
                 return obj
             else:
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
@@ -336,6 +345,7 @@ class BContainer(object):
         
         
         types = inspect.getmro(type(obj))
+            
         if BContainer in types: 
             key = obj.get(u"Name")
         else:
@@ -353,7 +363,6 @@ class BContainer(object):
                 raise Exception(u"Key already in use. Set bForceOverwrite=True to enforce overwriting!")        
         else:
             self.__Body[key] = obj
-            types = inspect.getmro(type(obj))
             if(BContainer in types):
                 obj.__parent = self
     

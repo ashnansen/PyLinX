@@ -15,6 +15,7 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     def __init__(self, parent, variable, mainController, drawWidget):
         
         super(PX_Dialogue_SimpleStimulate, self).__init__(parent)
+        #self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         
         layout = QtGui.QVBoxLayout(self)
         
@@ -29,11 +30,8 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             if variable.getRefObject().isAttr(attr):
                 value = variable.getRefObject().get(attr)
             else:
-                variable.getRefObject().ls()
-                variable.getRefObject().lsAttr()
                 value = 0.0
             dictVar[u"Value"] = unicode(value)
-                        
         self.setLayout(layout)
         self.variable = variable
         self.drawWidget = drawWidget
@@ -79,14 +77,16 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             return 
         strValues = repr(values).replace(" ", "")
         objPath = self.variable.get(u"objPath")
-        #ustrExec2 =  u"set " + objPath + u". " + unicode(strValues)
-        ustrExec2 =  u"set " + objPath  + u" " + unicode(strValues)
+        #stimFunction = self.variable.get(u"StimulationFunction")
+        attributeToSet =  PX_Templ.PX_DiagData.StimAttribute[self.stimFunction]
+        ustrExec2 =  u"set " + objPath[:-1] + u"." + attributeToSet + u" " + unicode(strValues)
         self.mainController.execCommand(ustrExec2)
         self.hide()
     
     def onActivated(self, text):
         text = str(text)
-        self.variable.set(u"StimulationFunction", text)
+        #self.variable.set(u"StimulationFunction", text)
+        self.stimFunction = text
         init_list = PX_Templ.PX_DiagData.StimForm[text]
         formWidget_New = BEasyWidget.EasyWidget(init_list)
         self.formWidget.setParent(None)

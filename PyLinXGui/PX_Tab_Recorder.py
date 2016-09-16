@@ -2,7 +2,7 @@ import sys, os
 from PyQt4 import QtCore, QtGui
 
 import PyLinXData.PyLinXHelper as helper
-import PyLinXCtl.PyLinXMainController as ctl
+import PyLinXCtl.PyLinXProjectController as ctl
 import PyLinXData.PX_ObjectHandler as PX_ObjectHandler 
 #import PyLinXData.PX_ObjectHandler.PX_Recorder as PX_Recorder
 
@@ -14,10 +14,10 @@ class PX_Tab_Recorder_TreeView(QtGui.QTreeView):
         self.setIndentation(0)
         self.setHeaderHidden(False)
         self.mainDrawingWidget = mainDrawingWidget
-            
+             
     def doubleClickEvent(self, modelIndex):
         print u"doubleClicked"
-        
+         
 
 
 class NamedQStandardItem(QtGui.QStandardItem):
@@ -38,6 +38,7 @@ class treeModel_Recorder(QtGui.QStandardItemModel):
         self.appendColumn([])
         self.__treeView = treeView
         self.__tabWidget = tabWidget
+
           
     def loadObjects(self, objects, listChecked = []):
      
@@ -76,16 +77,30 @@ class treeModel_Recorder(QtGui.QStandardItemModel):
             item.setEnabled(state)
         
         
+#     def get_recorder_VariablesToRecord(self):
+#         
+#         listCheckedSignals = []
+#         for i in range(self.rowCount()):
+#             item = self.item(i,0)
+#             if item.checkState():
+#                 signal = unicode(item.text())
+#                 listCheckedSignals.append(signal)
+#         return listCheckedSignals 
+        
     def get_recorder_VariablesToRecord(self):
         
         listCheckedSignals = []
         for i in range(self.rowCount()):
             item = self.item(i,0)
-            if item.checkState():
+            if self.__tabWidget.recorder_RecordState == PX_ObjectHandler.PX_ObjectHandler.recorderState.logSelected:
+                if item.checkState():
+                    signal = unicode(item.text())
+                    listCheckedSignals.append(signal)
+            else:
                 signal = unicode(item.text())
-                listCheckedSignals.append(signal)
+                listCheckedSignals.append(signal)                
         return listCheckedSignals 
-        
+
         
 
 class PX_Tab_Recorder(QtGui.QWidget):
@@ -101,7 +116,8 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.__objectHandler = mainController.getb(u"ObjectHandler")
         objects = self.__objectHandler.get(u"listObjects")
         self.widget = PX_Tab_Recorder_TreeView(self, self.listItems)  
-        self.model = treeModel_Recorder(self,objects, self.widget )
+        self.model = treeModel_Recorder(self,objects, self.widget, self)
+        #self.model = treeModel_Recorder(self,objects, self )
         self.__recorder_RecordState =  PX_ObjectHandler.PX_ObjectHandler.recorderState.off
         self.__recorder_VariablesToRecord = self.__objectHandler.get(u"recorder_VariablesToRecord")
         self.__recorder_fileFormat = self.__objectHandler.get(u"recorder_fileFormat")
@@ -157,6 +173,21 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.toolbar.setStyleSheet(u".QToolBar {border: 0px;}")
         self.SignalFileName = None
         self.repaint()
+        
+        
+    ####################
+    # Properties
+    ####################
+    
+    def get_recorder_RecordState(self):
+        return self.__recorder_RecordState
+
+    recorder_RecordState = property(get_recorder_RecordState)
+
+
+    ####################
+    # Methods
+    ####################
 
     def __onIndexComboFileForamtChangeed(self, index):
         if index == 0:
@@ -189,15 +220,17 @@ class PX_Tab_Recorder(QtGui.QWidget):
     
     # called bevore a run is started. Get the recorder data from the GUI
     def runInit(self):
-        command = u"set @objects.recorder_RecordState " + unicode(self.__recorder_RecordState)
+        
+        command = u"@objects set recorder_RecordState " + unicode(self.__recorder_RecordState)
         self.mainController.execCommand(command)
         
-        command2 = u"set @objects.recorder_VariablesToRecord " + unicode(repr(self.__recorder_VariablesToRecord)\
+        command2 = u"@objects set recorder_VariablesToRecord " + unicode(repr(self.__recorder_VariablesToRecord)\
                                                                  .replace(u" ", u""))
         self.mainController.execCommand(command2)
         
-        command3 = u"set @objects.recorder_fileFormat " + unicode(self.__recorder_fileFormat)
+        command3 = u"@objects set recorder_fileFormat " + unicode(self.__recorder_fileFormat)
         self.mainController.execCommand(command3)
+
         
     
     def repaint(self):
@@ -224,19 +257,13 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.listItems[listItemName]=None 
         self.rebuildListWidget() 
 
-#     def rebuildListWidget(self):
-#         self.widget.clear()
-#         items=self.listItems.keys()
-#         if len(items)>1: items.sort()
-#         for listItemName in items:
-#             listItem = NamedQStandardItem( listItemName, self.SignalFileName)
-#             self.listItems[listItemName]=listItem
-#             self.widget.addItem(listItem)
-            
+    def newProject(self, mainController):
+        self.mainController = mainController 
+        self.__objectHandler = mainController.getb(u"ObjectHandler")
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    mainController = ctl.PyLinXMainController(bListActions = False)
+    mainController = ctl.PyLinXProjectController(bListActions = False)
     
     # Example-Data
     

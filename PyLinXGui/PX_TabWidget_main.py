@@ -8,6 +8,8 @@ from PyQt4 import QtGui
 import sys
 
 import PyLinXGui.PX_Tab_Recorder as PX_Tab_Recorder
+import PyLinXGui.PX_Tab_SignalSelect as PX_Tab_SignalSelect
+import PyLinXGui.PX_Tab_ObjectHandlerList as PX_Tab_ObjectHandlerList
 
 class PX_TabWidget_main(QtGui.QTabWidget):
     
@@ -23,10 +25,20 @@ class PX_TabWidget_main(QtGui.QTabWidget):
         super(PX_TabWidget_main, self).__init__(parent)
         
         self.__dictWidgets = {}
-        self.__mainController = mainController
+        self.__projectController = mainController
         self.setTabPosition(QtGui.QTabWidget.East)
         self.setWindowTitle('PyQt QTabWidget Add self and Widgets Inside Tab')
 
+    def newProject(self, mainController):
+        self.__projectController = mainController
+        for strTitle in self.__dictWidgets:
+            _tuple = self.__dictWidgets[strTitle]
+            widget = _tuple[0]
+            if type(widget) in (PX_Tab_Recorder.PX_Tab_Recorder,\
+                          PX_Tab_ObjectHandlerList.PX_Tab_ObjectHandlerList,\
+                          PX_Tab_SignalSelect.PX_Tab_SignalSelect):
+                widget.newProject(mainController)
+    
     def adjoinTab(self, widget, strTitle, displayRole, priority = 0):
         
         # priority: 1 is the highest priority, 0 is the lowest
@@ -47,7 +59,7 @@ class PX_TabWidget_main(QtGui.QTabWidget):
         
         self.clear()
         
-        bSimulationMode = self.__mainController.get(u"bSimulationMode")
+        bSimulationMode = self.__projectController.get(u"bSimulationMode")
         
         maxPriority = self.getMaxPriority()
         listSortedTabs = (maxPriority + 1) * [[None]]
@@ -71,7 +83,7 @@ class PX_TabWidget_main(QtGui.QTabWidget):
             listSortedTabs_0_j = listSortedTabs_0[j]
             if decideAddTab(bSimulationMode, listSortedTabs_0_j):  
                 self.addTab(listSortedTabs_0_j[0], listSortedTabs_0_j[2])
-            
+
     def getMaxPriority(self):
         maxPriority = 0
         for strTitle in self.__dictWidgets:

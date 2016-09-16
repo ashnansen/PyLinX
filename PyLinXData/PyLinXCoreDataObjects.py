@@ -25,14 +25,13 @@ class PX_Object(BContainer.BContainer):
 
     def __init__(self, parent, name, headObject = None):
         
-        super(PX_Object, self).__init__( name, headObject =  headObject)
+        super(PX_Object, self).__init__( name,parent = parent, headObject =  headObject)
         if parent != None:
-            parent.paste(self)
-            self.mainController = parent.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
+            self.mainController = parent.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)
         else:
             types = inspect.getmro(type(self))
-            #if PyLinXCtl.PyLinXMainController.PyLinXMainController in types:
-            if PyLinXCtl.PyLinXMainController.PyLinXMainController in types:
+            #if PyLinXCtl.PyLinXProjectController.PyLinXProjectController in types:
+            if PyLinXCtl.PyLinXProjectController.PyLinXProjectController in types:
                 self.mainController = self
             else:
                 print("Warning: PX_Object.__init__ called without parent!")
@@ -321,7 +320,6 @@ class PX_PlottableGraphicsContainer(PX_PlottableIdObject):
     def __init__(self, parent, name = "<none>", mainController = None, * args):
         super(PX_PlottableGraphicsContainer, self).__init__(parent, name = name, mainController = mainController, *args)
         self._BContainer__AttributesVirtual.extend([u"ConnectModInfo"])
-
         
     def set(self, attr, val, options = None):
         
@@ -852,9 +850,6 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         def __drawValue(name):
             
             DataDictionary = self.mainController.getb(u"DataDictionary")
-            #print "name: ", name
-            #print "DataDictionary", DataDictionary 
-            #print "id(self.mainController.getb(u\"DataDictionary\")) (2)", id(self.mainController.getb(u"DataDictionary"))
             if name in DataDictionary:
                 value = DataDictionary[name]
             else:
@@ -966,8 +961,8 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
 
         def delFromListSelectedDispObj(element,idx):
             keys = element.getChildKeys()
-            listSelectedDispObj = element.get(u"listSelectedDispObj")
-            if listSelectedDispObj != None:
+            if element.isAttr(u"listSelectedDispObj"):
+                listSelectedDispObj = element.get(u"listSelectedDispObj")
                 newLlistSelectedDispObj = [x for x in listSelectedDispObj if x != idx]
                 element.set(u"listSelectedDispObj", newLlistSelectedDispObj)    
             for key in keys:
@@ -1268,15 +1263,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
             self.getParent().set(u"bHasProxyElement", True)
             proxyElement = self.mainController.latentGraphics.getb(u"PX_PlottableProxyElement")
             self._elem1 = proxyElement
-            
-        # list points saves for odd indices x-values and for even indices y-values of the corresponding corners of the connector
-#         for i in range(len(listPoints)):
-#             #x-value
-#             if i%2==0:
-#                 listPoints[i] = listPoints[i] - X 
-#             #y-value
-#             else:
-#                 listPoints[i] = listPoints[i] - Y       
+              
         self.set(u"listPoints", listPoints)
         
         self.rad = PX_Templ.Template.Gui.px_CONNECTOR_rad()
@@ -1307,7 +1294,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         try: 
             return self._elem1
         except:
-            print "Error!"
+            print "Error! (4)"
     
     def set_elem1(self, elem1):
         id_1 = elem1.ID
@@ -1361,7 +1348,10 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         elem1 = self.elem1
         self.X0 = elem0._X
         self.Y0 = elem0._Y
-        self.X1 = elem1._X
+        try:
+            self.X1 = elem1._X
+        except:
+            print "ERROR"
         self.Y1 = elem1._Y
         self.listOutPins0 = elem0.listOutPins
         self.listInPins1  = elem1.listInPins
@@ -1461,9 +1451,8 @@ class PX_PlottableConnector(PX_PlottableIdObject):
             if i == len_listPoints_minus_1:
                 x0 = x1_cache
                 y0 = y1_cache
-                x1 = self.inPin_x + self.X1 #- self.X0
-                #y1 = self.inPin_y + self.Y1 - self.Y0 
-                y1 = self.inPin_y + self.Y1 #- self.Y0 
+                x1 = self.inPin_x + self.X1
+                y1 = self.inPin_y + self.Y1
                 shape.append(self._PX_PlottableObject__getPolygon(x0,y0,x1,y1))
 
         self.set(u"Shape",shape )

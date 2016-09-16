@@ -9,10 +9,12 @@ import math
 import os
 import mdfreader
 import numpy as np
-import inspect
+#import inspect
 from datetime import datetime
 
 #import BContainer
+import PyLinXGui.PX_Templates as PX_Templ
+from PyQt4 import QtCore
 import PyLinXCtl
 import PyLinXCoreDataObjects
 from PyLinXData import PX_CSVObject as PX_CSVObject 
@@ -40,7 +42,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         logAll = 2
     
     def __init__(self, parent):
-        if not (type(parent) == PyLinXCtl.PyLinXMainController.PyLinXMainController):
+        if not (type(parent) == PyLinXCtl.PyLinXProjectController.PyLinXProjectController):
             raise Exception("Error PX_ObjectHandler.__init__: Invalid Type of MainController")
         super(PX_ObjectHandler, self).__init__(parent, u"ObjectHandler")
         self.set(u"bObjectInSimulationMode", False)
@@ -60,24 +62,25 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         self.__dataDict = None
         self.__runConfigDictionary = None
         self.__bRecord = False
-        self.__mainController = self.getRoot(PyLinXCtl.PyLinXMainController.PyLinXMainController)
+        self.__projectController = self.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)
         self.recorder = PX_Recorder(self)
         self.__variables = PyLinXCoreDataObjects.PX_Object(self, "variables")
-        
+
     
     def register(self, variable):
         
         varName = variable.get(u"DisplayName")
 
         #  Attributes with the prefix "var." correspond to variables of the models
-
+        
         if (varName in self.__variables._BContainer__Body):
             self._BContainer__Attributes[u"Var." + varName] += 1
             objectVar = self.__variables._BContainer__Body[varName]
-            objectVar.get(u"listRefInstances").append(variable) 
+            objectVar.get(u"listRefInstances").append(variable)
         else:
             objectVar = PX_ObjectVariable(self.__variables, variable)
             self._BContainer__Attributes[u"Var." + varName] = 1
+            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_objectHandler"))
         
         return objectVar
         
@@ -90,8 +93,8 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         for variable in self.__variables.getChildKeys():
             obj = self.__variables.getb(variable)
             obj.runInit()
-            # NEU
-            self.recorder.init()
+        # NEU
+        self.recorder.init()
 
 
     def updateDataDictionary(self):
@@ -115,7 +118,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
             recorder_VariablesToRecord = self.get(u"recorder_VariablesToRecordProcessed")
             return (len(recorder_VariablesToRecord ) > 0)
         elif attr == u"recorder_VariablesToRecordProcessed":
-            recorederState = self._BContainer__Attributes[u"recorder_RecordState"]<
+            recorederState = self._BContainer__Attributes[u"recorder_RecordState"]
             if  recorederState == PX_ObjectHandler.recorderState.logAll:
                 return self.__variables._BContainer__Body.keys()
             elif recorederState == PX_ObjectHandler.recorderState.logSelected:
@@ -159,9 +162,9 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         super(PX_ObjectVariable, self).__init__(parent, name)
         self._BContainer__Attributes[u"listRefInstances"] = [variable]
         self.__refVariable = variable
-        self.__mainController = self.getRoot()
-        self.__signalhandler = self.__mainController.getb(u"signalFiles")
-        self.__DataDictionary = self.__mainController.getb(u"DataDictionary")
+        self.__projectController = self.getRoot()
+        self.__signalhandler = self.__projectController.getb(u"signalFiles")
+        self.__DataDictionary = self.__projectController.getb(u"DataDictionary")
         
         self.set(u"StimulationFunction", None)
         self.set(u"listSelectedDispObj", [])
@@ -183,6 +186,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         self.__stim_sine_frequency = 0.
         self.__stim_sine_offset = 0.
         self.__stim_sine_amplitude = 0.
+        self.__stim_sine_phase = 0.
         self.__stim_ramp_frequency = 0.
         self.__stim_ramp_phase = 0.
         self.__stim_ramp_offset = 0.
@@ -197,6 +201,13 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         self.__stim_random_offset = 0.
         self.__stim_random_amplitude = 0.
         
+        
+        # Extending the virtual attributes
+        self._BContainer__AttributesVirtual.extend([u"stim_sine",\
+                                                    u"stim_ramp",\
+                                                    u"stim_pulse",\
+                                                    u"seim_step",\
+                                                    u"stim_random"])
 
     #########################
     # GET and SET-Funcitons
@@ -220,6 +231,30 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
                 if "Signal_" in StimulationFunction:
                     return StimulationFunction
             return None
+        elif attr == u"stim_const":
+            return { u"stim_const_val":          self.get(u"stim_const_val")}
+        elif attr == u"stim_sine":
+            return { u"stim_sine_frequency":     self.get(u"stim_sine_frequency"),\
+                     u"stim_sine_offset":        self.get(u"stim_sine_offset"),\
+                     u"stim_sine_amplitude":     self.get(u"stim_sine_amplitude"),\
+                     u"stim_sine_phase":         self.get(u"stim_sine_phase")}
+        elif attr == u"stim_ramp":
+            return { u"stim_ramp_frequency":     self.get(u"stim_ramp_frequency"),\
+                     u"stim_ramp_offset":        self.get(u"stim_ramp_offset"),\
+                     u"stim_ramp_amplitude":     self.get(u"stim_ramp_amplitude"),\
+                     u"stim_ramp_phase":         self.get(u"stim_ramp_phase")}
+        elif attr == u"stim_pulse": 
+            return { u"stim_pulse_frequency":    self.get(u"stim_pulse_frequency"),\
+                     u"stim_pulse_offset":       self.get(u"stim_pulse_offset"),\
+                     u"stim_pulse_amplitude":    self.get(u"stim_pulse_amplitude"),\
+                     u"stim_pulse_phase":        self.get(u"stim_pulse_phase")}
+        elif attr == u"stim_step":
+            return { u"stim_step_phase":         self.get(u"stim_step_phase"),\
+                     u"stim_step_amplitude":     self.get(u"stim_step_amplitude"),\
+                     u"stim_step_offset":        self.get(u"stim_step_offset")}
+        elif attr == u"stim_random":
+            return { u"stim_random_offset":      self.get(u"stim_random_offset"),\
+                     u"stim_random_amplitude":   self.get(u"stim_random_amplitude")}            
         else:
             return super(PX_ObjectVariable, self).get(attr)     
          
@@ -241,52 +276,113 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
                                u"labelRemove", (name, list_del))
         elif attr == u"signalMapped":
             if value == 0:
-                return super(PX_ObjectVariable, self).set(u"StimulationFunction", None)
+                retObj = super(PX_ObjectVariable, self).set(u"StimulationFunction", None)
+                self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
+                return retObj 
             else:
-                return super(PX_ObjectVariable, self).set(u"StimulationFunction", value)
+                retObj = super(PX_ObjectVariable, self).set(u"StimulationFunction", value)
+                self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
+                return retObj
             
+        elif attr == u"stim_const":
+            if set(value.keys()) == set([u"stim_const_val"]):
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")
+            
+        elif attr == u"stim_sine":
+            if set(value.keys()) == set([u"stim_sine_frequency", \
+                                         u"stim_sine_offset", \
+                                         u"stim_sine_amplitude", \
+                                         u"stim_sine_phase"]):            
+                self.__setStimFunction(attr)     
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")
+
+        elif attr == u"stim_ramp":
+            if set(value.keys()) == set([u"stim_ramp_phase", \
+                                         u"stim_ramp_offset", \
+                                         u"stim_ramp_frequency",\
+                                         u"stim_ramp_amplitude"]):            
+                self.__setStimFunction(attr)     
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")            
+        
+        elif attr == u"stim_pulse":
+            if set(value.keys()) == set([u"stim_pulse_frequency", \
+                                         u"stim_pulse_phase", \
+                                         u"stim_pulse_amplitude"\
+                                         u"stim_pulse_offset"]):
+                self.__setStimFunction(attr)     
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")               
+
+        elif attr == u"stim_step":
+            if set(value.keys()) == set([u"stim_step_phase", \
+                                         u"stim_step_offset", \
+                                         u"stim_step_amplitude"]):            
+                self.__setStimFunction(attr)     
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")       
+
+        elif attr == u"stim_random":
+            if set(value.keys()) == set([u"stim_random_offset", \
+                                         u"stim_random_amplitude"]):            
+                self.__setStimFunction(attr)     
+                return super(PX_ObjectVariable, self).set("", value, options)
+            else:
+                raise Exception(u"Error PX_ObjectVariable.set: Variables are not matching!")       
                  
         super(PX_ObjectVariable, self).set(attr, value, options)        
 
-
+    def __setStimFunction(self, attr):
+        for key, value in PX_Templ.PX_DiagData.StimAttribute.iteritems():
+            if value == attr:
+                break
+        self.set(u"StimulationFunction", key)
+    
     ###################################
     # METHODS USED DURING SIMULATION       
     ###################################
         
     def runInit(self):
         
-        self.__RunConfigDictionary = self.__mainController.getb(u"RunConfigDictionary")
+        self.__RunConfigDictionary = self.__projectController.getb(u"RunConfigDictionary")
         self.__StimulationFunction = self.get(u"StimulationFunction")
         signalMapped = self.get(u"signalMapped") 
 
 
         StimulationFunction = self.get(u"StimulationFunction")
         if StimulationFunction == u"Constant":
-            self.__stimFuntion = self.updateDataDictionary_const_val
+            self.__stimFuntion          = self.updateDataDictionary_const_val
         elif StimulationFunction == u"Sine":
-            self.__stim_sine_frequency = self.get(u"stim_sine_frequency")  
-            self.__stim_sine_offset = self.get(u"stim_sine_offset")     
-            self.__stim_sine_amplitude = self.get(u"stim_sine_amplitude")            
-            self.__stimFuntion = self.updateDataDictionary_stim_sine
+            self.__stim_sine_frequency  = self.get(u"stim_sine_frequency")  
+            self.__stim_sine_offset     = self.get(u"stim_sine_offset")     
+            self.__stim_sine_amplitude  = self.get(u"stim_sine_amplitude")            
+            self.__stimFuntion          = self.updateDataDictionary_stim_sine
         elif StimulationFunction == u"Ramp":
-            self.__stim_ramp_frequency = self.get(u"stim_ramp_frequency")
-            self.__stim_ramp_phase = self.get(u"stim_ramp_phase")
-            self.__stim_ramp_offset = self.get(u"stim_ramp_offset")
-            self.__stim_ramp_amplitude = self.get(u"stim_ramp_amplitude")                
-            self.__stimFuntion = self.updateDataDictionary_stim_ramp
+            self.__stim_ramp_frequency  = self.get(u"stim_ramp_frequency")
+            self.__stim_ramp_phase      = self.get(u"stim_ramp_phase")
+            self.__stim_ramp_offset     = self.get(u"stim_ramp_offset")
+            self.__stim_ramp_amplitude  = self.get(u"stim_ramp_amplitude")                
+            self.__stimFuntion          = self.updateDataDictionary_stim_ramp
         elif StimulationFunction == u"Pulse":
             self.__stim_pulse_frequency = self.get(u"stim_pulse_frequency")
-            self.__stim_pulse_phase = self.get(u"stim_pulse_phase")
+            self.__stim_pulse_phase     = self.get(u"stim_pulse_phase")
             self.__stim_pulse_amplitude = self.get(u"stim_pulse_amplitude")
-            self.__stim_pulse_offset = self.get(u"stim_pulse_offset")            
+            self.__stim_pulse_offset    = self.get(u"stim_pulse_offset")            
             self.__stimFuntion = self.updateDataDictionary_stim_pulse
         elif StimulationFunction ==  u"Step":
-            self.__stim_step_phase = self.get(u"stim_step_phase")
-            self.__stim_step_offset = self.get(u"stim_step_offset")
-            self.__stim_step_amplitude = self.get(u"stim_step_amplitude")            
+            self.__stim_step_phase      = self.get(u"stim_step_phase")
+            self.__stim_step_offset     = self.get(u"stim_step_offset")
+            self.__stim_step_amplitude  = self.get(u"stim_step_amplitude")            
             self.__stimFuntion = self.updateDataDictionary_stim_step
         elif StimulationFunction ==  u"Random":
-            self.__stim_random_offset = self.get(u"stim_random_offset")
+            self.__stim_random_offset   = self.get(u"stim_random_offset")
             self.__stim_random_amplitude = self.get(u"stim_random_amplitude")                   
             self.__stimFuntion = self.updateDataDictionary_stim_random
 
@@ -438,7 +534,6 @@ class PX_Recorder(PyLinXCoreDataObjects.PX_Object):
         
         
     def __exit_csv(self):
-        
         csvObject = PX_CSVObject.CSVObject()
         
         listVarsToSave = [u"time_1"]

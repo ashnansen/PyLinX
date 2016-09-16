@@ -4,10 +4,13 @@ Created on 08.02.2016
 @author: Waetzold Plaum
 '''
 import inspect
+from PyQt4 import QtCore
+from PyQt4.QtCore import QString
 
 import PyLinXCoreDataObjects 
 import PyLinXData.PyLinXHelper as helper
 import PyLinXData.PX_CSVObject as csvlib
+import PyLinXCtl.PyLinXProjectController #as PyLinXProjectController  
 
 # This is quite unusual, bus this class has to be built in this way, because
 # we want to to prepare for a dual license distribution model. It might be clever
@@ -23,16 +26,15 @@ if licenseOption == 0:
         import mdfreader as mdflib
     except:
         raise Exception(u"Error PX_Signals: Library mdfreader is missing! Please catch up for...")
-# elif licenseOption == 1:
-#     import SomeOtherLibrary as mdflib
+
 
 class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
     
-    def __init__(self,parent, name):
+    def __init__(self,parent, projectController = None):
         
-        super(PX_SignalsFolder, self).__init__(parent,name)
+        super(PX_SignalsFolder, self).__init__(parent, u"signalFiles")
         self._BContainer__AttributesVirtual.extend([u"bSignalLoaded",u"signals"])
-        #self.__mainController = parent
+        self.__projectController = projectController
         
         
     def get(self, attr):
@@ -61,6 +63,16 @@ class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
                 signalsName = signal.get(u"Name")
                 listSignals = signal.get(u"signals")
                 listWithFullNames.extend([(signalName, signalsName) for signalName in listSignals])
+            return listWithFullNames
+        elif attr == u"variablesLoadedInFolder":
+            listWithFullNames = []
+            for key in  self.getChildKeys():
+                signal = self.getb(key)
+                signalsName = signal.get(u"Name")
+                listSignals = signal.get(u"signals")
+                masterSignals = signal.get(u"masterSignals")
+                setSignalsFiltered = set(listSignals).difference(set(masterSignals ) ) 
+                listWithFullNames.extend([(signalName, signalsName) for signalName in setSignalsFiltered])
             return listWithFullNames
                 
         else:
@@ -113,6 +125,10 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
         for key in self._BContainer__Head:
             listVirtualAttributes.append(key)
         self._BContainer__AttributesVirtual.extend(listVirtualAttributes)
+        fullName = self.get(u"Name")
+        self.__projectController = parent.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)      
+        
+        self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_signals"))
         
         
     def set(self, attr, val, options = None):

@@ -3066,25 +3066,36 @@ last edited: September 2011
 # 
 # plt.show()
 
-import csv
+'''
+CSV-Example
+'''
 
-with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:
-    #Heuristic for determining the deliminiter
-    strCSVFile = csvfile.read()
-    Chars =[';', '\t']
-    numChars = []
-    maxNumChars = 0
-    idxMaxNumChars = 0
-    for i,char in enumerate(Chars):
-        count = strCSVFile.count(char)
-        if maxNumChars > count:
-            idxMaxNumChars = i
-            maxNumChars = count 
-    delimiter = Chars[idxMaxNumChars]
+# import csv
+# 
+# with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:
+#     #Heuristic for determining the deliminiter
+#     strCSVFile = csvfile.read()
+#     Chars =[';', '\t']
+#     numChars = []
+#     maxNumChars = 0
+#     idxMaxNumChars = 0
+#     for i,char in enumerate(Chars):
+#         count = strCSVFile.count(char)
+#         if maxNumChars > count:
+#             idxMaxNumChars = i
+#             maxNumChars = count 
+#     delimiter = Chars[idxMaxNumChars]
+# 
+# with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:    
+#     print "delimiter", delimiter 
+#     spamreader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+#     for row in spamreader:
+#         print row #', '
+#     
 
-with open('D:/Projekte/PyLinX/Measure_5.ascii', 'rb') as csvfile:    
-    print "delimiter", delimiter 
-    spamreader = csv.reader(csvfile, delimiter='\t', quotechar='"')
-    for row in spamreader:
-        print row #', '
+class TestA:
+    def __init__(self):
+        pass
     
+A = TestA()
+print A
