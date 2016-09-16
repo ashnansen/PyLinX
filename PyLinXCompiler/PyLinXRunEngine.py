@@ -10,6 +10,7 @@ import mdfreader
 import numpy as np
 import os
 from datetime import datetime
+ 
 
 from PyLinXData import BContainer, PyLinXCoreDataObjects
 
@@ -32,12 +33,12 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         self.__runThreadMessageQueue = PyLinXMainWindow.runThreadMessageQueue
         
         # Object Data
-        ###############
+        #############
         
         self.__PyLinXMainWindow  = PyLinXMainWindow
-        self.__mainController    = parent
-        self.__rootGraphics      = self.__mainController.getb(u"rootGraphics")
-        self.__objectHandler     = self.__mainController.getb(u"ObjectHandler")
+        self.__projectController    = parent
+        self.__rootGraphics      = self.__projectController.getb(u"rootGraphics")
+        self.__objectHandler     = self.__projectController.getb(u"ObjectHandler")
         
         # Initialize Lists of DataTypes
         
@@ -62,8 +63,8 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
 # Allgemein
         
         # Setting Coding-Variant           
-        self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadVarsFromDataDict)
-        # self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadSingleVars)
+        # self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadVarsFromDataDict)
+        self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadSingleVars)
 
         # Processing
         ############
@@ -78,13 +79,13 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         RunConfigDictionary.set(u"Name", u"RunConfigDictionary")
         RunConfigDictionary.set(u"DisplayName", u"RunConfigDictionary")
         RunConfigDictionary[u"t"] = 0.0
-        self.__mainController.paste(RunConfigDictionary, bForceOverwrite = True)
+        self.__projectController.paste(RunConfigDictionary, bForceOverwrite = True)
         self.__RunConfigDictionary = RunConfigDictionary 
 
-        self.__DataDictionary = self.__mainController.getb(u"DataDictionary") 
+        self.__DataDictionary = self.__projectController.getb(u"DataDictionary") 
         for element in self.__listVarElements:
             self.__DataDictionary[element.get(u"DisplayName")] = 0.0                 
-        self.__mainController.updateDataDictionary()
+        self.__projectController.updateDataDictionary()
             
     def __genCode(self):
         
@@ -219,7 +220,8 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
 
 # Allgemein
 
-    class SimulationThread(BContainer.BContainer, QtCore.QThread ):
+    #class SimulationThread(BContainer.BContainer,  QtCore.QThread ):
+    class SimulationThread( QtCore.QThread ):
         
         def __init__(self, CodeGenerator,  mainDrawWidget, runConfigDictionary, dataDictionary):
             QtCore.QThread.__init__(self)
@@ -267,7 +269,8 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         # connecting the signal "signal_runInit" to the main controller
         ###############################################################
         
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self, QtCore.SIGNAL(u"signal_runInit"),self.__mainController.runInit)
+        #TODO has to be moved to project controller
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self, QtCore.SIGNAL(u"signal_runInit"),self.__projectController.runInit)
               
         # initializing the Run
         ######################
@@ -286,11 +289,12 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         # Connecting signals to the run thread
         ######################################
         
+        # has to be moved to project controller
         self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_repaint"), self.__PyLinXMainWindow.ui.drawWidget.repaint,\
                                                                             QtCore.Qt.BlockingQueuedConnection)
         self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"),\
-                                                   self.__mainController.sync,QtCore.Qt.BlockingQueuedConnection)
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),self.__mainController.stop_run)
+                                                   self.__projectController.sync,QtCore.Qt.BlockingQueuedConnection)
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),self.__projectController.stop_run)
         
 
 # allgemein
@@ -316,7 +320,7 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
     def run_(self):
         self.t+= self.delta_t
         self.__RunConfigDictionary[u"t"] = self.t
-        self.__mainController.updateDataDictionary()
+        self.__projectController.updateDataDictionary()
         
 # speziell
 

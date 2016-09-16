@@ -15,6 +15,7 @@ import sys
 import threading
 import Queue
 import codecs
+from PyQt4.QtCore import pyqtSignal
 
 # Project specific Libraries - alphabedic order
 from PyLinXData import BContainer, PyLinXCoreDataObjects, PyLinXHelper, \
@@ -26,10 +27,12 @@ import PyLinXGui.PX_TabWidget_main as PX_TabWidget_main
 import PyLinXGui.PX_Tab_SignalSelect as PX_Tab_SignalSelect
 import PyLinXGui.PX_Tab_Recorder as PX_Tab_Recorder
 import PyLinXData.PyLinXHelper as helper
-from PyLinXCtl import PyLinXMainController
+from PyLinXCtl import PyLinXProjectController
 
 class PyLinXMain(QtGui.QMainWindow):
 
+    #signal_dataChanged_signals = pyqtSignal(unicode, name='dataChanged_signals')
+    
     def __init__(self):
  
         super(PyLinXMain, self).__init__()
@@ -51,21 +54,12 @@ class PyLinXMain(QtGui.QMainWindow):
         
         # Main Data Structures
 
-        self.mainController = PyLinXMainController.PyLinXMainController(mainWindow = self )
+        self.mainController = PyLinXProjectController.PyLinXProjectController(mainWindow = self )
+        
 
         _rootGraphics = self.mainController.getb(u"rootGraphics")
         
-        # ExampleData
 
-        script = u"new varElement TestVar_0 150 90 15 refName=\"TestVar_0\"\n\
-new varElement Variable_id4 150 140 15 refName=\"Variable_id4_1\" \n\
-new varElement Variable_id4 400.0 100.0 15 refName=\"Variable_id4_2\"\n\
-new basicOperator + 300.0 100.0 name=u\"Operator_1\"\n\
-new connector TestVar_0 Operator_1 idxInPin=-1\n\
-new connector Variable_id4_1 Operator_1 idxInPin=-2\n\
-new connector Operator_1 Variable_id4_2 idxInPin=-1"
-            
-        self.mainController.execScript(script)
 
         # run Engine
         
@@ -91,17 +85,26 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         # DrawWidget
         self.ui.drawWidget = PX_Widget_MainDrawArea.DrawWidget(self.mainController, self, self.repaintEvent )        
         
+        ############
         # TabWidget
+        ############
         self.ui.TabWidget = PX_TabWidget_main.PX_TabWidget_main(mainController = self.mainController)
         self.ui.TabWidget.setMinimumWidth(260)
+        
+        # Info
         self.ui.TabInfo = QtGui.QWidget() 
         self.ui.TabWidget.adjoinTab(self.ui.TabInfo, u"Info", PX_TabWidget_main.PX_TabWidget_main.DisplayRole.inEditAndSimulationMode,1)
+        # Signals
         self.ui.TabSignals = PX_Tab_SignalSelect.PX_Tab_SignalSelect(self.mainController, drawWidget = self.ui.drawWidget  )
         self.ui.TabWidget.adjoinTab(self.ui.TabSignals, u"Signals", PX_TabWidget_main.PX_TabWidget_main.DisplayRole.onlyInSimulationMode,2)
+        # Elements
         self.ui.TabElements = PX_Tab_ObjectHandlerList.PX_Tab_ObjectHandlerList(self.mainController)
         self.ui.TabWidget.adjoinTab(self.ui.TabElements, u"Elements", PX_TabWidget_main.PX_TabWidget_main.DisplayRole.onlyInEditMode,3)
+        # Recorder
         self.ui.Tabrecorder = PX_Tab_Recorder.PX_Tab_Recorder(self.mainController)
         self.ui.TabWidget.adjoinTab(self.ui.Tabrecorder, u"Recorder", PX_TabWidget_main.PX_TabWidget_main.DisplayRole.onlyInSimulationMode,4)
+        
+        #Connect Signal
         self.connect(self, QtCore.SIGNAL("updateTabs"), self.ui.TabWidget.updateTabs)
         
         # Splitter
@@ -164,14 +167,30 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         self.ui.actionRun.triggered.connect(self.on_run)
         self.ui.actionStop.triggered.connect(self.on_stop)
 
+        # Configurations that require the GUI to exist
+        self.mainController.set(u"bSimulationMode", False)
+
+        ################
+        # ExampleData
+        ################
+
+        _file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
+        self.__loadFile(_file)
+
+        script = u"new varElement TestVar_0 150 90 15 refName=\"TestVar_0\"\n\
+new varElement Variable_id4 150 140 15 refName=\"Variable_id4_1\" \n\
+new varElement Variable_id4 400.0 100.0 15 refName=\"Variable_id4_2\"\n\
+new basicOperator + 300.0 100.0 name=u\"Operator_1\"\n\
+new connector TestVar_0 Operator_1 idxInPin=-1\n\
+new connector Variable_id4_1 Operator_1 idxInPin=-2\n\
+new connector Operator_1 Variable_id4_2 idxInPin=-1"
+            
+        #self.mainController.execScript(script)        
 
         ############
         # Finish
         ############
-
-        # Configurations that require the GUI to exist
-        self.mainController.set(u"bSimulationMode", False)
-
+        
         # Show GUI
         self.ui.resize(800,600)
         self.ui.show()
@@ -276,31 +295,32 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
                                                      strExt = u"*.pyp",\
                                                      dialogType = u"load")  
  
+        self.__loadFile(_file)
+
+        rootGraphics = self.mainController.getb(u"rootGraphics")
+        rootGraphics.set(u"strSavePath", strSavePath)           
+    
+    def __loadFile(self, _file):
+                
         if _file == None:
             return
-         
         old_Controller = self.mainController
- 
-        self.mainController = PyLinXMainController.PyLinXMainController(mainWindow = self )
-        _file_read = _file.read()
- 
-        self.mainController.execScript(_file_read)
-         
-        old_Controller.delete()
-        newProject = self.mainController.getb(u"rootGraphics")
+        self.mainController = PyLinXProjectController.PyLinXProjectController(mainWindow = self )
+        # TODO: should be removed in the long term
         self.ui.drawWidget.newProject(self.mainController)
-         
-        rootGraphics = self.mainController.getb(u"rootGraphics")
-        rootGraphics.set(u"strSavePath", strSavePath)          
- 
-        self.ui.drawWidget.repaint()
+        self.ui.TabWidget.newProject(self.mainController)
+        
+        _file_read = _file.read()
+        self.mainController.execScript(_file_read)
+        old_Controller.delete()
+        self.ui.repaint()
 
     
     def on_actionNewProject(self):
-        rootGraphicsNew = PyLinXCoreDataObjects.PX_PlottableObject(u"rootGraphics")
+        rootGraphicsNew = PyLinXCoreDataObjects.PX_PlottableObject(None, u"rootGraphics")
         self.mainController.delete(u"rootGraphics")
-        self.mainController.set(u"bSimulationMode", False)
         self.mainController.paste(rootGraphicsNew)
+        self.mainController.set(u"bSimulationMode", False)
         self.ui.drawWidget.activeGraphics = rootGraphicsNew
         self.ui.drawWidget.repaint()
         
@@ -310,11 +330,11 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         
         bSimulationMode = self.mainController.get(u"bSimulationMode")
         if bSimulationMode:
-            self.mainController.execCommand(u"set @mainController.bSimulationMode False")
+            self.mainController.execCommand(u"@mainController set bSimulationMode False")
         else:
-            self.mainController.execCommand(u"set @mainController.bSimulationMode True")
-        self.ui.drawWidget.repaint()
-        
+            self.mainController.execCommand(u"@mainController set bSimulationMode True")
+        self.ui.repaint() 
+                
     def on_run(self):
         
         self.runEngine = self.mainController.getb(u"PX_CodeGeerator")

@@ -56,7 +56,7 @@ class CSVObject(object):
                         bFloat = True
                     except:
                         bFloat = False
-                    if bFloat: # '''col[i][0] in ('f', 's', 'u') and'''
+                    if bFloat: 
                         numRowType = i
                         break
                 return numRowType
@@ -142,10 +142,7 @@ class CSVObject(object):
             csvwriter.writerow(row)
             row = [self.__data[label][u"type"] for label in self.__data]
             csvwriter.writerow(row)
-            
-            for i in range(len_data):
-                pass
-            
+                       
             j = 0
             while 1:
                 row = []

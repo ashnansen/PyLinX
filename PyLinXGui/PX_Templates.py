@@ -64,26 +64,33 @@ class Plot_Target():
 
 class PX_DiagData():
     StimForm = {}
-    StimForm["Constant"]  = [{ "Name": "stim_const_val",        "DisplayName":  "Value",     "ValueType": "float", "Value": 0.}]
-    StimForm["Sine"]      = [{ "Name": "stim_sine_frequency",   "DisplayName":  "Frequency", "ValueType": "float", "Value": 0., "Unit" : "Hz"},\
-                             { "Name": "stim_sine_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0., "Unit": "s"},\
-                             { "Name": "stim_sine_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_sine_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]
-    StimForm["Ramp"]      = [{ "Name": "stim_ramp_frequency",   "DisplayName":  "Frequency", "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_ramp_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_ramp_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_ramp_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}] 
-    StimForm["Pulse"]     = [{ "Name": "stim_pulse_frequency",  "DisplayName":  "Frequency", "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_pulse_phase",      "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_pulse_offset",     "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_pulse_amplitude",  "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
-    StimForm["Step"]      = [{ "Name": "stim_step_phase",       "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_step_offset",      "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_step_amplitude",   "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
-    #StimForm["Random"]    = [{ "Name": "stim_random_phase",     "DisplayName":  "Phase",     "ValueType": "float", "Value": 0.},\
-    StimForm["Random"]    = [{ "Name": "stim_random_offset",    "DisplayName":  "Offset",    "ValueType": "float", "Value": 0.},\
-                             { "Name": "stim_random_amplitude", "DisplayName":  "Amplitude", "ValueType": "float", "Value": 0.}]  
+    StimForm[u"Constant"]  = [{ u"Name": u"stim_const_val",        u"DisplayName":  u"Value",     u"ValueType": u"float", u"Value": 0.}]
+    StimForm[u"Sine"]      = [{ u"Name": u"stim_sine_frequency",   u"DisplayName":  u"Frequency", u"ValueType": u"float", u"Value": 0., u"Unit" : u"Hz"},\
+                             {  u"Name": u"stim_sine_phase",       u"DisplayName":  u"Phase",     u"ValueType": u"float", u"Value": 0., u"Unit":  u"s"},\
+                             {  u"Name": u"stim_sine_offset",      u"DisplayName":  u"Offset",    u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_sine_amplitude",   u"DisplayName":  u"Amplitude", u"ValueType": u"float", u"Value": 0.}]
+    StimForm[u"Ramp"]      = [{ u"Name": u"stim_ramp_frequency",   u"DisplayName":  u"Frequency", u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_ramp_phase",       u"DisplayName":  u"Phase",     u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_ramp_offset",      u"DisplayName":  u"Offset",    u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_ramp_amplitude",   u"DisplayName":  u"Amplitude", u"ValueType": u"float", u"Value": 0.}] 
+    StimForm[u"Pulse"]     = [{ u"Name": u"stim_pulse_frequency",  u"DisplayName":  u"Frequency", u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_pulse_phase",      u"DisplayName":  u"Phase",     u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_pulse_offset",     u"DisplayName":  u"Offset",    u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_pulse_amplitude",  u"DisplayName":  u"Amplitude", u"ValueType": u"float", u"Value": 0.}]  
+    StimForm[u"Step"]      = [{ u"Name": u"stim_step_phase",       u"DisplayName":  u"Phase",     u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_step_offset",      u"DisplayName":  u"Offset",    u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_step_amplitude",   u"DisplayName":  u"Amplitude", u"ValueType": u"float", u"Value": 0.}]  
+    StimForm[u"Random"]    = [{ u"Name": u"stim_random_offset",    u"DisplayName":  u"Offset",    u"ValueType": u"float", u"Value": 0.},\
+                             {  u"Name": u"stim_random_amplitude", u"DisplayName":  u"Amplitude", u"ValueType": u"float", u"Value": 0.}]  
 
+    StimAttribute = {}
+    StimAttribute[u"Constant"]  = u"stim_const"
+    StimAttribute[u"Sine"]      = u"stim_sine"
+    StimAttribute[u"Ramp"]      = u"stim_ramp"
+    StimAttribute[u"Pulse"]     = u"stim_pulse"
+    StimAttribute[u"Step"]      = u"stim_step"
+    StimAttribute[u"Random"]    = u"stim_random"
+    
 ## Definition of graphical measures 
 
 class Scalable:

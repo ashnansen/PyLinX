@@ -2,7 +2,7 @@ import sys, os
 from PyQt4 import QtCore, QtGui
 
 import PyLinXData.PyLinXHelper as helper
-import PyLinXCtl.PyLinXMainController as ctl
+import PyLinXCtl.PyLinXProjectController as ctl
 import matplotlib.pyplot as pyplot
 
 class ThumbListWidget(QtGui.QListWidget):
@@ -66,9 +66,6 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
 
         self.myListWidget = ThumbListWidget(self, self.listItems)  
         self.myListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        #self.myListWidget.connect(self.myListWidget, QtCore.SIGNAL("customContextMenuRequested(QPoint)" ), self.listItemRightClicked)
-        
-        #self.connect(self.myListWidget, QtCore.SIGNAL("plotSignal"), self.plotSignal)
         
         myBoxLayout.addWidget(self.toolbar)
         myBoxLayout.addWidget(self.myListWidget)
@@ -77,16 +74,14 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
 
         self.toolbar.setIconSize (QtCore.QSize(16,16))
         
-        # Add Action to Toolbar
-        
-        #self.__actionLoad = helper.loadAction(widget=self,  IconPath =u"./Recources/Icons/openSignal24.png", ToolTip=u"Load Signal File",\
-        #                                ShortCut=u"Ctrl+L", Callback=self.loadSignal, ToolBar=self.toolbar)
-        #self.__actionMap  = helper.loadAction(widget=self,  IconPath =u"./Recources/Icons/SignalMapping16.png", ToolTip=u"Map Signals by Name",\
-        #                                ShortCut=u"Ctrl+M", Callback=self.mapSignalsByName, ToolBar=self.toolbar)
-
-        
         self.toolbar.setStyleSheet(u".QToolBar {border: 0px;}")
         self.SignalFileName = None
+        
+        # Signals
+        #########
+        
+        self.connect(self.mainController.mainWindow, QtCore.SIGNAL(u"dataChanged_objectHandler"), self.repaint )
+        
         self.repaint()
         
     def repaint(self):
@@ -96,40 +91,12 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
             listItem = NamedQListWidgetItem( _object)
             self.addListWidgetItem(listItem)
         super(PX_Tab_ObjectHandlerList, self).repaint()
-
-#     def plotSignal(self, labelName):
-#         signal = self.mainController.get(u"@signals." + unicode(labelName)) 
-#         if (u"xlabel" in signal) and (u"time" in signal):
-#             pyplot.plot(signal[u"time"], signal[u"values"])
-#             pyplot.xlabel(signal[u"xlabel"])
-#         else:
-#             pyplot.plot(signal[u"values"])
-#         pyplot.title(signal[u"title"])
-#         pyplot.ylabel(signal[u"ylabel"])    
-#         pyplot.grid(True)
-#         pyplot.show()
         
     def addListWidgetItem(self, listItemName = None):
         if listItemName == None:
             listItemName='Item '+str(len(self.listItems.keys()))        
         self.listItems[listItemName]=None 
         self.rebuildListWidget() 
-# 
-#     def listItemRightClicked(self, QPos): 
-#         self.listMenu= QtGui.QMenu()
-#         menu_item = self.listMenu.addAction("Remove Item")
-#         if len(self.listItems.keys())==0: menu_item.setDisabled(True)
-#         self.connect(menu_item, QtCore.SIGNAL("triggered()"), self.menuItemClicked) 
-# 
-#         parentPosition = self.myListWidget.mapToGlobal(QtCore.QPoint(0, 0))        
-#         self.listMenu.move(parentPosition + QPos)
-#         self.listMenu.show() 
-# 
-#     def menuItemClicked(self):
-#         if len(self.listItems.keys())==0: print 'return from menuItemClicked'; return
-#         currentItemName=str(self.myListWidget.currentItem().text() )
-#         self.listItems.pop(currentItemName, None)
-#         self.rebuildListWidget()
 
     def rebuildListWidget(self):
         self.myListWidget.clear()
@@ -140,10 +107,14 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
             self.listItems[listItemName]=listItem
             self.myListWidget.addItem(listItem)
             
+    def newProject(self, mainController):
+        self.mainController = mainController
+        self.__objectHandler = self.mainController.getb(u"ObjectHandler")
+            
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    mainController = ctl.PyLinXMainController(bListActions = False)
+    mainController = ctl.PyLinXProjectController(bListActions = False)
     
     # Example-Data
     

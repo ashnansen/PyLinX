@@ -35,7 +35,6 @@ class DrawWidget (QtGui.QWidget):
         self.mainController.set(u"ConnectorToModify", None)
         self.mainController.set(u"idxPointModified" , None)
         self.mainWindow = mainWindow
-        #self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         self.setMouseTracking(True)
 
         
@@ -97,8 +96,7 @@ class DrawWidget (QtGui.QWidget):
         var = self.__variableInSimMOde(e.pos())
         if var:
             signal = e.mimeData().text()
-            #command = u"set @objects/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal) 
-            command = u"set @objects/variables/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal)
+            command = u"@objects set ./variables/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal)
             self.mainController.execCommand(command)
             self.repaint()
             self.emit(QtCore.SIGNAL(u"signal_repaint_Tab_SignalSelect"))
@@ -136,7 +134,7 @@ class DrawWidget (QtGui.QWidget):
                     self.repaint() 
 
     def newProject(self, mainController):
-        self.rootGraphics   = mainController.rootGraphics
+        self.rootGraphics   = mainController.root
         self.activeGraphics = mainController.activeFolder
         self.mainController = mainController
     
@@ -173,7 +171,7 @@ class DrawWidget (QtGui.QWidget):
             for delItem in setDel:
                 command += " " + unicode(delItem)
                            
-            self.mainController.execCommand(command) 
+            self.mainController.execCommand(command)
             self.repaint()
 
        
@@ -210,7 +208,7 @@ class DrawWidget (QtGui.QWidget):
                 else:
                     if set(objInFocus) != set(self.mainController.selection):
                         usttObj = [obj.get(u"Name") for obj in objInFocus]
-                        self.mainController.execCommand(u"select " + u" ".join(usttObj)) 
+                        self.mainController.execCommand(u"select " + u" ".join(usttObj))
                 
 
                     
@@ -257,9 +255,8 @@ class DrawWidget (QtGui.QWidget):
                 # case connecting of elements is not finished yet. No second Element has been clicked
                 if objInFocus == None:                    
                     strVal = repr((x,y)).replace(u" ", u"")
-                    #strCommand_xy = u"set ./PX_PlottableProxyElement.xy " + strVal
-                    strCommand_xy = u"set @latent/PX_PlottableProxyElement.xy " + strVal
-                    self.mainController.execCommand(strCommand_xy)
+                    strCommand_xy = u"@latent set ./PX_PlottableProxyElement.xy " + strVal
+                    self.mainController.execCommand(strCommand_xy)                    
                 
                 # Case connecting of elements is finished. Second Element is clicked
                 else:
@@ -268,8 +265,8 @@ class DrawWidget (QtGui.QWidget):
                     if not (idxPin in setIdxConnectedInPins):
                         ConnectorPloting = self.mainController.get(u"ConnectorPloting")
                         connectorName = ConnectorPloting.get(u"Name")
-                        ustrCommand = u"set @latent/" + connectorName + ".connectInfo (\"" + objInFocus.get(u"Name") + u"\"," + unicode(idxPin) + u")"
-                        self.mainController.execCommand(ustrCommand)
+                        ustrCommand = u"@latent set ./" + connectorName + ".connectInfo (\"" + objInFocus.get(u"Name") + u"\"," + unicode(idxPin) + u")"
+                        self.mainController.execCommand(ustrCommand)                        
                                                
             # connecting has not been started yet
             else:
@@ -284,13 +281,13 @@ class DrawWidget (QtGui.QWidget):
                         if len(idxPin) > 0:
                             idxPin = idxPin[0]                         
                         if objInFocus != None and (idxPin > -1):
-                            strCommand = u"new connector " + unicode( element.ID ) + u" idxOutPinConnectorPloting=" + unicode(idxPin)
+                            strCommand = u"@latent new connector " + unicode( element.ID ) + u" idxOutPinConnectorPloting=" + unicode(idxPin)
                             self.mainController.execCommand(strCommand)
+
                                       
         def mousePressEvent_tool_newVarElement():     
             n = PyLinXCoreDataObjects.PX_IdObject._PX_IdObject__ID + 1
             ustrCommand = u"new varElement " + u"Variable_id" + unicode(n) + u" " + unicode(X) + u" " + unicode(Y) + u" " + unicode(15) 
-            print "ustrCommand", ustrCommand
             self.mainController.execCommand(ustrCommand)
             self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
             self.mainWindow.ui.actionNewElement.setChecked(False)
@@ -374,13 +371,14 @@ class DrawWidget (QtGui.QWidget):
                 px_mousePressedAt_Y = self.mainController.get(u"px_mousePressedAt_Y")
                 if px_mousePressedAt_X != sys.maxint:
                     xOffset = X - px_mousePressedAt_X 
-                    yOffset = Y - px_mousePressedAt_Y 
+                    yOffset = Y - px_mousePressedAt_Y
                     
                     if ((xOffset != 0) or (yOffset != 0)) and \
-                            (PyLinXCoreDataObjects.PX_PlottableElement in self.mainController.get(u"@.types")) and\
-                            self.mainController.get(u"@.bUnlock"):
-                        ustrCommand = u"set @.xy (" + unicode(xOffset) + "," + unicode(yOffset) + u") -p"
+                            (PyLinXCoreDataObjects.PX_PlottableElement in self.mainController.get(u"Selection_types")) and\
+                            self.mainController.get(u"Selection_bUnlock"):
+                        ustrCommand = u"@selection set xy (" + unicode(xOffset) + "," + unicode(yOffset) + u") -p"
                         self.mainController.execCommand(ustrCommand)
+
                     
                     # move line of connector.                 
                     ConnectorToModify = self.mainController.get(u"ConnectorToModify") 
@@ -396,7 +394,7 @@ class DrawWidget (QtGui.QWidget):
                         listPoints[idxPointModified] = 10 * round( 0.1 * float(value))
                         if sum([abs(x-y) for x,y in zip(listPoints, listPointsOld)]) != 0:
                             ustrCommand = "set ./" + ConnectorToModify.get(u"Name") + ".listPoints " + repr(listPoints).replace(" ", "")
-                            self.mainController.execCommand(ustrCommand)   
+                            self.mainController.execCommand(ustrCommand)
                     
                     self.mainController.set(u"px_mousePressedAt_X", X)
                     self.mainController.set(u"px_mousePressedAt_Y", Y)
@@ -449,8 +447,7 @@ class DrawWidget (QtGui.QWidget):
                 command += ( element.get("Name") + u" ")
             if len(objectsInFocus) > 0:
                 self.mainController.execCommand(command)
-#             self.activeGraphics.set(u"ConnectorToModify", None )
-#             self.activeGraphics.set(u"idxPointModified" , None )   
+  
 
         
         keys = self.latentGraphics.getChildKeys()       
