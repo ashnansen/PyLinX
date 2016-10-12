@@ -64,7 +64,7 @@ class DrawWidget (QtGui.QWidget):
         self.connect(self, QtCore.SIGNAL("signal_repaint"), self.repaint)
         
     def sizeHint(self):
-        maxXY = self.mainController.get_dimActiveGraphics()
+        maxXY = self.mainController.dimActiveGraphics
         maxXY2 = self.mainWindow.get_DrawWidgetSize()
         x = max(maxXY[0] + 60, maxXY2[0]) - 2
         y = max(maxXY[1] + 40,maxXY2[1]) - 2
@@ -80,9 +80,8 @@ class DrawWidget (QtGui.QWidget):
         event.accept()
  
     
-    def __variableInSimMOde(self, coord):
-        bSimulationMode = self.mainController.get(u"bSimulationMode")
-        if bSimulationMode:
+    def __variableInSimMOde(self, coord): 
+        if self.mainController.bSimulationMode:
             objInFocus = self.activeGraphics.getObjectInFocus(coord)
             if len(objInFocus) > 0:
                 var = objInFocus[0]
@@ -109,6 +108,7 @@ class DrawWidget (QtGui.QWidget):
         if var:
             bStimulate  = var.get(u"bStimulate")
             bMeasure    = var.get(u"bMeasure")
+            
             self.actionMeasure.setChecked(bMeasure)
             self.actionStimulate.setChecked(bStimulate)
             self.popMenu_SimulationMode.exec_(self.mapToGlobal(coord))
@@ -229,17 +229,15 @@ class DrawWidget (QtGui.QWidget):
                         if idxPolygon > 0:
                             # not sent via ustr-Command, since this information is only cached at the mainController
                             # for the final command. No data is changed here.
-                            id = unicode(activeObject.get("ID"))
+                            id = unicode(activeObject.ID)
                             self.mainController.set(u"ConnectModInfo", ( id + u"_id" + id ,idxPolygon - 1 ))
                             return 
                             
             # Connecting Elements
             #####################
             
-            bConnectorPloting = self.mainController.get(u"bConnectorPloting")
             # connecting has been started yet
-            if bConnectorPloting:
-                # Determining if there is a endpoint in focus
+            if self.mainController.bConnectorPloting:
                 keys = self.activeGraphics.getChildKeys()
                 objInFocus = None
                 for key in keys:
@@ -289,14 +287,16 @@ class DrawWidget (QtGui.QWidget):
             n = PyLinXCoreDataObjects.PX_IdObject._PX_IdObject__ID + 1
             ustrCommand = u"new varElement " + u"Variable_id" + unicode(n) + u" " + unicode(X) + u" " + unicode(Y) + u" " + unicode(15) 
             self.mainController.execCommand(ustrCommand)
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.idxToolSelected = helper.ToolSelected.none
             self.mainWindow.ui.actionNewElement.setChecked(False)
             self.mainWindow.ui.TabElements.repaint()
             
         def mousePressEvent_tool_newBasicOperator(ustrOperator):
             ustrCommand = u"new basicOperator " +  ustrOperator + " " + unicode(X) + " " + unicode(Y) 
             self.mainController.execCommand(ustrCommand)
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.idxToolSelected = helper.ToolSelected.none
             if ustrOperator == u"+":
                 self.mainWindow.ui.actionNewPlus.setChecked(False)
             elif ustrOperator == u"-":
@@ -309,7 +309,8 @@ class DrawWidget (QtGui.QWidget):
         def mousePressEvent_tool_newVarDispObj():
             ustrCommand = u"new varDispElement "+ unicode(X) + " " + unicode(Y)
             self.mainController.execCommand(ustrCommand)
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.idxToolSelected = helper.ToolSelected.none
             self.mainWindow.ui.actionOsci.setChecked(False)
             
                    
@@ -321,8 +322,11 @@ class DrawWidget (QtGui.QWidget):
         y = coord.y()
         X = 10 * round( 0.1 * float(x))
         Y = 10 * round( 0.1 * float(y))
-        toolSelected = self.mainController.get(u"idxToolSelected")
-        bSimulationMode = self.mainController.get(u"bSimulationMode")
+        #toolSelected = self.mainController.get(u"idxToolSelected")
+        toolSelected = self.mainController.idxToolSelected
+        #bSimulationMode = self.mainController.get(u"bSimulationMode")
+        #bSimulationMode = self.mainController.get(u"bSimulationMode")
+        bSimulationMode = self.mainController.bSimulationMode
         
         # not passed as command since just clicking should not change the data
         self.mainController.set(u"px_mousePressedAt_X",X)
@@ -359,7 +363,8 @@ class DrawWidget (QtGui.QWidget):
         y = coord.y()
         X = 10 * round( 0.1 * float(x))
         Y = 10 * round( 0.1 * float(y))
-        toolSelected = self.mainController.get(u"idxToolSelected")
+        #toolSelected = self.mainController.get(u"idxToolSelected")
+        toolSelected = self.mainController.idxToolSelected
 
         if toolSelected == helper.ToolSelected.none:
 
@@ -374,8 +379,8 @@ class DrawWidget (QtGui.QWidget):
                     yOffset = Y - px_mousePressedAt_Y
                     
                     if ((xOffset != 0) or (yOffset != 0)) and \
-                            (PyLinXCoreDataObjects.PX_PlottableElement in self.mainController.get(u"Selection_types")) and\
-                            self.mainController.get(u"Selection_bUnlock"):
+                            (PyLinXCoreDataObjects.PX_PlottableElement in self.mainController.Selection_types and\
+                            self.mainController.Selection_bUnlock):
                         ustrCommand = u"@selection set xy (" + unicode(xOffset) + "," + unicode(yOffset) + u") -p"
                         self.mainController.execCommand(ustrCommand)
 
@@ -406,8 +411,7 @@ class DrawWidget (QtGui.QWidget):
                 highlightObject.set(u"Y1", coord.y())
                     
             # change coordinates of the proxyElement, that is a placeholder for the finally connected element
-            bConnectorPloting = self.mainController.get(u"bConnectorPloting")
-            if bConnectorPloting:
+            if self.mainController.bConnectorPloting:
                 proxyElem = self.mainController.latentGraphics.getb(u"PX_PlottableProxyElement")
                 proxyElem.X = X
                 proxyElem.Y = Y
@@ -451,7 +455,8 @@ class DrawWidget (QtGui.QWidget):
 
         
         keys = self.latentGraphics.getChildKeys()       
-        toolSelected = self.mainController.get(u"idxToolSelected")        
+        #toolSelected = self.mainController.get(u"idxToolSelected")        
+        toolSelected = self.mainController.idxToolSelected
 
         # selecting Elements
         if toolSelected == helper.ToolSelected.none:
@@ -477,7 +482,7 @@ class DrawWidget (QtGui.QWidget):
                 bDialog = not (len(idxPolygon) == 0)
             return bDialog
         
-        if not self.mainController.get(u"bSimulationMode"):
+        if not self.mainController.bSimulationMode:
             if self.mainController.get(u"bConnectorPloting"):
                 self.mainController.execCommand("set /.bConnectorPloting False")
                 self.repaint()

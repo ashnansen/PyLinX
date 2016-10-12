@@ -114,7 +114,7 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.toolbar = QtGui.QToolBar()
         self.mainController = mainController
         self.__objectHandler = mainController.getb(u"ObjectHandler")
-        objects = self.__objectHandler.get(u"listObjects")
+        objects = self.__objectHandler.listObjects
         self.widget = PX_Tab_Recorder_TreeView(self, self.listItems)  
         self.model = treeModel_Recorder(self,objects, self.widget, self)
         #self.model = treeModel_Recorder(self,objects, self )
@@ -125,7 +125,7 @@ class PX_Tab_Recorder(QtGui.QWidget):
         self.listItems = {}
         
         # Initialize Model
-        VariablesToRecord = self.__objectHandler.get(u"listObjects")
+        VariablesToRecord = self.__objectHandler.listObjects
         self.model.loadObjects(VariablesToRecord)
 
         
@@ -196,7 +196,7 @@ class PX_Tab_Recorder(QtGui.QWidget):
             self.__recorder_fileFormat = PX_ObjectHandler.PX_Recorder.FileFormat.csv
     
     def updateWidget(self):
-        listObjects = self.__objectHandler.get(u"listObjects")
+        listObjects = self.__objectHandler.listObjects
         self.model.loadObjects(listObjects, self.__recorder_VariablesToRecord)
 
         

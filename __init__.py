@@ -8,7 +8,6 @@ import copy
 import cProfile
 import ctypes
 import inspect
-import jsonpickle
 import os
 from PyQt4 import QtGui, QtCore, uic, Qt
 import sys
@@ -17,9 +16,20 @@ import Queue
 import codecs
 from PyQt4.QtCore import pyqtSignal
 
-# Project specific Libraries - alphabedic order
-from PyLinXData import BContainer, PyLinXCoreDataObjects, PyLinXHelper, \
-    PX_Signals, PX_DataDictionary
+# Project specific Libraries
+# OLD 
+#from PyLinXData import BContainer, PyLinXCoreDataObjects, PyLinXHelper, \
+#    PX_Signals, PX_DataDictionary
+# Trial NEW
+#import PyLinXData.BContainer as BContainer
+#import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
+#import PyLinXData.BContainer 
+#import PyLinXData.PyLinXCoreDataObjects
+import PyLinXData
+import PyLinXData.PyLinXHelper as PyLinXHelper
+import PyLinXData.PX_Signals as PX_Signals
+import PyLinXData.PX_DataDictionary as PX_DataDictionary 
+    
 from PyLinXGui import *
 from PyLinXCompiler import *
 import PyLinXGui.PX_Templates as PX_Templ
@@ -28,6 +38,10 @@ import PyLinXGui.PX_Tab_SignalSelect as PX_Tab_SignalSelect
 import PyLinXGui.PX_Tab_Recorder as PX_Tab_Recorder
 import PyLinXData.PyLinXHelper as helper
 from PyLinXCtl import PyLinXProjectController
+
+# NEW
+import PyLinXGui.PX_Tab_ObjectHandlerList as PX_Tab_ObjectHandlerList
+
 
 class PyLinXMain(QtGui.QMainWindow):
 
@@ -54,8 +68,8 @@ class PyLinXMain(QtGui.QMainWindow):
         
         # Main Data Structures
 
+        #self.mainController = PyLinXCtl.PyLinXProjectController.PyLinXProjectController(mainWindow = self )
         self.mainController = PyLinXProjectController.PyLinXProjectController(mainWindow = self )
-        
 
         _rootGraphics = self.mainController.getb(u"rootGraphics")
         
@@ -168,13 +182,15 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.actionStop.triggered.connect(self.on_stop)
 
         # Configurations that require the GUI to exist
-        self.mainController.set(u"bSimulationMode", False)
+        #self.mainController.set(u"bSimulationMode", False)
+        self.mainController.bSimulationMode = False
 
         ################
         # ExampleData
         ################
 
         _file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
+        #_file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\TestCases\testCase_Bug_GetNeu.pyp")
         self.__loadFile(_file)
 
         script = u"new varElement TestVar_0 150 90 15 refName=\"TestVar_0\"\n\
@@ -214,38 +230,38 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
             
     def on_actionNewElement(self):
         
-        if self.mainController.get(u"idxToolSelected") == helper.ToolSelected.none:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.newVarElement) 
+        if self.mainController.get(u"idxToolSelected") == PyLinXHelper.ToolSelected.none:
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.newVarElement) 
         else:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.none)
             
     def on_actionNewPlus(self):
         
-        if self.mainController.get(u"idxToolSelected") == helper.ToolSelected.none:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.newPlus) 
+        if self.mainController.get(u"idxToolSelected") == PyLinXHelper.ToolSelected.none:
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.newPlus) 
         else:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.none)
 
     def on_actionNewMinus(self):
         
-        if self.mainController.get(u"idxToolSelected") == helper.ToolSelected.none:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.newMinus) 
+        if self.mainController.get(u"idxToolSelected") == PyLinXHelper.ToolSelected.none:
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.newMinus) 
         else:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.none)
             
     def on_actionNewMultiplication(self):
         
-        if self.mainController.get(u"idxToolSelected") == helper.ToolSelected.none:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.newMultiplication) 
+        if self.mainController.get(u"idxToolSelected") == PyLinXHelper.ToolSelected.none:
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.newMultiplication) 
         else:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.none)
             
     def on_actionNewDivision(self):
         
-        if self.mainController.get(u"idxToolSelected") == helper.ToolSelected.none:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.newDivision) 
+        if self.mainController.get(u"idxToolSelected") == PyLinXHelper.ToolSelected.none:
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.newDivision) 
         else:
-            self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
+            self.mainController.set(u"idxToolSelected", PyLinXHelper.ToolSelected.none)
 
             
     def on_actionSave(self):
@@ -263,7 +279,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
             (strPath, strSavePath_old_file) = os.path.split(strSavePath_old)
         else:
             strPath = os.getcwd()
-        strSavePath= helper.showFileSelectionDialog(self.ui,strPath, bDir = False, strExt = u"*.pyp", \
+        strSavePath= PyLinXHelper.showFileSelectionDialog(self.ui,strPath, bDir = False, strExt = u"*.pyp", \
                                                     strHeader =u"Select File to save Project...",\
                                                     dialogType = u"save",\
                                                     bFileObject = False)
@@ -277,7 +293,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         
         _file = codecs.open(strSavePath, encoding='utf-8', mode='w')
         
-        listCommands = self.mainController.get(u"listCommands")
+        listCommands = self.mainController.listCommands
         strCommands = u""
         for command in listCommands:
             strCommands += command
@@ -285,13 +301,13 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         _file.write(strCommands)
         _file.close()
         rootGraphics = self.mainController.getb(u"rootGraphics")
-        rootGraphics.set(u"strSavePath", strSavePath)  
+        rootGraphics.set(u"strSavePath", strSavePath)
 
   
     def on_actionLoadProject(self):
          
         strPath = os.getcwd()
-        _file, strSavePath = helper.showFileSelectionDialog(self.ui,strPath, bDir = False,strHeader ="Select File to load Project...",\
+        _file, strSavePath = PyLinXHelper.showFileSelectionDialog(self.ui,strPath, bDir = False,strHeader ="Select File to load Project...",\
                                                      strExt = u"*.pyp",\
                                                      dialogType = u"load")  
  
@@ -320,7 +336,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         rootGraphicsNew = PyLinXCoreDataObjects.PX_PlottableObject(None, u"rootGraphics")
         self.mainController.delete(u"rootGraphics")
         self.mainController.paste(rootGraphicsNew)
-        self.mainController.set(u"bSimulationMode", False)
+        self.mainController.bSimulationMode = False
         self.ui.drawWidget.activeGraphics = rootGraphicsNew
         self.ui.drawWidget.repaint()
         
@@ -328,7 +344,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
         
     def on_Activate_Simulation_Mode(self):
         
-        bSimulationMode = self.mainController.get(u"bSimulationMode")
+        bSimulationMode = self.mainController.bSimulationMode
         if bSimulationMode:
             self.mainController.execCommand(u"@mainController set bSimulationMode False")
         else:

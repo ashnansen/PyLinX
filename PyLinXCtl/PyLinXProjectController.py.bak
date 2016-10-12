@@ -9,13 +9,14 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import pyqtSignal #, #QObject
 import copy
 
-import PyLinXData.BContainer as BContainer 
-import PyLinXData.PyLinXHelper as PyLinXHelper 
+#import PyLinXData # .BContainer as BContainer 
+#import PyLinXData #.PyLinXHelper as PyLinXHelper 
 import PyLinXGui.PX_Templates as PX_Templ
-import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
-import PyLinXData.PX_ObjectHandler as PX_ObjectHandler 
-import PyLinXData.PX_Signals #as PX_Signals  
-from PyLinXCompiler import PyLinXRunEngine
+import PyLinXData.BContainer
+#import PyLinXData.PX_ObjectHandler as PX_ObjectHandler 
+#import PyLinXData.PX_Signals #as PX_Signals  
+#from PyLinXCompiler import PyLinXRunEngine
+import PyLinXCompiler 
 import PyLinXData.PyLinXHelper as helper
 import PyLinXController
 
@@ -68,6 +69,11 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
 
         # Seting sonme attributes
         #########################
+        self._BContainer__AttributesVirtual.extend([u"ConnectModInfo", \
+                                                    u"Selection_listKeys", \
+                                                    u"lenDataDictionary", \
+                                                    u"listSignalFiles"])
+
 
         self._BContainer__Attributes[u"px_mousePressedAt_X"] = sys.maxint
         self._BContainer__Attributes[u"px_mousePressedAt_Y"] = sys.maxint
@@ -91,7 +97,9 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
         self.set(u"idxLastSelectedDataViewer", -1)
         self.set(u"idxOutPinConnectorPloting", None)
         self.set(u"listDataDispObj", [])
-         
+        
+    
+    
     
     ##############
     # PROPERTIES
@@ -290,7 +298,8 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
     ########
     
     ## TODO: The mechanism of recur has to be modified by the use of lambda expressions
-    # Ggf. zu verallgemeinern. Auch andere GUI-Teile koennten bei einem Exberiment zu verallgemeinern sein.
+
+# Ggf. zu verallgemeinern. Auch andere GUI-Teile koennten bei einem Exberiment zu verallgemeinern sein.
 
     # Method that synchronizes the DataDictionary with the data hold for graphical representation in the DataViewer
     def sync(self):
@@ -303,6 +312,22 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
         self.recur(PyLinXData.PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"stop_run", ())
         self.objectHandler.recorder.exit()
         self.set(u"bSimulationRuning", False)
+        
+    # Method to change the active folder
+    def cd(self, path):
+        try:
+            obj = self.getObjFromPath(path)
+        except Exception as exp:
+            errorString = u"Error PyLinXProjectController,PyLinXProjectController.cd: Failed to open " + path + \
+                     " - " + unicode(Exception) 
+            helper.error(errorString)
+            return 
+        if obj == None:
+            errorString = u"Error PyLinXProjectController,PyLinXProjectController.cd - " + unicode(Exception) 
+            helper.error(errorString)
+            return
+        self.activeFolder = obj
+        return
     
     # Method to initialize a simulation run
     def runInit(self):

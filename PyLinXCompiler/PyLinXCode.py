@@ -3,11 +3,15 @@ Created on 02.09.2015
 
 @author: Waetzold Plaum
 '''
+import copy
 
 from PyLinXData.BContainer import BList
 
 class Code(BList):
     
+    _dictSetCallbacks = copy.copy(BList._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(BList._dictGetCallbacks)
+        
     def __init__(self):
         
         super(Code, self).__init__(name="Code")

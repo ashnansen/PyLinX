@@ -44,3 +44,5 @@ select
 #@mainController set bSimulationMode True
 #select TestVar_0
 #set /ObjectHandler/variables/TestVar_0.stim_sine {u'stim_sine_amplitude':1.0,u'stim_sine_frequency':1.0,u'stim_sine_phase':0.0,u'stim_sine_offset':2.0}
+@signals new signalFile D:/Projekte/PyLinX/Aptana-Projekte/PyLinX2/Recources/Testdata/Testdata1.mf4
+@objects set ./variables/Variable_id4.signalMapped var3|Signal_id36

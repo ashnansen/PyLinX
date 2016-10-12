@@ -14,8 +14,8 @@ from datetime import datetime
 
 #import BContainer
 import PyLinXGui.PX_Templates as PX_Templ
-from PyQt4 import QtCore
 import copy
+from PyQt4 import QtCore
 import PyLinXCtl
 import PyLinXCoreDataObjects
 from PyLinXData import PX_CSVObject as PX_CSVObject 
@@ -25,10 +25,10 @@ from PyLinXData import PX_CSVObject as PX_CSVObject
 # objects. The object handler handles the object. Each time a new instance of the variable is createt, it is registered by the object handler. The 
 # object handler also manages the recording of signals. 
 
-class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object): 
+class PX_ObjectHandler(PyLinXData.PyLinXCoreDataObjects.PX_Object): 
     
-    _dictSetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_Object._dictSetCallbacks)
-    _dictGetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_Object._dictGetCallbacks)
+    _dictSetCallbacks = copy.copy(PyLinXData.PyLinXCoreDataObjects.PX_Object._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PyLinXData.PyLinXCoreDataObjects.PX_Object._dictGetCallbacks)
     
     # Enumeration for the file extension of the recorder
     
@@ -50,6 +50,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
             raise Exception("Error PX_ObjectHandler.__init__: Invalid Type of MainController")
         super(PX_ObjectHandler, self).__init__(parent, u"ObjectHandler")
         self.set(u"bObjectInSimulationMode", False)
+        self._BContainer__AttributesVirtual.extend([u"listObjects", u"mapping", u"bRecord", u"recorder_VariablesToRecordProcessed"])
         
         ################################
         # Configuration of the recorder
@@ -85,7 +86,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         mapping = {}
         for key in self.__variables.getChildKeys():
             element = self.__variables.getb(key)
-            nameSignal= element.signalMapped # get(u"signalMapped")
+            nameSignal= element.get(u"signalMapped")
             if nameSignal!= None:
                 nameVariable = element.get(u"Name")
                 mapping[nameVariable] = nameSignal
@@ -96,8 +97,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         for variable in mapping:
             if variable in keys:
                 varObject = self.getb(variable)
-                #varObject.set(u"signalMapped", mapping[variable])
-                varObject.signalMapped = mapping[variable]
+                varObject.set(u"signalMapped", mapping[variable])
         return
     _dictSetCallbacks.addCallback(u"mapping", set__mapping)
     _dictGetCallbacks.addCallback(u"mapping", get__mapping)
@@ -105,7 +105,8 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
     
     # bRecord
     def get__bRecord(self):
-        return (len( self.recorder_VariablesToRecordProcessed ) > 0)
+        recorder_VariablesToRecord = self.get(u"recorder_VariablesToRecordProcessed")
+        return (len(recorder_VariablesToRecord ) > 0)        
     _dictGetCallbacks.addCallback(u"bRecord", get__bRecord)
     bRecord = property(get__bRecord)
     
@@ -180,9 +181,10 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         self.__signalhandler = self.__projectController.getb(u"signalFiles")
         self.__DataDictionary = self.__projectController.getb(u"DataDictionary")
         
+        #self.set(u"StimulationFunction", u"Constant")
         self.set(u"StimulationFunction", None)
         self.listSelectedDispObj = []
-        self.stim_const_val = 0.
+        self.set(u"stim_const_val", 0.)
         self.__time = None
         self.__signal = None
         self.__iteratorSignal = None
@@ -214,6 +216,14 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         self.__stim_step_amplitude = 0.
         self.__stim_random_offset = 0.
         self.__stim_random_amplitude = 0.
+        
+        
+        # Extending the virtual attributes
+        self._BContainer__AttributesVirtual.extend([u"stim_sine",\
+                                                    u"stim_ramp",\
+                                                    u"stim_pulse",\
+                                                    u"seim_step",\
+                                                    u"stim_random"])
 
     ####################
     # GETTER and SETTER
@@ -232,8 +242,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     
     # objPath
     def get__objPath(self):
-        #objPath = super(PX_ObjectVariable, self).get(u"path")
-        objPath = super(PX_ObjectVariable, self).get__path()
+        objPath = super(PX_ObjectVariable, self).get(u"path")
         return objPath
     _dictGetCallbacks.addCallback(u"objPath", get__objPath)    
     objPath = property(get__objPath)
@@ -267,7 +276,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     
     # stim_const
     def get__stim_const(self):
-        return { u"stim_const_val":          self.stim_const_val}
+        return { u"stim_const_val":          self.get(u"stim_const_val")}
     _dictGetCallbacks.addCallback(u"stim_const", get__stim_const)
 
     def set__stim_const(self, value, options = None):
@@ -415,12 +424,12 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         
         self.__RunConfigDictionary = self.__projectController.getb(u"RunConfigDictionary")
         self.__StimulationFunction = self.get(u"StimulationFunction")
-        #signalMapped = self.get(u"signalMapped")
+        signalMapped = self.get(u"signalMapped")
 
 
         StimulationFunction = self.get(u"StimulationFunction")
         if StimulationFunction == u"Constant":
-            self.__stim_const_val        = self.stim_const_val #self.get(u"stim_const_val")
+            self.__stim_const_val        = self.get(u"stim_const_val")
             self.__stimFuntion           = self.updateDataDictionary_const_val
         elif StimulationFunction == u"Sine":
             self.__stim_sine_frequency   = self.get(u"stim_sine_frequency")  
@@ -449,7 +458,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
             self.__stim_random_amplitude = self.get(u"stim_random_amplitude")                   
             self.__stimFuntion = self.updateDataDictionary_stim_random
 
-        if  self.signalMapped  == None:
+        if  signalMapped  == None:
             self.__time = None
             self.__signal = None
             self.__iteratorSignal = None
@@ -460,7 +469,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         # Stimulation by Signal
         self.__stimulateBySignal = True
         self.__stimFuntion = self.updateDataDictionary_stim_signal
-        signalObject = self.__signalhandler.get(self.signalMapped) 
+        signalObject = self.__signalhandler.get(signalMapped) 
         signal = signalObject[u"values"]
         time = signalObject[u"time"]
         self.__time = time
@@ -475,6 +484,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
             self.__stimFuntion()
 
     def updateDataDictionary_const_val(self):
+        print u"self.__stim_const_val", self.__stim_const_val
         self.__DataDictionary[ self.get(u"DisplayName") ] = self.__stim_const_val
 
     def updateDataDictionary_stim_sine(self):
@@ -558,8 +568,9 @@ class PX_Recorder(PyLinXCoreDataObjects.PX_Object):
         self.__recorder_fileFormat                  = self.__objectHandler.get(u"recorder_fileFormat")
         self.__recorder_SaveFolder                  = self.__objectHandler.get(u"recorder_SaveFolder")
         self.__recorder_RecordState                 = self.__objectHandler.get(u"recorder_RecordState")
+        #self.__bRecord                              = self.__objectHandler.get(u"bRecord")
         self.__bRecord                              = self.__objectHandler.bRecord
-        self.__recorder_VariablesToRecordProcessed  = self.__objectHandler.recorder_VariablesToRecordProcessed
+        self.__recorder_VariablesToRecordProcessed  = self.__objectHandler.get(u"recorder_VariablesToRecordProcessed")
         
         self.__dataDict = {}
         

@@ -3,6 +3,7 @@ Created on 02.09.2015
 
 @author: Waetzold Plaum
 '''
+import copy
 
 from PyLinXData import PyLinXCoreDataObjects
 import PyLinXRunEngine 
@@ -14,9 +15,12 @@ import PyLinXRunEngine
 ################################################
 
 class PX_CodeRefObject(PyLinXCoreDataObjects.PX_IdObject):
+    
     '''
     classdocs
     '''
+    _dictSetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictGetCallbacks)
 
     def __init__(self, parent, refObj):
         '''
@@ -34,6 +38,9 @@ class PX_CodeRefObject(PyLinXCoreDataObjects.PX_IdObject):
         
 
 class PX_CodableBasicOperator(PX_CodeRefObject):
+    
+    _dictSetCallbacks = copy.copy(PX_CodeRefObject._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PX_CodeRefObject._dictGetCallbacks)
     
     def __init__(self,parent, knot, CodingVariant, orderConnection):
         super(PX_CodableBasicOperator, self).__init__(parent, knot)
@@ -55,6 +62,9 @@ class PX_CodableBasicOperator(PX_CodeRefObject):
 
 class PX_CodableVarElement(PX_CodeRefObject):
             
+    _dictSetCallbacks = copy.copy(PX_CodeRefObject._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PX_CodeRefObject._dictGetCallbacks)
+    
     def __init__(self,parent, knot, CodingVariant):
         super(PX_CodableVarElement, self).__init__(parent, knot)
         self.CodingVariant = CodingVariant

@@ -3,6 +3,7 @@ Created on 08.02.2016
 
 @author: Waetzold Plaum
 '''
+import copy
 import inspect
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString
@@ -30,54 +31,74 @@ if licenseOption == 0:
 
 class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
     
+    _dictSetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictGetCallbacks)
+    
     def __init__(self,parent, projectController = None):
         
         super(PX_SignalsFolder, self).__init__(parent, u"signalFiles")
-        self._BContainer__AttributesVirtual.extend([u"bSignalLoaded",u"signals"])
         self.__projectController = projectController
+
         
-        
-    def get(self, attr):
-        
-        if u"|" in attr:
-            listAttr = attr.split(u"|")
-            if len(listAttr) != 2:
-                raise Exception(u"PX_Signals.PX_SignalsFolder: Invalid Attribute")
-                return
-            signalFileName = listAttr[1] 
-            signalName = listAttr[0]
-            signalFile = self.getb(signalFileName)
-            return signalFile.get(signalName)
-        elif attr == u"bSignalLoaded":
-            bSignalLoaded = False
-            for key in self.getChildKeys():
-                obj = self.getb(key)
-                types = inspect.getmro(type(obj))
-                if PX_Signals in types:
-                    bSignalLoaded = True
-            return bSignalLoaded
-        elif attr == u"signals":
-            listWithFullNames = []
-            for key in  self.getChildKeys():
-                signal = self.getb(key)
-                signalsName = signal.get(u"Name")
-                listSignals = signal.get(u"signals")
-                listWithFullNames.extend([(signalName, signalsName) for signalName in listSignals])
-            return listWithFullNames
-        elif attr == u"variablesLoadedInFolder":
-            listWithFullNames = []
-            for key in  self.getChildKeys():
-                signal = self.getb(key)
-                signalsName = signal.get(u"Name")
-                listSignals = signal.get(u"signals")
-                masterSignals = signal.get(u"masterSignals")
-                setSignalsFiltered = set(listSignals).difference(set(masterSignals ) ) 
-                listWithFullNames.extend([(signalName, signalsName) for signalName in setSignalsFiltered])
-            return listWithFullNames
+    ##############
+    # GET-Methods
+    ##############
+
+    # Object specific GETTERs
+    #########################
+    
+    def get_signal(self, attr):
+        listAttr = attr.split(u"|")
+        if len(listAttr) != 2:
+            raise Exception(u"PX_Signals.PX_SignalsFolder: Invalid Attribute")
+            return
+        signalFileName = listAttr[1] 
+        signalName = listAttr[0]
+        signalFile = self.getb(signalFileName)
+        return signalFile.get(signalName)
+
+    # static GETTERs
+    ################   
+    
+    def get__bSignalLoaded(self):
+        bSignalLoaded = False
+        for key in self.getChildKeys():
+            obj = self.getb(key)
+            types = inspect.getmro(type(obj))
+            if PX_Signals in types:
+                bSignalLoaded = True
+        return bSignalLoaded
+    _dictGetCallbacks.addCallback(u"bSignalLoaded", get__bSignalLoaded)
+    bSignalLoaded = property(get__bSignalLoaded)
                 
-        else:
-            return super(PX_SignalsFolder, self).get(attr)
+    def get__signals(self):
+        listWithFullNames = []
+        for key in  self.getChildKeys():
+            signal = self.getb(key)
+            signalsName = signal.get(u"Name")
+            listSignals = signal.get(u"signals")
+            listWithFullNames.extend([(signalName, signalsName) for signalName in listSignals])
+        return listWithFullNames
+    _dictGetCallbacks.addCallback(u"signals", get__signals)
+    signals = property(get__signals)
+    
+    def get__variablesLoadedInFolder(self):
+        listWithFullNames = []
+        for key in  self.getChildKeys():
+            signal = self.getb(key)
+            signalsName = signal.get(u"Name")
+            listSignals = signal.get(u"signals")
+            masterSignals = signal.get(u"masterSignals")
+            setSignalsFiltered = set(listSignals).difference(set(masterSignals ) ) 
+            listWithFullNames.extend([(signalName, signalsName) for signalName in setSignalsFiltered])
+        return listWithFullNames            
+    _dictGetCallbacks.addCallback(u"variablesLoadedInFolder", get__variablesLoadedInFolder)
+    variablesLoadedInFolder  = property(get__variablesLoadedInFolder)
         
+    ###############
+    # PASTE Method
+    ###############
+    
     def paste(self, obj, name = None, bForceOverwrite = False, pathkey = None):
         types = inspect.getmro(type(obj))
         if PX_Signals in types:
@@ -85,11 +106,13 @@ class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
             listVirtualAttributes = []
             for key in obj.get(u"signals"):
                 virtualAttribute =  key + u"|" + name
-                listVirtualAttributes.append(virtualAttribute)
-            self._BContainer__AttributesVirtual.extend(listVirtualAttributes)
+                self._dictGetCallbacks.addCallback(virtualAttribute, lambda: self.get_signal(virtualAttribute))
         return super(PX_SignalsFolder, self).paste(obj, name, bForceOverwrite, pathkey)
 
 class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
+    
+    _dictSetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(PyLinXCoreDataObjects.PX_IdObject._dictGetCallbacks)            
     
     class fileType:
         mdf = "mdf"
@@ -123,45 +146,19 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
         self._BContainer__Attributes[u"pathMdfFile"] = path
         listVirtualAttributes = [u"signals", u"signalsFullData"]
         for key in self._BContainer__Head:
-            listVirtualAttributes.append(key)
-        self._BContainer__AttributesVirtual.extend(listVirtualAttributes)
-        fullName = self.get(u"Name")
+            self._dictGetCallbacks.addCallback(key, lambda: self.get_signal(key))
         self.__projectController = parent.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)      
         
         self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_signals"))
-        
-        
-    def set(self, attr, val, options = None):
-        
-        if attr in self._BContainer__AttributesVirtual:
-            return u"Message:SignalReadOnly"
-        else:
-            return super(PX_Signals, self).set(attr, val, options = None)
+
+    ################
+    # GETTER-Methods
+    ################
     
-    def get(self, attr):
-        
-        if attr == u"signals":
-            return self.geth().keys()
-        elif attr == u"signalsFullData":
-            dictSignals = {}
-            for key in self.geth().keys():
-                dictSignals[key] = self.__get_signal(key)
-            return dictSignals
-        elif attr in self._BContainer__Head:
-            return self.__get_signal(attr)
-        elif attr == u"masterSignals":
-            listMasterSignals = []
-            for key in  self.geth().keys():
-                signal = self.geth()[key]
-                masterType = signal[u"masterType"]
-                if masterType == 1: # Case MasterSigna,
-                    listMasterSignals.append(key)
-            return listMasterSignals
-        else:
-            return super(PX_Signals, self).get(attr)
-        
-    def __get_signal(self, signalName):
-  
+    # object specific
+    #################
+
+    def get_signal(self, signalName):  
         fileType = self.get(u"fileType")
         if fileType  == PX_Signals.fileType.mdf:
             return self.__get_signal_mdf(signalName)
@@ -195,5 +192,34 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
     def __get_signal_csv(self, signalName):
         
         return self._BContainer__Head[signalName]
+        
+    # static
+    ########
+    
+    # signals
+    def get__signals(self):
+        return self.geth().keys()        
+    _dictGetCallbacks.addCallback(u"signals", get__signals)    
+    
+    # masterSignals
+    def get__masterSignals(self):
+        listMasterSignals = []
+        for key in  self.geth().keys():
+            signal = self.geth()[key]
+            masterType = signal[u"masterType"]
+            if masterType == 1: # Case MasterSigna,
+                listMasterSignals.append(key)
+        return listMasterSignals
+    _dictGetCallbacks.addCallback(u"masterSignals", get__masterSignals)    
+        
+    # signalsFullData
+    def get__signalsFullData(self):
+        dictSignals = {}
+        for key in self.geth().keys():
+            dictSignals[key] = self.__get_signal(key)
+        return dictSignals
+    _dictGetCallbacks.addCallback(u"signalsFullData", get__signalsFullData)      
+    
+
         
         

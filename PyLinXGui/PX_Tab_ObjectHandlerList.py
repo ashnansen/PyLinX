@@ -85,7 +85,7 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
         self.repaint()
         
     def repaint(self):
-        listObjects = self.__objectHandler.get(u"listObjects")
+        listObjects = self.__objectHandler.listObjects
         self.listItems = {}
         for _object in listObjects:
             listItem = NamedQListWidgetItem( _object)

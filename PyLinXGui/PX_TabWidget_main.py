@@ -59,7 +59,7 @@ class PX_TabWidget_main(QtGui.QTabWidget):
         
         self.clear()
         
-        bSimulationMode = self.__projectController.get(u"bSimulationMode")
+        bSimulationMode = self.__projectController.bSimulationMode
         
         maxPriority = self.getMaxPriority()
         listSortedTabs = (maxPriority + 1) * [[None]]

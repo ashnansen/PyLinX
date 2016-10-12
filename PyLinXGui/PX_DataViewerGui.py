@@ -64,9 +64,6 @@ class DataViewerGui(QtGui.QMainWindow):
           
         #######  Hiding number
         self.labelview.verticalHeader().setVisible(False)
-   
-        #self.items.setFeatures(QtGui.QDockWidget.DockWidgetFloatable | 
-        #     QtGui.QDockWidget.DockWidgetMovable)  
         self.items.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures |
                                        QtGui.QDockWidget.DockWidgetMovable) 
         ################################################################################# 
@@ -149,16 +146,7 @@ class DataViewerGui(QtGui.QMainWindow):
                         and not self.items.isVisible():
                 height += self.items.height()
                  
-#             self.items = QtGui.QDockWidget("Slider",self)
-#             self.labelview =  QtGui.QTableView()        
-#             self.tablemodel = self.plotterWidget.getTableModel()
-#             self.items.setWidget(self.labelview)
-#             self.items.setFloating(False)
-#             self.items.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures |
-#                                        QtGui.QDockWidget.DockWidgetMovable)  
-#             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.items)
-#              
-#             
+         
             
             self.items.show()
             self.plotterWidget.setLine()

@@ -3093,9 +3093,57 @@ CSV-Example
 #         print row #', '
 #     
 
-class TestA:
-    def __init__(self):
-        pass
+class dictCallbacks(dict):
     
-A = TestA()
-print A
+    def __init__(self, * args, **kwargs):
+        super(dictCallbacks, self).__init__(*args, **kwargs)
+        
+    def addCallback(self, attr, callback):
+        if attr not in self:
+            self[attr] = callback
+        else:
+            raise Exception(u"Error dictCallbacks.addCallback: Callback for attribute \"" + attr + "\" allready exists!")
+
+class classA(object):
+    
+    dictSetCallbacks = dictCallbacks({})
+    
+    def __init__(self):
+        self.__Attributes = {}
+        
+    def set(self, attr, val, **kwargs):
+ 
+        if attr in classA.dictSetCallbacks:
+            classA.dictSetCallbacks[attr](self,val, **kwargs)
+        else:
+            self.__Attributes[attr] = val
+            
+    def set_attr1(self, val):
+        print "attr1 is set!"
+        self.__Attributes["attr1"] = val
+        
+    dictSetCallbacks.addCallback( "attr1", set_attr1)
+        
+class classB(classA):
+    
+    def __init__(self):
+        super(classB, self).__init__()
+    
+    def set_attr2(self, val):
+        print "attr2 is set!"
+        self._classA__Attributes["attr2"] = val
+               
+    classA.dictSetCallbacks.addCallback("attr2", set_attr2)
+        
+obj1 = classA()
+obj2 = classB()
+obj3 = classB()
+
+obj1.set("attr1", 1)
+obj2.set("attr2", 2)
+obj2.set("attr1", 1)
+obj3.set("attr2", 4)
+obj3.set("attr1", 3)
+obj3.set("testattr", 4)
+
+print "Ende"
