@@ -309,7 +309,7 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
         self.repaint()
         
     def delMap(self):
-        mapping = self.__objectHandler.get(u"mapping") 
+        mapping = self.__objectHandler.mapping 
         for key in mapping:
             command = u"@objects set ./variables/" + key + u".signalMapped 0"
             self.mainController.execCommand(command)
@@ -318,25 +318,32 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
         
     def repaint(self):
 
+        print "self.__signalsFolder", type(self.__signalsFolder)
+        import PyLinXData
+        print PyLinXData.PX_Signals.PX_SignalsFolder._dictGetCallbacks
         bSignalLoaded = self.__signalsFolder.get(u"bSignalLoaded")
         self.__actionMap.setEnabled(bSignalLoaded)
         self.__actionDelMap.setEnabled(bSignalLoaded)
         self.__actionLoad.setEnabled(not bSignalLoaded)
-        mappingFromData = self.__objectHandler.get(u"mapping")
+        mappingFromData = self.__objectHandler.mapping
         self.model.setMapping(mappingFromData)        
         super(PX_Tab_SignalSelect, self).repaint()
 
     def plotSignal(self, labelName):
-        signal = self.mainController.get(u"@signals." + unicode(labelName)) 
-        if (u"xlabel" in signal) and (u"time" in signal):
-            pyplot.plot(signal[u"time"], signal[u"values"])
-            pyplot.xlabel(signal[u"xlabel"])
-        else:
-            pyplot.plot(signal[u"values"])
-        pyplot.title(signal[u"title"])
-        pyplot.ylabel(signal[u"ylabel"])    
-        pyplot.grid(True)
-        pyplot.show()    
+        if u"|" in labelName:
+            listLabelName = labelName.split(u"|")
+            path = u"/signalFiles/" + listLabelName[1] + u"." + listLabelName[0]
+            signal = self.mainController.get(path)
+            
+            if (u"xlabel" in signal) and (u"time" in signal):
+                pyplot.plot(signal[u"time"], signal[u"values"])
+                pyplot.xlabel(signal[u"xlabel"])
+            else:
+                pyplot.plot(signal[u"values"])
+            pyplot.title(signal[u"title"])
+            pyplot.ylabel(signal[u"ylabel"])    
+            pyplot.grid(True)
+            pyplot.show()  
         
     def loadSignalFile(self):
         strPath = helper.showFileSelectionDialog(self,strPath = None, bDir = False, \
@@ -365,7 +372,7 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
     
     def mapSignalsByName(self):
         signals = self.__signalsFolder.get(u"signals")
-        varObjects = self.__objectHandler.get(u"listObjects")
+        varObjects = self.__objectHandler.listObjects
         mapping = {}
         for varObject in varObjects:
             for signal in signals:
@@ -389,8 +396,8 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
         self.rebuildListWidget() 
 
     def listItemRightClicked(self, QPos):
-        listObjects = self.__objectHandler.get(u"listObjects")
-        mapping = self.__objectHandler.get(u"mapping")
+        listObjects = self.__objectHandler.listObjects
+        mapping = self.__objectHandler.mapping
         signal = self.myListWidget.getSignal()
         menu = QtGui.QMenu()
         listActions = []

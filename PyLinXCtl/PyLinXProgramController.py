@@ -3,10 +3,13 @@ Created on 29.08.2016
 
 @author: Waetzold Plaum
 '''
+import copy
 
 import PyLinXController
 
 class PyLinXProgramController(PyLinXController.PyLinXController):
+    
+    _dictSetCallbacks = copy.copy(PyLinXController.PyLinXController._dictSetCallbacks)
     
     def __init__(self, mainWindow = None, bListActions = False):
         

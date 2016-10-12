@@ -8,8 +8,7 @@ import inspect
 from PyQt4 import QtCore
 import mdfreader 
 import numpy as np
-import os
-from datetime import datetime
+import copy 
  
 
 from PyLinXData import BContainer, PyLinXCoreDataObjects
@@ -24,6 +23,9 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
     class CodingVariant:
         ReadSingleVars = 0
         ReadVarsFromDataDict = 1
+        
+    _dictSetCallbacks = copy.copy(BContainer.BContainer._dictSetCallbacks)  
+    _dictGetCallbacks = copy.copy(BContainer.BContainer._dictGetCallbacks)  
  
     def __init__(self, parent, PyLinXMainWindow):
         
@@ -63,8 +65,8 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
 # Allgemein
         
         # Setting Coding-Variant           
-        # self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadVarsFromDataDict)
-        self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadSingleVars)
+        self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadVarsFromDataDict)
+        # self.set(u"CodingVariant", PX_CodeAnalyser.CodingVariant.ReadSingleVars)
 
         # Processing
         ############

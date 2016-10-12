@@ -19,11 +19,16 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         
         layout = QtGui.QVBoxLayout(self)
         
-        StimulationFunction = variable.get(u"StimulationFunction")
-        if StimulationFunction == None:
-            StimulationFunction = u"Constant"
+        #StimulationFunction = variable.get(u"StimulationFunction")
+        #if StimulationFunction == None:
+        #    StimulationFunction = u"Constant"
+
+        self.stimFunction  = variable.get(u"StimulationFunction")
+        if self.stimFunction  == None:
+            self.stimFunction  = u"Constant"
        
-        init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
+        #init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
+        init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[ self.stimFunction ])
         # Get Data 
         for dictVar in init_list:
             attr = dictVar[u"Name"]
@@ -34,6 +39,7 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             dictVar[u"Value"] = unicode(value)
         self.setLayout(layout)
         self.variable = variable
+        #self.stimFunction = self.variable.get(u"StimulationFunction")
         self.drawWidget = drawWidget
         self.mainController = mainController
         
@@ -43,11 +49,11 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         index = 0
         for function in self.listFunctions:
             self.combo.addItem(function)
-            if StimulationFunction == function:
+            if self.stimFunction == function:
                 index = counter
             counter +=1
         self.combo.setCurrentIndex(index)
-        self.combo.setEditText(StimulationFunction)
+        self.combo.setEditText(self.stimFunction)
         self.combo.activated[str].connect(self.onActivated)
         self.layout().addWidget(self.combo)
 
@@ -75,10 +81,13 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             helper.error(u"Invalid Input! Please Try again!")
             self.result = False
             return 
+        values[u"StimulationFunction"] = self.stimFunction
         strValues = repr(values).replace(" ", "")
-        objPath = self.variable.get(u"objPath")
+        objPath = self.variable.objPath
         #stimFunction = self.variable.get(u"StimulationFunction")
+        print self.stimFunction
         attributeToSet =  PX_Templ.PX_DiagData.StimAttribute[self.stimFunction]
+        print "objPath", objPath
         ustrExec2 =  u"set " + objPath[:-1] + u"." + attributeToSet + u" " + unicode(strValues)
         self.mainController.execCommand(ustrExec2)
         self.hide()

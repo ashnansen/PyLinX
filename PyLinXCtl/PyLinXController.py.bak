@@ -7,10 +7,10 @@ from PyQt4 import QtCore
 import inspect
 import copy
 
-import PyLinXData
-import PyLinXData.BContainer as BContainer 
-import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
-import PyLinXData.PyLinXHelper as helper
+#import PyLinXData
+#import PyLinXData.BContainer as BContainer 
+#import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
+import PyLinXData.PyLinXCoreDataObjects
 
 class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
     
@@ -27,8 +27,14 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
         self.__activeFolder = None
         self.__dictAlias = BContainer.BDict({}, name = u"dictAlias")
         self.paste(self.__dictAlias)
+#         self.__dictQtSignals = BContainer.BDict({}, name = u"dictQtSignals" )
+#         self.paste(self.__dictQtSignals)
         self.set(u"LogLevel", 0)
         self.paste(BContainer.BDict({}, name="dictConstructors"))
+        self._BContainer__AttributesVirtual.extend([u"mainWindow",\
+                                                    u"drawWidget",\
+                                                    u"listCommands"])
+
         self._selection         = []
         
                 
@@ -85,7 +91,7 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
     def execCommand(self, command):
         
         if self.get(u"LogLevel") > 0:
-            print  self.activeFolder.get__path() + "> " +  command
+            print  self.activeFolder.get(u"path") + "> " +  command
         
         # Tracking of the commands
         self._PyLinXController__listCommands.append(command)
@@ -145,8 +151,6 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             return self.__execCommand_new(context, command[1:])
         elif strCommand == u"select":
             return self.__execCommand_select(command[1:])
-        elif strCommand == u"cd":
-            return self.__execCommand_cd(command[1:])
 
 
     ####################
@@ -262,25 +266,4 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
         for element in self.selection:
             if element.isAttr(command[0]):
                 element.set(*tuple(command))
-                
-    
-    #############
-    # Command CD
-    #############
-
-    # Method to change the active folder
-    def __execCommand_cd(self, path):
-        try:
-            obj = self.getObjFromPath(path)
-        except Exception as exp:
-            errorString = u"Error PyLinXProjectController,PyLinXProjectController.cd: Failed to open " + path + \
-                     " - " + unicode(Exception) 
-            helper.error(errorString)
-            return 
-        if obj == None:
-            errorString = u"Error PyLinXProjectController,PyLinXProjectController.cd - " + unicode(Exception) 
-            helper.error(errorString)
-            return
-        self.activeFolder = obj
-        return    
     

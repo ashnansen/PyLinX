@@ -10,6 +10,7 @@ Created on 15.09.2014
 # transparent tree structures
 
 
+import copy
 import inspect
 import threading
 from PyQt4 import QtCore
@@ -17,14 +18,41 @@ from PyQt4 import QtCore
 
 import PyLinXData
 
+
+# helper Class for the callback functions for the set and get methods
+######################################################################
+
+class dictCallbacks(dict):
+    
+    def __init__(self, * args, **kwargs):
+        super(dictCallbacks, self).__init__(*args, **kwargs)
+        
+    def addCallback(self, attr, callback):
+        self[attr] = callback
+
+
 ## Base class of the B object modell
 
 class BContainer(object):
 
-
+    #########################################
+    # Dictionary for the set-callback methods
+    #########################################
+    
+    _dictSetCallbacks = dictCallbacks({})
+    _dictGetCallbacks = dictCallbacks({})
+    
+    ##############
     ## Constructor
+    ##############
     
     def __init__(self, name = u"<no Name>", parent = None, headObject = None):
+        
+        
+        # Attention: There are twoe versions von _dictGetCallbacks and _dictSetCallbacks
+        # One that holds the static Callbacks and one that holds the object specific callbacks! 
+        self._dictGetCallbacks = dictCallbacks({})
+        self._dictGetCallbacks = dictCallbacks({})
         
         # Element for saving the main or global information ot the knot
         self.__Head = headObject
@@ -32,7 +60,6 @@ class BContainer(object):
         self.__Body = {}
         # reference to the root knot
         #self.__parent = parent
-        self.__AttributesVirtual = [u"path"]
 
         self.__Attributes                 = {} 
         self.__Attributes[u"Type"]        = 0
@@ -80,16 +107,25 @@ class BContainer(object):
                 self.delete(childKey)
             
 
-    ## Method that gets the value of an label
-    
+    ################
+    ## GET-Methods
+    ################
+            
     def get(self, attr, bComplex = False):
-        if attr == u"path":
-            return self.__get_path()
+        if attr in type(self)._dictGetCallbacks:
+            return type(self)._dictGetCallbacks[attr](self)
+        elif attr in self._dictGetCallbacks:
+            return self._dictGetCallbacks[attr]()
         else:
             if bComplex:
                 return self.__get_complex(attr)
+            elif u"." in attr:
+                listAttr = attr.split(u".")
+                obj = self.getRoot().getObjFromPath(listAttr[0])
+                return obj.get(listAttr[1])
             else:
                 return self.__Attributes[attr]
+        
             
     def __get_complex(self, attr):
         types = inspect.getmro(type(attr))
@@ -112,14 +148,69 @@ class BContainer(object):
         else:
             raise Exception("Error BContainer.get: No valid type for collective set. Use dict!")        
     
-    def __get_path(self, path = u""):
+    def get__path(self):
+        return self.__get__path()
+    _dictGetCallbacks.addCallback(u"path", get__path)
+    path = property(get__path)
+    
+    def __get__path(self, path = u""):
         if self.__parent == None:
             return u"/" + path
         else:
             try:
-                return self.__parent.__get_path( self.__parent.key(self) + u"/" +  path)
+                return self.__parent.__get__path( self.__parent.key(self) + u"/" +  path)
             except:
                 print u"Error!"
+
+    ###############
+    # SET-METHODE
+    ###############
+    
+    ##  Method to add or set an attribute
+    
+    def set(self,  attr, setObj, options = None):
+        
+        _type = type(self)
+        if attr in _type._dictSetCallbacks:
+            _type._dictSetCallbacks[attr](self,setObj, options)
+        elif attr in self._dictGetCallbacks:
+            self._dictSetCallbacks[attr](setObj, options)            
+        else:
+            if attr in _type._dictGetCallbacks:
+                raise Exception(u"BContainer.set: Attribute " + attr + u" is write-protected! Please implement a set-method to write this \
+                attribute or remove the get-method to remove write-protection!" )
+            # None or empty string as attribute indicates complex set command with a whole dict to be set.
+            if attr == None or attr == u"": 
+                types = inspect.getmro(type(setObj))
+                if dict in types:
+                    return self.__set_dict(setObj, options)
+                else:
+                    raise Exception("Error BContainer.set: No valid type for collective set. Use dict!")
+            if options == None: 
+                self.__Attributes[attr] = setObj
+            elif options == u"-p":
+                val = self.get(attr)
+                types = inspect.getmro(type(val))
+                if (float in types) or (int in types):
+                    self.set(attr,  val + setObj)
+                elif tuple in types:
+                    self.set(attr, tuple([a + b for a, b in zip(val, setObj ) ] ) )
+                elif list in types:
+                    self.set(attr, [a + b for a, b in zip(val, setObj ) ] )
+                
+    def __set_dict(self, setObj, options):
+        for key in setObj:
+            len_key = len(key)
+            if len_key > 0:
+                if key[0] == u"@":
+                    childObj = self.getb(key[1:])
+                    setObjChild = setObj[key]
+                    childObj.__set_dict(setObjChild, options)
+                else:
+                    self.set(key, setObj[key], options)
+            else:
+                raise Exception(u"Error BContainer.__set_dict: key of length 0.")    
+
         
     def getb(self,name):
         if name in self.__Body:
@@ -132,7 +223,7 @@ class BContainer(object):
         listChilds = []
         for key in self.__Body:
             element = self.__Body[key]
-            if (attrib in element.__Attributes) or (attrib in element.__AttributesVirtual):
+            if element.isAttr(attrib):
                 if element.get(attrib) == value:
                     if returnAttribute == None:
                         listChilds.append(element)
@@ -170,7 +261,7 @@ class BContainer(object):
     ## Method that returns True if the attribute exists
     
     def isAttr(self, attr):
-        return (attr in self.__Attributes) or (attr in self.__AttributesVirtual)
+        return (attr in self.__Attributes) or (attr in self._dictGetCallbacks) or (attr in type(self)._dictGetCallbacks)
     
     ## Method that returns true, if an attribute exists and has the value "True", otherwise it returns "False" 
 
@@ -215,18 +306,27 @@ class BContainer(object):
             listLs.append((unicode(elem.get("Name")), unicode(type(elem))))
         if len(listLs) > 0:
             self.__printLsList(sorted(listLs))
-          
+        
     def lsAttr(self):
         listLsAttr = []
         for attr in self.__Attributes:
-            listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )
-        for attr in self.__AttributesVirtual:
-            try:
-                listLsAttr.append( (unicode(attr),u"v", unicode(self.get(attr))))
-            except:
-                print "Error! (2)"
+            listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )            
+        for attr in self._dictGetCallbacks:
+            listLsAttr.append( (unicode(attr), u"v",  unicode(self.get(attr)) ) )      
+        for attr in type(self)._dictGetCallbacks:
+            listLsAttr.append( (unicode(attr), u"v",  unicode(self.get(attr)) ) )
+        for i, line in enumerate(listLsAttr):
+            line_0 = line[0]
+            line_1 = line[1]
+            _type = type(self)
+            if    ( (line_0 in  self._dictGetCallbacks) and not (line_0 in  self._dictSetCallbacks) ) or\
+                  ( (line_0 in _type._dictGetCallbacks) and not (line_0 in _type._dictSetCallbacks) ):
+                line_1 += 'r'
+            else:
+                line_1 += 'w'
+            listLsAttr[i] = (line[0], line_1, line[2])
         if len(listLsAttr) > 0:
-            self.__printLsList(sorted(listLsAttr))
+            self.__printLsList(sorted(listLsAttr))            
           
     def __printLsList(self, lsList):
         len_lsList = len(lsList)
@@ -385,62 +485,25 @@ class BContainer(object):
             element = self.__Body[key]
             element.recur(typeinfo, strFunction, tupleArgs, bSubTypes)
 
-    ##  Method to add or set an attribute
-    
-    def set(self,  attr, setObj, options = None):
-                
-        # None or empty string as attribute indicates complex set command with a whole dict to be set.
-        if attr == None or attr == u"": 
-            types = inspect.getmro(type(setObj))
-            if dict in types:
-                return self.__set_dict(setObj, options)
-            else:
-                raise Exception("Error BContainer.set: No valid type for collective set. Use dict!")
-        if options == None: 
-            self.__Attributes[attr] = setObj
-        elif options == u"-p":
-            val = self.__Attributes[attr]
-            types = inspect.getmro(type(val))
-            if (float in types) or (int in types):
-                self.set(attr,  val + setObj)
-            elif tuple in types:
-                self.set(attr, tuple([a + b for a, b in zip(val, setObj ) ] ) )
-            elif list in types:
-                self.set(attr, [a + b for a, b in zip(val, setObj ) ] )
-                
-    def __set_dict(self, setObj, options):
-        for key in setObj:
-            len_key = len(key)
-            if len_key > 0:
-                if key[0] == u"@":
-                    childObj = self.getb(key[1:])
-                    setObjChild = setObj[key]
-                    childObj.__set_dict(setObjChild, options)
-                else:
-                    self.set(key, setObj[key], options)
-            else:
-                raise Exception(u"Error BContainer.__set_dict: key of length 0.")
+
                     
         
 class BList(BContainer, list):
     
+    _dictSetCallbacks = copy.copy(BContainer._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(BContainer._dictGetCallbacks)
+    
     def __init__(self, *args, **kwargs):
         
         list.__init__(self, *args)
-        #BContainer.__init__(self, *args, **kwargs)
         BContainer.__init__(self, **kwargs)
         
-#     def __str__(self):
-#         print u"================================="
-#         self.lsAttr()
-#         print u"---------------------------------"
-#         self.ls()
-#         print u"---------------------------------"
-#         print list.__str__(self)
-#         print u"================================="
-#         return ""
+
 
 class BDict(BContainer, dict):
+    
+    _dictSetCallbacks = copy.copy(BContainer._dictSetCallbacks)
+    _dictGetCallbacks = copy.copy(BContainer._dictGetCallbacks)
     
     def __init__(self, *args, **kwargs):
         

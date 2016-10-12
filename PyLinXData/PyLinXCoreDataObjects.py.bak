@@ -6,7 +6,7 @@ Created on 03.11.2014
 # general modules to import
 from PyQt4 import QtGui, QtCore
 import inspect
-import sys, traceback
+import sys
 import copy
 import math
 
@@ -15,12 +15,10 @@ import BContainer
 import PyLinXGui.PX_Templates as PX_Templ
 import PyLinXHelper
 import PyLinXCtl
-
+#import PyLinXData
+#import PyLinXData
+import  PyLinXData.PX_ObjectHandler #import PX_ObjectHandler
 import PyLinXGui
-
-#NEW
-#import PX_ObjectHandler.PX_ObjectHandler as PX_ObjectHandler
-#import PX_ObjectHandler
 
 
 ## Meta-Class for all PyLinX data Objects,
@@ -66,6 +64,10 @@ class PX_Object(BContainer.BContainer):
                     _id = element_id
             _id = element.getMaxID(_id)
         return _id
+    
+#     def get(self, attr):
+#         return super(PX_Object, self).get(attr)
+    
 
 ## Classes, which should have an ID should inherit from this class
 
@@ -89,6 +91,7 @@ class PX_IdObject(PX_Object):
         self._BContainer__Attributes[u"DisplayName"] = name
         
         PX_IdObject.__ID += 1
+        self._BContainer__AttributesVirtual.extend([u"ID"])
         
     def get_ID(self):
         return self._ID
@@ -133,6 +136,7 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         super(PX_PlottableObject, self).__init__(parent, name, bIdSuffix)
         self.set(u"bVisible", bVisible)  
         self.set(u"bOnlyVisibleInSimMode", False)
+        self._BContainer__AttributesVirtual.extend([u"bUnlock"])
 
 
     #####################
@@ -195,6 +199,7 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         listLatent = []
         for key in self._BContainer__Body:
             element = self._BContainer__Body[key]
+            #print element.get("Name"), "bVisible" , element.isAttrTrue(u"bVisible") 
             if element.isAttrTrue(u"bVisible"):
             #if element.bVisible:
                 if element.isAttrTrue(u"bLatent"):
@@ -245,6 +250,7 @@ class PX_PlottableLatentGraphicsContainer(PX_PlottableObject):
     
     def __init__(self, parent, name, bIdSuffix = False):
         super(PX_PlottableLatentGraphicsContainer, self).__init__(parent, name, bIdSuffix = bIdSuffix)
+        self._BContainer__AttributesVirtual.extend([u"bHasProxyElement"])
         
     
     #####################
@@ -337,6 +343,7 @@ class PX_PlottableGraphicsContainer(PX_PlottableIdObject):
     
     def __init__(self, parent, name = "<none>", mainController = None, * args):
         super(PX_PlottableGraphicsContainer, self).__init__(parent, name = name, mainController = mainController, *args)
+        self._BContainer__AttributesVirtual.extend([u"ConnectModInfo"])
         
 ## Meta-Class for all plotalble objects that can be connected
     
@@ -378,6 +385,8 @@ class PX_PlottableElement(PX_PlottableIdObject):
         self.set(u"bMethodIsInFocus", True)
         self.set(u"setIdxConnectedInPins", set([]))
         self.set(u"setIdxConnectedOutPins", set([]))
+        #self.set(u"bVisible", True)  
+        self._BContainer__AttributesVirtual.extend([u"xy"])
         PX_PlottableElement.calcDimensions(self, tupleInPins = tupleInPins, tupleOutPins = tupleOutPins)
         
     
@@ -726,32 +735,35 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         self.__refObject._BContainer__Head = value 
         self.set(u"tupleInPins", tupleInPins)
         self.set(u"tupleOutPins", tupleOutPins)
-        for attr in (u"StimulationFunction", "StimulationFunction"):
-            self._dictSetCallbacks.addCallback(attr, lambda val, options: self.__refObject.set(attr, val, options))
-            self._dictGetCallbacks.addCallback(attr, lambda: self.__refObject.get(attr))
+        self._BContainer__AttributesVirtual.extend([u"bMeasure"])
         
     ###################
     # GETTER and SETTER
     ###################
     
-    # bMeasure
-    def get__bMeasure(self):
-        return self.__refObject.get__bMeasure()
-    _dictGetCallbacks.addCallback(u"bMeasure", get__bMeasure)
-    bMeasure = property(get__bMeasure)
+    #######################################################
+    # Is there a possibility to eliminate these get and set
+    # methods which fits together with the design idea of 
+    # get-/setCallback dictionaries? The functionallity
+    # should be preserved
+    #######################################################
     
-    # objPath
-    def get__objPath(self):
-        return self.__refObject.get__objPath()
-    _dictGetCallbacks.addCallback(u"objPath", get__objPath)
-    objPath = property(get__objPath)
+    def get(self,attr):
+        
+        if attr in (u"bStimulate",u"bMeasure",u"StimulationFunction",u"listSelectedDispObj"):#, u"objPath"):
+            return self.__refObject.get(attr)
+        else:
+            return super(PX_PlottableVarElement, self).get(attr)
+        
+    def set(self, attr, val, options = None):
+        
+        if attr in (u"bStimulate",u"StimulationFunction",u"listSelectedDispObj"):
+            return self.__refObject.set(attr, val, options = None)
+        else:
+            return super(PX_PlottableVarElement, self).set(attr, val, options = options)
     
-    # bStimulate
-    def get__bStimulate(self):
-        return self.__refObject.get__bStimulate()
-    _dictGetCallbacks.addCallback(u"bStimulate", get__bStimulate)
-    bStimulate = property(get__bStimulate)
-
+    objPath = property(PyLinXData.PX_ObjectHandler.PX_ObjectVariable.get__objPath)
+        
         
     def calcDimensions(self,bStimulate,bMeasure):
         
@@ -982,7 +994,9 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
         self.__widgetPos      = self.__widget.pos()
         
         self.set(u"bVarDispVisible", False)
-            
+        
+        print "bVisible", self.get(u"bVisible")
+        
         super(PX_PlottableVarDispElement, self).calcDimensions(width = PX_Templ.Template.Gui.px_DispVarObjSize(),\
                                           heigth = PX_Templ.Template.Gui.px_DispVarObjSize())
    
@@ -1341,6 +1355,24 @@ class PX_PlottableConnector(PX_PlottableIdObject):
         
     elem1 = property(get_elem1, set_elem1)
     
+#     def get_listOutPins(self):
+#         return self._listOutPins
+#     
+#     def set_listOutPins(self, listOutPins):
+#         self._listOutPins = listOutPins
+#         
+#     listOutPins = property(get_listOutPins, set_listOutPins)
+    
+#     def get__listInPins(self):
+#         return self._listInPins
+#     
+#     def set__listInPins(self, listInPins):
+# 
+#         self._listInPins = listInPins
+# 
+#         
+#     listInPins = property(get__listInPins, set__listInPins)
+    
     def get_idxOutPin(self):
         return self._idxOutPin
      
@@ -1430,6 +1462,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
             if len_listPoints %2==0:
                 self.listPoints.append(self.X1 - self.X0 )
             else:
+                # self.listPoints.append(self.Y1 - self.Y0  )
                 self.listPoints.append(self.Y1 - self.Y0 + self.inPin_y )
         
         len_listPoints = len(self.listPoints)
@@ -1713,7 +1746,7 @@ class PX_LatentPlottable_HighlightRect(PX_PlottableObject):
                         if element.get(u"bUnlock"):
                             objInFocusTemp.append(element)
                             keysObjInFocus.append(key)
-            Selection_listKeys = self.mainController.Selection_listKeys
+            Selection_listKeys = self.mainController.get(u"Selection_listKeys")
             if set(keysObjInFocus) != set(Selection_listKeys):
                 ustrExecCommand = u"select " + u" ".join([unicode(key) for key in keysObjInFocus])
                 self.mainController.execCommand(ustrExecCommand)
