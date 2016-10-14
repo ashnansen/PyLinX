@@ -6,7 +6,7 @@ Created on 03.11.2014
 # general modules to import
 from PyQt4 import QtGui, QtCore
 import inspect
-import sys, traceback
+import sys
 import copy
 import math
 
@@ -726,7 +726,7 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         self.__refObject._BContainer__Head = value 
         self.set(u"tupleInPins", tupleInPins)
         self.set(u"tupleOutPins", tupleOutPins)
-        for attr in (u"StimulationFunction", "StimulationFunction"):
+        for attr in (u"StimulationFunction", u"StimulationFunction", u"listSelectedDispObj"):
             self._dictSetCallbacks.addCallback(attr, lambda val, options: self.__refObject.set(attr, val, options))
             self._dictGetCallbacks.addCallback(attr, lambda: self.__refObject.get(attr))
         
