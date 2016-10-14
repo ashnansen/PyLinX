@@ -116,7 +116,7 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
                 strCommand = command[0].strip()
             else:
                 raise Exception("Error PyLiNXController.execCommand: \"" + strCommand  + "\" unknown Alias!")
-                
+
         
         strExec = ""
         for i in range(1, len(command)):

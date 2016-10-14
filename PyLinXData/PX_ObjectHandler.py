@@ -397,6 +397,7 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         
     def get__listSelectedDispObj(self):
         return self._BContainer__Attributes[u"listSelectedDispObj"]
+        #                                     listSelectedDispObj
         
     _dictSetCallbacks.addCallback(u"listSelectedDispObj", set__listSelectedDispObj)
     listSelectedDispObj = property(get__listSelectedDispObj, set__listSelectedDispObj)
