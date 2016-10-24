@@ -408,6 +408,8 @@ class PX_PlottableElement(PX_PlottableIdObject):
         else:
             if options == u"-p":
                 self._X = self._X + X
+            else:
+                raise Exception(u"Error PX_PlottableElement.set_X: illegal option \"" + options + u"\"" )
         
     def get_X(self):
         return self._X
@@ -418,8 +420,11 @@ class PX_PlottableElement(PX_PlottableIdObject):
         if options == None:
             self._Y = Y
         else:
-            self._Y = self._Y + Y
-        
+            if options == u"-p":
+                self._Y = self._Y + Y
+            else:
+                raise Exception(u"Error PX_PlottableElement.set_X: illegal option \"" + options + u"\"" )
+
     def get_Y(self):
         return self._Y
     
@@ -726,9 +731,11 @@ class  PX_PlottableVarElement(PX_PlottableElement):
         self.__refObject._BContainer__Head = value 
         self.set(u"tupleInPins", tupleInPins)
         self.set(u"tupleOutPins", tupleOutPins)
-        for attr in (u"StimulationFunction", u"StimulationFunction", u"listSelectedDispObj"):
-            self._dictSetCallbacks.addCallback(attr, lambda val, options: self.__refObject.set(attr, val, options))
-            self._dictGetCallbacks.addCallback(attr, lambda: self.__refObject.get(attr))
+        for attr in (u"StimulationFunction", u"listSelectedDispObj"):
+            # very interesting error - attr = attr is necessary 
+            self._dictSetCallbacks.addCallback(attr, lambda val, options, attr = attr: self.__refObject.set(attr, val, options))
+            self._dictGetCallbacks.addCallback(attr, lambda attr = attr: self.__refObject.get(attr))
+
         
     ###################
     # GETTER and SETTER

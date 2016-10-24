@@ -284,18 +284,14 @@ class DrawWidget (QtGui.QWidget):
 
                                       
         def mousePressEvent_tool_newVarElement():     
-            n = PyLinXCoreDataObjects.PX_IdObject._PX_IdObject__ID + 1
-            ustrCommand = u"new varElement " + u"Variable_id" + unicode(n) + u" " + unicode(X) + u" " + unicode(Y) + u" " + unicode(15) 
-            self.mainController.execCommand(ustrCommand)
-            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
             self.mainController.idxToolSelected = helper.ToolSelected.none
             self.mainWindow.ui.actionNewElement.setChecked(False)
+            n = PyLinXCoreDataObjects.PX_IdObject._PX_IdObject__ID + 1
+            ustrCommand = u"new varElement " + u"Variable_id" + unicode(n) + u" " + unicode(X) + u" " + unicode(Y) + u" " + unicode(15)
+            self.mainController.execCommand(ustrCommand)             
             self.mainWindow.ui.TabElements.repaint()
             
         def mousePressEvent_tool_newBasicOperator(ustrOperator):
-            ustrCommand = u"new basicOperator " +  ustrOperator + " " + unicode(X) + " " + unicode(Y) 
-            self.mainController.execCommand(ustrCommand)
-            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
             self.mainController.idxToolSelected = helper.ToolSelected.none
             if ustrOperator == u"+":
                 self.mainWindow.ui.actionNewPlus.setChecked(False)
@@ -305,13 +301,15 @@ class DrawWidget (QtGui.QWidget):
                 self.mainWindow.ui.actionNewMultiplication.setChecked(False)                
             elif ustrOperator == u"/":
                 self.mainWindow.ui.actionNewDivision.setChecked(False)                        
+            ustrCommand = u"new basicOperator " +  ustrOperator + " " + unicode(X) + " " + unicode(Y) 
+            self.mainController.execCommand(ustrCommand)
+
             
         def mousePressEvent_tool_newVarDispObj():
-            ustrCommand = u"new varDispElement "+ unicode(X) + " " + unicode(Y)
-            self.mainController.execCommand(ustrCommand)
-            #self.mainController.set(u"idxToolSelected", helper.ToolSelected.none)
             self.mainController.idxToolSelected = helper.ToolSelected.none
             self.mainWindow.ui.actionOsci.setChecked(False)
+            ustrCommand = u"new varDispElement "+ unicode(X) + " " + unicode(Y)
+            self.mainController.execCommand(ustrCommand)
             
                    
         #################

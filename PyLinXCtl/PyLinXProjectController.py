@@ -68,7 +68,6 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
 
         # Seting sonme attributes
         #########################
-
         self._BContainer__Attributes[u"px_mousePressedAt_X"] = sys.maxint
         self._BContainer__Attributes[u"px_mousePressedAt_Y"] = sys.maxint
         self._BContainer__Attributes[u"px_mousePressedAt_x"] = sys.maxint

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg3135"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="Concept2StageCoder2.svg">
+  <defs
+     id="defs3">
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path3925"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-units="mm"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="275.78529"
+     inkscape:cy="873.23257"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="309.5625"
+       y="55.56406"
+       id="text3141"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3143"
+         x="309.5625"
+         y="55.56406"
+         style="font-size:12px">BContainer</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.99921262;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)"
+       d="m 341.21937,61.972223 0.29586,54.783357"
+       id="path3145"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4359"
+       y="131.07297"
+       x="285.31882"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="131.07297"
+         x="285.31882"
+         id="tspan4361"
+         sodipodi:role="line">PX_Code</tspan><tspan
+         style="font-size:12px"
+         y="146.07297"
+         x="285.31882"
+         sodipodi:role="line"
+         id="tspan4363">(Compiler-Backend)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="162.33275"
+       y="132.5882"
+       id="text4365"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4367"
+         x="162.33275"
+         y="132.5882"
+         style="font-size:12px">PX_CodeAnalyser</tspan><tspan
+         id="tspan4369"
+         sodipodi:role="line"
+         x="162.33275"
+         y="147.5882"
+         style="font-size:12px">(Compiler-Frontend)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="400.4762"
+       y="132.08311"
+       id="text4371"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4373"
+         x="400.4762"
+         y="132.08311"
+         style="font-size:12px">PX_RunEngine</tspan><tspan
+         id="tspan4375"
+         sodipodi:role="line"
+         x="400.4762"
+         y="147.08311"
+         style="font-size:12px" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="362.67529"
+       y="217.14438"
+       id="text4377"
+       sodipodi:linespacing="125%"><tspan
+         id="tspan4381"
+         sodipodi:role="line"
+         x="362.67529"
+         y="217.14438"
+         style="font-size:12px">PX_CodePython</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4385"
+       y="219.07803"
+       x="258.10675"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="219.07803"
+         x="258.10675"
+         sodipodi:role="line"
+         id="tspan4387">PX_CodeC</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4389"
+       d="m 319.43366,158.4008 -33.27557,42.64049"
+       style="fill:none;stroke:#000000;stroke-width:0.99921262;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.99921262;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)"
+       d="m 359.73731,159.47223 33.27557,42.64049"
+       id="path4391"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4393"
+       y="294.5831"
+       x="162.26186"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="294.5831"
+         x="162.26186"
+         id="tspan4395"
+         sodipodi:role="line">PX_RunEngine</tspan><tspan
+         style="font-size:12px"
+         y="309.5831"
+         x="162.26186"
+         sodipodi:role="line"
+         id="tspan4397" /></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4399"
+       y="312.68011"
+       x="203.17595"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="312.68011"
+         x="203.17595"
+         sodipodi:role="line"
+         id="tspan4401">PX_CodePython/PX_CodeC</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4411"
+       y="132.08311"
+       x="400.4762"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="132.08311"
+         x="400.4762"
+         id="tspan4413"
+         sodipodi:role="line">PX_RunEngine</tspan><tspan
+         style="font-size:12px"
+         y="147.08311"
+         x="400.4762"
+         sodipodi:role="line"
+         id="tspan4415" /></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4423"
+       d="M 326.57216,63.487452 255.65227,115.24035"
+       style="fill:none;stroke:#000000;stroke-width:0.99921262;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.99921262;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)"
+       d="m 358.20962,63.487452 70.91989,51.752898"
+       id="path4425"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4427"
+       y="329.57782"
+       x="203.58269"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px"
+         y="329.57782"
+         x="203.58269"
+         sodipodi:role="line"
+         id="tspan4431">PX_CodeAnalyser</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 171.2664,300.23707 0.0613,24.10625 28.49377,-0.0571"
+       id="path4435"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4439"
+       d="m 171.78574,308.25503 28.21429,0.17858"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4441"
+       y="37.381313"
+       x="162.23862"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;font-weight:bold;-inkscape-font-specification:Sans Bold"
+         y="37.381313"
+         x="162.23862"
+         id="tspan4443"
+         sodipodi:role="line">Class Hierarchy</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.48062706px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="162.23862"
+       y="267.38132"
+       id="text4447"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4449"
+         x="162.23862"
+         y="267.38132"
+         style="font-size:12px;font-weight:bold;-inkscape-font-specification:Sans Bold">Object Hierarchy</tspan></text>
+  </g>
+</svg>

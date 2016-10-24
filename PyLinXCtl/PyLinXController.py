@@ -90,11 +90,12 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
         # Tracking of the commands
         self._PyLinXController__listCommands.append(command)
 
-        if (type(command) in [str,  unicode, QtCore.QString]):
-            command = unicode(command)
-            command = command.strip()
-            command = command.split(" ")
-        
+        if not (type(command) in (str,  unicode, QtCore.QString)):
+            raise Exception(u"Error PyLinXController.execCommand: Wrong datatype for command!")
+
+        command = unicode(command)
+        command = command.strip()
+        command = command.split(u" ")
         strCommand = command[0].strip()
         
         # Comments or white space lines
@@ -116,9 +117,8 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
                 strCommand = command[0].strip()
             else:
                 raise Exception("Error PyLiNXController.execCommand: \"" + strCommand  + "\" unknown Alias!")
-
         
-        strExec = ""
+        # Transforming data strings to data types
         for i in range(1, len(command)):
             command_i = command[i]
             command_i_0 = command_i[0]
@@ -126,17 +126,16 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             # lists, sets, dicts, numeric
             if      (command_i_0 in (u"[", u"(", u"{")) or command_i.isnumeric()\
                     or (command_i   in (u"True", u"False")): 
-                strExec += (u"command[" + unicode(i) + u"] = " + command[i] + u"\n")
+                command[i] = eval(command[i]) 
             
             # other cases
             else:
                 if u"\"" in command_i:
                     command[i] = command_i.replace(u"\"", u"\\\"")
-                strExec += (u"command[" + unicode(i) + u"] = u\"" + command[i] + u"\"\n")
-
-        exec(strExec)
+                command[i] = eval(u"u\"" + command[i] + u"\"")
+                
         
-        
+        # Executing command
         if strCommand == u"set":
             return self.__execCommand_set(context, command[1:])
         elif strCommand == u"del":
@@ -147,6 +146,8 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             return self.__execCommand_select(command[1:])
         elif strCommand == u"cd":
             return self.__execCommand_cd(command[1:])
+        else: 
+            raise Exception(u"Error PyLinXController.execCommand: Unknown command \""+ strCommand +"\"")
 
 
     ####################
@@ -209,8 +210,7 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             if type(command) in (unicode, str):
                 if u"=" in command:
                     command = command.split(u"=")
-                    exec(u"val = " + command[1]) in globals()
-                    dictKWArgs[command[0]] = val
+                    dictKWArgs[command[0]] = eval(command[1])
                 else:
                     listArgs.append(command)
             else:

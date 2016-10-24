@@ -38,7 +38,7 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         #############
         
         self.__PyLinXMainWindow  = PyLinXMainWindow
-        self.__projectController    = parent
+        self.__projectController = parent
         self.__rootGraphics      = self.__projectController.getb(u"rootGraphics")
         self.__objectHandler     = self.__projectController.getb(u"ObjectHandler")
         
@@ -312,11 +312,12 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         self.t = - self.delta_t
         self.__RunConfigDictionary[u"t"] = self.t
         self.__RunConfigDictionary[u"delta_t"] = self.delta_t
+        # running the exec command on bytecode is more efficient then running on code string
+        self.__ByteCode = compile(self.__CodeStr, "<string>", "exec")
 
     def run(self): 
         import cProfile 
         cProfile.runctx("self.run_()", globals(), locals(), "profile.stat")
-
 
 
     def run_(self):
@@ -326,9 +327,11 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         
 # speziell
 
-        DataDictionary = self.__DataDictionary 
+#         DataDictionary = self.__DataDictionary
+#         exec(self.__ByteCode, globals(), locals()) 
         try:
-            exec(self.__CodeStr, globals(), locals())
+            DataDictionary = self.__DataDictionary
+            exec(self.__ByteCode, globals(), locals())
         except Exception as exc:
             strExp = str(exc)
             print "Error executing code! -- " + strExp
