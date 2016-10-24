@@ -152,7 +152,6 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         for variable in self.__variables.getChildKeys():
             obj = self.__variables.getb(variable)
             obj.runInit()
-        # NEU
         self.recorder.init()
 
 
@@ -232,7 +231,6 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     
     # objPath
     def get__objPath(self):
-        #objPath = super(PX_ObjectVariable, self).get(u"path")
         objPath = super(PX_ObjectVariable, self).get__path()
         return objPath
     _dictGetCallbacks.addCallback(u"objPath", get__objPath)    
@@ -255,11 +253,11 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
 
     def set__signalMapped(self, value, options = None):
         if value == 0:
-            retObj = super(PX_ObjectVariable, self).set(u"StimulationFunction", None)
+            retObj = super(PX_ObjectVariable, self).set(u"signalMapped", None)
             self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
             return retObj 
         else:
-            retObj = super(PX_ObjectVariable, self).set(u"StimulationFunction", value)
+            retObj = super(PX_ObjectVariable, self).set(u"signalMapped", value)
             self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
             return retObj
     _dictSetCallbacks.addCallback(u"signalMapped", set__signalMapped)
@@ -381,6 +379,9 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     stim_random = property(get__stim_random, set__stim_random)
     
     # listSelectedDispObj
+    def get__listSelectedDispObj(self):
+        return self._BContainer__Attributes[u"listSelectedDispObj"]
+        
     def set__listSelectedDispObj(self, value, options = None):
         if not u"listSelectedDispObj" in self._BContainer__Attributes:
             self._BContainer__Attributes[u"listSelectedDispObj"] = []
@@ -395,10 +396,6 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
                            u"labelRemove", (name, list_del))
         self._BContainer__Attributes[u"listSelectedDispObj"] = value
         
-    def get__listSelectedDispObj(self):
-        return self._BContainer__Attributes[u"listSelectedDispObj"]
-        #                                     listSelectedDispObj
-        
     _dictSetCallbacks.addCallback(u"listSelectedDispObj", set__listSelectedDispObj)
     listSelectedDispObj = property(get__listSelectedDispObj, set__listSelectedDispObj)
     
@@ -406,7 +403,8 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         for key, value in PX_Templ.PX_DiagData.StimAttribute.iteritems():
             if value == attr:
                 break
-        self.set(u"StimulationFunction", key)    
+        self.set(u"StimulationFunction", key)
+        print "key", key
         
     ###################################
     # METHODS USED DURING SIMULATION       
@@ -416,8 +414,6 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
         
         self.__RunConfigDictionary = self.__projectController.getb(u"RunConfigDictionary")
         self.__StimulationFunction = self.get(u"StimulationFunction")
-        #signalMapped = self.get(u"signalMapped")
-
 
         StimulationFunction = self.get(u"StimulationFunction")
         if StimulationFunction == u"Constant":
@@ -471,7 +467,6 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
 
     
     def updateDataDictionary(self):
-        #if self.get(u"bStimulate"):
         if self.bStimulate:
             self.__stimFuntion()
 
@@ -600,7 +595,7 @@ class PX_Recorder(PyLinXCoreDataObjects.PX_Object):
         
         
     def __exit_csv(self):
-        csvObject = PyLinXData.PX_CSVObject.CSVObject()
+        csvObject = PX_CSVObject.CSVObject()
         
         listVarsToSave = [u"time_1"]
         listVarsToSave.extend(self.__recorder_VariablesToRecordProcessed)

@@ -4,7 +4,7 @@ import numpy as np
 import copy
 
 from PyQt4 import QtGui, QtCore
-from PyLinXCompiler import PyLinXRunEngine
+#from PyLinXCompiler import PyLinXRunEngine
 from PyLinXData import PyLinXCoreDataObjects
 
 
@@ -452,7 +452,7 @@ class PlotterWidget(QtGui.QWidget):
                 return QtCore.QVariant("")
             
             else:
-#######################      
+                #######################      
                 if not index.isValid():
                     return QtCore.QVariant()
                 
@@ -535,10 +535,9 @@ class PlotterWidget(QtGui.QWidget):
                         self.curveMapMemory[var].append(self.curveMap[var].pop(0))
                     self.curveMap[var].append(QtCore.QPointF(self.settings.maxX,\
                                                   self.DataDictionary[var]))
-                  #  print self.DataDictionary
-                    #print "PyLinXRunEngine.DataDictionary[" + str(var) + "]", PyLinXRunEngine.DataDictionary[var]             
+                    # print self.DataDictionary
+                    # print "PyLinXRunEngine.DataDictionary[" + str(var) + "]", PyLinXRunEngine.DataDictionary[var]             
                 self.refreshPixmap()
-                #self.repaint()
 
                 QtGui.QWidget.update(self)
                 

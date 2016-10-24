@@ -309,16 +309,16 @@ class BContainer(object):
         
     def lsAttr(self):
         listLsAttr = []
+        _type = type(self)
         for attr in self.__Attributes:
             listLsAttr.append( (unicode(attr), u"-",  unicode(self.__Attributes[attr]) ) )            
         for attr in self._dictGetCallbacks:
             listLsAttr.append( (unicode(attr), u"v",  unicode(self.get(attr)) ) )      
-        for attr in type(self)._dictGetCallbacks:
+        for attr in _type._dictGetCallbacks:
             listLsAttr.append( (unicode(attr), u"v",  unicode(self.get(attr)) ) )
         for i, line in enumerate(listLsAttr):
             line_0 = line[0]
             line_1 = line[1]
-            _type = type(self)
             if    ( (line_0 in  self._dictGetCallbacks) and not (line_0 in  self._dictSetCallbacks) ) or\
                   ( (line_0 in _type._dictGetCallbacks) and not (line_0 in _type._dictSetCallbacks) ):
                 line_1 += 'r'

@@ -28,6 +28,7 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             self.stimFunction  = u"Constant"
        
         #init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
+        print "self.stimFunction",  self.stimFunction
         init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[ self.stimFunction ])
         # Get Data 
         for dictVar in init_list:
@@ -94,7 +95,6 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
     
     def onActivated(self, text):
         text = str(text)
-        #self.variable.set(u"StimulationFunction", text)
         self.stimFunction = text
         init_list = PX_Templ.PX_DiagData.StimForm[text]
         formWidget_New = BEasyWidget.EasyWidget(init_list)

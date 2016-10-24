@@ -144,7 +144,6 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
         self.set("fileType", fileType)
         
         self._BContainer__Attributes[u"pathMdfFile"] = path
-        listVirtualAttributes = [u"signals", u"signalsFullData"]
         for key in self._BContainer__Head:
             self._dictGetCallbacks.addCallback(key, lambda: self.get_signal(key))
         self.__projectController = parent.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)      
@@ -219,7 +218,4 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
             dictSignals[key] = self.__get_signal(key)
         return dictSignals
     _dictGetCallbacks.addCallback(u"signalsFullData", get__signalsFullData)      
-    
-
-        
-        
+          
