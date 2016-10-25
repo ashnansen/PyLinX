@@ -189,7 +189,7 @@ class PyLinXMain(QtGui.QMainWindow):
         # ExampleData
         ################
 
-        _file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
+        _file = open(r"E:\Master\3. Programm\PyLinX\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
         #_file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\TestCases\testCase_Bug_GetNeu.pyp")
         self.__loadFile(_file)
 

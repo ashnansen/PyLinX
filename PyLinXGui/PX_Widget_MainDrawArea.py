@@ -182,6 +182,8 @@ class DrawWidget (QtGui.QWidget):
         # Deleting Objects      
         if qKeyEvent.key() == QtCore.Qt.Key_Delete:
             __keyPressEvent_delete()
+        if qKeyEvent.key() == QtCore.Qt.Key_Backspace:
+            __keyPressEvent_delete()
         else:
             super(DrawWidget, self).keyPressEvent(qKeyEvent)
     
