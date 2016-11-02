@@ -16,20 +16,10 @@ import Queue
 import codecs
 from PyQt4.QtCore import pyqtSignal
 
-# Project specific Libraries
-# OLD 
-#from PyLinXData import BContainer, PyLinXCoreDataObjects, PyLinXHelper, \
-#    PX_Signals, PX_DataDictionary
-# Trial NEW
-#import PyLinXData.BContainer as BContainer
-#import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
-#import PyLinXData.BContainer 
-#import PyLinXData.PyLinXCoreDataObjects
 import PyLinXData
 import PyLinXData.PyLinXHelper as PyLinXHelper
 import PyLinXData.PX_Signals as PX_Signals
 import PyLinXData.PX_DataDictionary as PX_DataDictionary 
-    
 from PyLinXGui import *
 from PyLinXCompiler import *
 import PyLinXGui.PX_Templates as PX_Templ
@@ -45,7 +35,7 @@ import PyLinXGui.PX_Tab_ObjectHandlerList as PX_Tab_ObjectHandlerList
 
 class PyLinXMain(QtGui.QMainWindow):
 
-    #signal_dataChanged_signals = pyqtSignal(unicode, name='dataChanged_signals')
+    #signal_dataChanged__signals = pyqtSignal(unicode, name='dataChanged__signals')
     
     def __init__(self):
  
@@ -68,12 +58,9 @@ class PyLinXMain(QtGui.QMainWindow):
         
         # Main Data Structures
 
-        #self.mainController = PyLinXCtl.PyLinXProjectController.PyLinXProjectController(mainWindow = self )
         self.mainController = PyLinXProjectController.PyLinXProjectController(mainWindow = self )
 
         _rootGraphics = self.mainController.getb(u"rootGraphics")
-        
-
 
         # run Engine
         
@@ -83,6 +70,7 @@ class PyLinXMain(QtGui.QMainWindow):
         
         self.stopRunEvent = threading.Event()
         self.repaintEvent = threading.Event()
+        
         
         ##########################
         # Building the main Window
@@ -99,9 +87,11 @@ class PyLinXMain(QtGui.QMainWindow):
         # DrawWidget
         self.ui.drawWidget = PX_Widget_MainDrawArea.DrawWidget(self.mainController, self, self.repaintEvent )        
         
+        
         ############
         # TabWidget
         ############
+        
         self.ui.TabWidget = PX_TabWidget_main.PX_TabWidget_main(mainController = self.mainController)
         self.ui.TabWidget.setMinimumWidth(260)
         
@@ -119,7 +109,7 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.TabWidget.adjoinTab(self.ui.Tabrecorder, u"Recorder", PX_TabWidget_main.PX_TabWidget_main.DisplayRole.onlyInSimulationMode,4)
         
         #Connect Signal
-        self.connect(self, QtCore.SIGNAL("updateTabs"), self.ui.TabWidget.updateTabs)
+        self.connect(self, QtCore.SIGNAL("ctlChanged__simMode"), self.ui.TabWidget.updateTabs)
         
         # Splitter
         self.ui.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
@@ -146,7 +136,7 @@ class PyLinXMain(QtGui.QMainWindow):
         # Connecting Signals
         ####################
         
-        self.connect(self.ui.drawWidget, QtCore.SIGNAL(u"signal_repaint_Tab_SignalSelect"),self.ui.TabSignals.repaint)
+        self.connect(self.ui.drawWidget, QtCore.SIGNAL(u"guiAction__drawWidget_dropped"),self.ui.TabSignals.repaint)
         
         # Menu-Bar
             
@@ -189,7 +179,7 @@ class PyLinXMain(QtGui.QMainWindow):
         # ExampleData
         ################
 
-        _file = open(r"E:\Master\3. Programm\PyLinX\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
+        _file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\Testdata\testProjekt_setUeberarbeitung.pyp")
         #_file = open(r"D:\Projekte\PyLinX\Aptana-Projekte\PyLinX2\Recources\TestCases\testCase_Bug_GetNeu.pyp")
         self.__loadFile(_file)
 

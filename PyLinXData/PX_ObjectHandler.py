@@ -139,7 +139,7 @@ class PX_ObjectHandler(PyLinXCoreDataObjects.PX_Object):
         else:
             objectVar = PX_ObjectVariable(self.__variables, variable)
             self._BContainer__Attributes[u"Var." + varName] = 1
-            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_objectHandler"))
+            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged__objectHandler"))
         
         return objectVar
         
@@ -246,20 +246,19 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     def get__signalMapped(self):
         StimulationFunction = self.get(u"StimulationFunction")
         if StimulationFunction != None:
-            if "Signal_" in StimulationFunction:
+            if u"Signal_" in StimulationFunction:
                 return StimulationFunction
         return None
     _dictGetCallbacks.addCallback(u"signalMapped", get__signalMapped)
 
     def set__signalMapped(self, value, options = None):
+        print "set__signalMapped value", value
         if value == 0:
-            retObj = super(PX_ObjectVariable, self).set(u"signalMapped", None)
-            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
-            return retObj 
+            self._BContainer__Attributes[u"StimulationFunction"] = None
+            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged__mapping"))
         else:
-            retObj = super(PX_ObjectVariable, self).set(u"signalMapped", value)
-            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_mapping"))
-            return retObj
+            self._BContainer__Attributes[u"StimulationFunction"] = value
+            self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged__mapping"))
     _dictSetCallbacks.addCallback(u"signalMapped", set__signalMapped)
     signalMapped = property(get__signalMapped, set__signalMapped)
     
@@ -595,8 +594,8 @@ class PX_Recorder(PyLinXCoreDataObjects.PX_Object):
         
         
     def __exit_csv(self):
-        csvObject = PX_CSVObject.CSVObject()
         
+        csvObject = PX_CSVObject.CSVObject()
         listVarsToSave = [u"time_1"]
         listVarsToSave.extend(self.__recorder_VariablesToRecordProcessed)
         for var in listVarsToSave:

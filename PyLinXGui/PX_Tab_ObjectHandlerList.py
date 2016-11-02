@@ -5,9 +5,9 @@ import PyLinXData.PyLinXHelper as helper
 import PyLinXCtl.PyLinXProjectController as ctl
 import matplotlib.pyplot as pyplot
 
-class ThumbListWidget(QtGui.QListWidget):
+class QListWidget_ObjHandler(QtGui.QListWidget):
     def __init__(self, parent=None, listItems={}):
-        super(ThumbListWidget, self).__init__(parent)
+        super(QListWidget_ObjHandler, self).__init__(parent)
         self.setAcceptDrops(True)
         self.setIconSize(QtCore.QSize(124, 124))
         self.doubleClicked.connect(self.doubleClickEvent)
@@ -26,21 +26,21 @@ class ThumbListWidget(QtGui.QListWidget):
         else:
             event.ignore()
 
-    def dropEvent(self, event):
-        if event.mimeData().hasUrls:
-            event.setDropAction(QtCore.Qt.CopyAction)
-            event.accept()
-            links = []
-            for url in event.mimeData().urls():
-                links.append(str(url.toLocalFile()))
-            self.emit(QtCore.SIGNAL("dropped"), links)
-        else:
-            event.ignore()
+#     def dropEvent(self, event):
+#         print "DROP EVENT"
+#         if event.mimeData().hasUrls:
+#             event.setDropAction(QtCore.Qt.CopyAction)
+#             event.accept()
+#             links = []
+#             for url in event.mimeData().urls():
+#                 links.append(str(url.toLocalFile()))
+#             self.emit(QtCore.SIGNAL("dropped"), links)
+#         else:
+#             event.ignore()
             
     def doubleClickEvent(self, modelIndex):
         print u"doubleClocked"
-        #labelName = self.item(modelIndex.row()).getFullSignalName()
-        #self.emit(QtCore.SIGNAL("plotSignal"), labelName )
+
 
 
 class NamedQListWidgetItem(QtGui.QListWidgetItem):
@@ -64,7 +64,7 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
 
         self.listItems = {}
 
-        self.myListWidget = ThumbListWidget(self, self.listItems)  
+        self.myListWidget = QListWidget_ObjHandler(self, self.listItems)  
         self.myListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
         myBoxLayout.addWidget(self.toolbar)
@@ -80,7 +80,7 @@ class PX_Tab_ObjectHandlerList(QtGui.QWidget):
         # Signals
         #########
         
-        self.connect(self.mainController.mainWindow, QtCore.SIGNAL(u"dataChanged_objectHandler"), self.repaint )
+        self.connect(self.mainController.mainWindow, QtCore.SIGNAL(u"dataChanged__objectHandler"), self.repaint )
         
         self.repaint()
         

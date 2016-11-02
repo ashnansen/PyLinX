@@ -148,7 +148,7 @@ class PX_Signals (PyLinXCoreDataObjects.PX_IdObject):
             self._dictGetCallbacks.addCallback(key, lambda: self.get_signal(key))
         self.__projectController = parent.getRoot(PyLinXCtl.PyLinXProjectController.PyLinXProjectController)      
         
-        self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged_signals"))
+        self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged__signals"))
 
     ################
     # GETTER-Methods

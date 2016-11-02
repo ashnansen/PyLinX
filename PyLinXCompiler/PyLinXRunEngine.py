@@ -171,11 +171,14 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         setNotConnectedOutVarElements = set(self.__listVarElements).difference(setConnectedOutVarEleemnts)
         self.__listNotConnectedOutVarElements = list(setNotConnectedOutVarElements)
 
-        setConnectedInVarEleemnts = set([])
-        for connector in self.__listConnectors:
-            setConnectedInVarEleemnts.add(connector.elem1)            
-        setNotConnectedInVarElements = set(self.__listVarElements).difference(setConnectedInVarEleemnts)
-        self.__listNotConnectedInVarElements = list(setNotConnectedInVarElements)        
+
+        # Currently not used
+        ####################
+#        setConnectedInVarEleemnts = set([])
+#        for connector in self.__listConnectors:
+#            setConnectedInVarEleemnts.add(connector.elem1)            
+#        setNotConnectedInVarElements = set(self.__listVarElements).difference(setConnectedInVarEleemnts)
+#        self.__listNotConnectedInVarElements = list(setNotConnectedInVarElements)        
 
         # Creating the Syntax Tree
         
@@ -246,9 +249,9 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
                 #print i
                 self.__CodeGenerator.run_()
                 # Synchronize the data in DataDictionary with the data stored in the DataViewer-GUI
-                self.emit(QtCore.SIGNAL(u"signal_sync"))
+                self.emit(QtCore.SIGNAL(u"simState__cycleDone"))
                 # Trigger Repaint
-                self.emit(QtCore.SIGNAL(u"signal_repaint"))
+                self.emit(QtCore.SIGNAL(u"dataChanged__coreDataObjects"))
                 
                 if not self.__runThreadMessageQueue.empty():
                     try:
@@ -262,23 +265,23 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
                     if self.__bRecord:
                         self.__runExitInTread()
                     self.__runThreadMessageQueue.task_done()
-                    self.emit(QtCore.SIGNAL(u"signal_stop_run"))
+                    self.emit(QtCore.SIGNAL(u"simState__exit"))
                     return                      
                 
         
     def startRun(self, drawWQidget, stopEvent, repaintEvent):
         
-        # connecting the signal "signal_runInit" to the main controller
+        # connecting the signal "simState__init" to the main controller
         ###############################################################
         
         #TODO has to be moved to project controller
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self, QtCore.SIGNAL(u"signal_runInit"),self.__projectController.runInit)
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self, QtCore.SIGNAL(u"simState__init"),self.__projectController.runInit)
               
         # initializing the Run
         ######################
         
         self.__runInit()
-        self.emit(QtCore.SIGNAL(u"signal_runInit"))        
+        self.emit(QtCore.SIGNAL(u"simState__init"))        
         
         # creatubg tge run thread
         #########################
@@ -292,11 +295,11 @@ class PX_CodeAnalyser(BContainer.BContainer, QtCore.QObject):
         ######################################
         
         # has to be moved to project controller
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_repaint"), self.__PyLinXMainWindow.ui.drawWidget.repaint,\
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"dataChanged__coreDataObjects"), self.__PyLinXMainWindow.ui.drawWidget.repaint,\
                                                                             QtCore.Qt.BlockingQueuedConnection)
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_sync"),\
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"simState__cycleDone"),\
                                                    self.__projectController.sync,QtCore.Qt.BlockingQueuedConnection)
-        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"signal_stop_run"),self.__projectController.stop_run)
+        self.__PyLinXMainWindow.ui.drawWidget.connect(self.__runThread, QtCore.SIGNAL(u"simState__exit"),self.__projectController.stop_run)
         
 
 # allgemein
