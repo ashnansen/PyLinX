@@ -6,8 +6,8 @@ Created on 18.12.2014
 # general imports
 import inspect
 from PyQt4 import QtCore
-import mdfreader 
-import numpy as np
+#import mdfreader 
+#import numpy as np
 import copy 
  
 

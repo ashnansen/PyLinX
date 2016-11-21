@@ -5,7 +5,7 @@ Created on 30.10.2014
 '''
 
 from PyQt4 import QtCore
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QColor, QBrush
 
 
 class color():

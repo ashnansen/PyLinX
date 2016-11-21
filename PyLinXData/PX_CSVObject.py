@@ -5,7 +5,7 @@ Created on 11.07.2016
 '''
 import csv
 
-import PyLinXCoreDataObjects
+#import PyLinXCoreDataObjects
 
 class CSVObject(object):
     
@@ -25,7 +25,7 @@ class CSVObject(object):
         with open(path, 'rb') as csvfile:
             strCSVFile = csvfile.read()
             Chars = [';', '\t']
-            numChars = []
+            #numChars = []
             maxNumChars = 0
             idxMaxNumChars = 0
             for i,char in enumerate(Chars):

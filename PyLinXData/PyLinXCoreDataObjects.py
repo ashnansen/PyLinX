@@ -135,9 +135,9 @@ class PX_PlottableObject (PX_Object):#, QtGui.QGraphicsItem):
         self.set(u"bOnlyVisibleInSimMode", False)
 
 
-    #####################
+    ####################
     # GETTER and SETTER
-    #####################
+    ####################
     
     # bUnlock
     def get__bUnlock(self):
@@ -282,6 +282,7 @@ class PX_PlottableLatentGraphicsContainer(PX_PlottableObject):
 
 class PX_PlottableIdObject(PX_PlottableObject, PX_IdObject ):
 
+    # Necessary due to diamant inheritance
     _dictSetCallbacks = copy.copy(PX_PlottableObject._dictSetCallbacks)
     _dictSetCallbacks.update(PX_IdObject._dictSetCallbacks)
     _dictGetCallbacks = copy.copy(PX_PlottableObject._dictGetCallbacks)
@@ -504,8 +505,6 @@ class PX_PlottableElement(PX_PlottableIdObject):
         listOutPins  = [(  rightEndpoint_x, outPin[0],  elementWidth_half, outPin[0], outPin[1]) for outPin in tupleOutPins]       
         ShapeInPins =  [self._PX_PlottableObject__getPolygon(*inPin[0:4])  for inPin  in listInPins]
         ShapeOutPins = [self._PX_PlottableObject__getPolygon(*outPin[0:4]) for outPin in listOutPins]
-                
-        types = inspect.getmro(type(self))
         
         self._listInPins = listInPins
         self._listOutPins = listOutPins
@@ -1073,18 +1072,13 @@ class PX_PlottableVarDispElement(PX_PlottableElement):
                         , strIdx)
 
     def set__bVarDispVisible(self, value, options = None):
-        if self.__widget == None:
-            if  value == True:
+        if value in (True, False):
+            if value == True:
                 self.__widget.show()
-                return super(PX_PlottableVarDispElement, self).set(attr, True, options)
+                self._BContainer__Attributes[u"bVarDispVisible"] = True
             elif value == False:
-                return
-        else:
-            if value in (True, False):
-                if value == True:
-                    self.__widget.show()
-                elif value == False:
-                    self.__widget.hide()
+                self.__widget.hide()
+                self._BContainer__Attributes[u"bVarDispVisible"] = False
     _dictSetCallbacks.addCallback(u"bVarDispVisible", set__bVarDispVisible)       
     
     def stop_run(self):
@@ -1336,10 +1330,8 @@ class PX_PlottableConnector(PX_PlottableIdObject):
     elem0 = property(get_elem0, set_elem0)
 
     def get_elem1(self):
-        try: 
-            return self._elem1
-        except:
-            print "Error! (4)"
+        return self._elem1
+
     
     def set_elem1(self, elem1):
         id_1 = elem1.ID
@@ -1369,7 +1361,7 @@ class PX_PlottableConnector(PX_PlottableIdObject):
     def __calcDimensions(self):
 
         # Getting data
-        ############################
+        ##############
         
         elem0 = self.elem0
         elem1 = self.elem1

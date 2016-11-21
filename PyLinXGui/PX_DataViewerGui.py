@@ -1,11 +1,11 @@
-import sys
+#import sys
 import math
 import numpy as np
 import copy
 
 from PyQt4 import QtGui, QtCore
 #from PyLinXCompiler import PyLinXRunEngine
-from PyLinXData import PyLinXCoreDataObjects
+#from PyLinXData import PyLinXCoreDataObjects
 
 
 class DataViewerGui(QtGui.QMainWindow):
@@ -121,7 +121,7 @@ class DataViewerGui(QtGui.QMainWindow):
         self.items.dockLocationChanged.connect(self.__on_dockLocationChanged)
         
     def __onActionSlider(self):
-       #
+        
         geometry = copy.copy(self.geometry())
         x = geometry.x()
         width = self.width()
@@ -957,7 +957,7 @@ class PlotterWidget(QtGui.QWidget):
                            QtCore.QPoint( self.LineB - 5, 45 )])
         painter.drawPolygon(self.sliderB)
         
- #   def drawText(self,qp):
+    #   def drawText(self,qp):
         painter.setPen(QtCore.Qt.white)
         painter.setFont(QtGui.QFont('Decorative', 6))
         painter.drawText(QtCore.QPoint(self.LineA-2, 43) , 'A') 
@@ -967,7 +967,7 @@ class PlotterWidget(QtGui.QWidget):
     
     def drawCurves(self,  painter):
     
-        colorForIds = [QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.blue, QtCore.Qt.cyan, QtCore.Qt.magenta, QtCore.Qt.yellow]
+        #colorForIds = [QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.blue, QtCore.Qt.cyan, QtCore.Qt.magenta, QtCore.Qt.yellow]
         self.settings = self.zoomStack[self.curZoom]
         
         rect = QtCore.QRect( self.margin, self.margin, self.width() - 2*self.margin, self.height() - 2*self.margin)

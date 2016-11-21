@@ -12,11 +12,7 @@ Created on 15.09.2014
 
 import copy
 import inspect
-import threading
 from PyQt4 import QtCore
-
-
-import PyLinXData
 
 
 # helper Class for the callback functions for the set and get methods
@@ -349,7 +345,8 @@ class BContainer(object):
                 max_len_cell.append(max(len_cell[i]))
             else:
                 len_cell.append([])
-                len_cell[i] = [ 0 for cell in lsList ]
+                #len_cell[i] = [ 0 for cell in lsList ]
+                len_cell[i] = [ 0 ] * len(lsList)
                 max_len_cell.append(0)
         for i in range(len_lsList):
             ustrPrint = u""
@@ -377,16 +374,14 @@ class BContainer(object):
     
     def getObjFromPath(self,path):
         
-        bFolder = False 
+        #bFolder = False 
         if not ( type(path)  in (list, QtCore.QStringList)):
             path = str(path).split(u"/")
             if type(path) == QtCore.QStringList:
                 path = list(path)
             if path[-1] == u"":
                 path.pop(-1)
-                bFolder = True
-            
-                
+                #bFolder = True
         
         len_path = len(path)   
          
@@ -428,8 +423,6 @@ class BContainer(object):
             else:
                 #TODO Chance hasByID mechanism. Hash by unicoe(ID)
                 # so far a quick and dirty workaround
-                #if path[0].isdigit():
-                #    path[0] = int(path[0])
                 obj = self.getb(path[0])
                 return obj.getObjFromPath(path[1:]) 
     

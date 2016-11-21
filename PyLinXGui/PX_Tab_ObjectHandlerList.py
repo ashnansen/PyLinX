@@ -1,9 +1,9 @@
-import sys, os
+import sys #, os
 from PyQt4 import QtCore, QtGui
 
-import PyLinXData.PyLinXHelper as helper
+#import PyLinXData.PyLinXHelper as helper
 import PyLinXCtl.PyLinXProjectController as ctl
-import matplotlib.pyplot as pyplot
+#import matplotlib.pyplot as pyplot
 
 class QListWidget_ObjHandler(QtGui.QListWidget):
     def __init__(self, parent=None, listItems={}):
@@ -128,7 +128,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=0"
             
     mainController.execScript(script)    
     
-    dialog_1 = PX_Tab_SignalSelect(mainController)
+    dialog_1 = PX_Tab_ObjectHandlerList(mainController)
     dialog_1.show()
     dialog_1.resize(480,320)
     sys.exit(app.exec_()) 

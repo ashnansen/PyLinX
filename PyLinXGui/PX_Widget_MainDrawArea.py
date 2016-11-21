@@ -6,10 +6,10 @@ Created on 18.08.2015
 
 # General Libraries - alphabedic order
 import copy
-import ctypes 
+#import ctypes 
 import inspect
-import os
-from PyQt4 import QtGui, QtCore, uic, Qt
+#import os
+from PyQt4 import QtGui, QtCore #, #uic, Qt
 import sys
 
 # Project specific Libraries - alphabedic order
@@ -139,6 +139,7 @@ class DrawWidget (QtGui.QWidget):
         self.mainController = mainController
     
     def paintEvent(self, event = None):
+        #print "paintEvent"
         self.activeGraphics.write(self,PX_Templ.Plot_Target.Gui)
         self.latentGraphics.write(self,PX_Templ.Plot_Target.Gui)
         super(DrawWidget, self).paintEvent(event)
@@ -219,18 +220,18 @@ class DrawWidget (QtGui.QWidget):
             if len_objectsInFocus == 1:
                 activeObject = objInFocus[0]
                 if activeObject.isAttr(u"listPoints"):
-                    listPoints = list(activeObject.get(u"listPoints"))
+                    #listPoints = list(activeObject.get(u"listPoints"))
                     objectInFocus = objInFocus[0]
                     shape = objectInFocus.get(u"Shape")
-                    elem0 = objectInFocus.elem0
+                    #elem0 = objectInFocus.elem0
                     idxPolygons = helper.point_inside_polygon(x, y, shape)
                     if len(idxPolygons) == 1:
                         idxPolygon = idxPolygons[0]
                         if idxPolygon > 0:
                             # not sent via ustr-Command, since this information is only cached at the mainController
                             # for the final command. No data is changed here.
-                            id = unicode(activeObject.ID)
-                            self.mainController.set(u"ConnectModInfo", ( id + u"_id" + id ,idxPolygon - 1 ))
+                            _id = unicode(activeObject.ID)
+                            self.mainController.set(u"ConnectModInfo", ( _id + u"_id" + _id ,idxPolygon - 1 ))
                             return 
                             
             # Connecting Elements

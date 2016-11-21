@@ -3,27 +3,24 @@ Created on 19.08.2015
 
 @author: Waetzold Plaum
 '''
-import inspect
+#import inspect
 import sys
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import pyqtSignal #, #QObject
 import copy
 
 import PyLinXData.BContainer as BContainer 
 import PyLinXData.PyLinXHelper as PyLinXHelper 
 import PyLinXGui.PX_Templates as PX_Templ
-import PyLinXData.PyLinXCoreDataObjects as PyLinXCoreDataObjects
-import PyLinXData.PX_ObjectHandler as PX_ObjectHandler 
-import PyLinXData.PX_Signals #as PX_Signals  
+import PyLinXData.PX_Signals 
 from PyLinXCompiler import PyLinXRunEngine
 import PyLinXData.PyLinXHelper as helper
-import PyLinXController
+import BController
 
 
-class PyLinXProjectController(PyLinXController.PyLinXController):
+class PyLinXProjectController(BController.BController):
 
-    _dictSetCallbacks = copy.copy(PyLinXController.PyLinXController._dictSetCallbacks)    
-    _dictGetCallbacks = copy.copy(PyLinXController.PyLinXController._dictGetCallbacks)    
+    _dictSetCallbacks = copy.copy(BController.BController._dictSetCallbacks)    
+    _dictGetCallbacks = copy.copy(BController.BController._dictGetCallbacks)    
 
 
     def __init__(self, rootGraphics = None, mainWindow = None, bListActions = True):
@@ -125,7 +122,7 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
 
     def __execCommand_select(self, command):
         
-        self._PyLinXController__execCommand_select(command)
+        self._BController__execCommand_select(command)
         
         # reset ConnectorToModify if necessary
         len_selection = len(self.selection)
@@ -232,37 +229,40 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
     #################
     def set_bSimulationMode(self, value, options=None):
         if value == True:
-            runEngine = PyLinXRunEngine.PX_CodeAnalyser(self.mainController, self._PyLinXController__mainWindow)
+            runEngine = PyLinXRunEngine.PX_CodeAnalyser(self.mainController, self._BController__mainWindow)
             self.paste(runEngine, bForceOverwrite=True)
             pal = QtGui.QPalette()
             pal.setColor(QtGui.QPalette.Background,PX_Templ.color.backgroundSim)
-            self._PyLinXController__mainWindow.ui.drawWidget.setPalette(pal)                
-            self._PyLinXController__mainWindow.ui.actionRun.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(True)
-            self._PyLinXController__mainWindow.ui.actionNewElement.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionNewPlus.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionNewMinus.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionNewMultiplication.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionNewDivision.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionStop.setEnabled(True)
+            self._BController__mainWindow.ui.drawWidget.setPalette(pal)                
+            self._BController__mainWindow.ui.actionRun.setEnabled(True)
+            self._BController__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(True)
+            self._BController__mainWindow.ui.actionNewElement.setEnabled(False)
+            self._BController__mainWindow.ui.actionNewPlus.setEnabled(False)
+            self._BController__mainWindow.ui.actionNewMinus.setEnabled(False)
+            self._BController__mainWindow.ui.actionNewMultiplication.setEnabled(False)
+            self._BController__mainWindow.ui.actionNewDivision.setEnabled(False)
+            self._BController__mainWindow.ui.actionStop.setEnabled(True)
             rootGraphics = self.getb(u"rootGraphics")
             rootGraphics.recur(PyLinXData.PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"widgetShow", ())
         elif value == False:
             pal = QtGui.QPalette()
             pal.setColor(QtGui.QPalette.Background,PX_Templ.color.background)
-            self._PyLinXController__mainWindow.ui.drawWidget.setPalette(pal)
-            self._PyLinXController__mainWindow.ui.actionRun.setEnabled(False)
-            self._PyLinXController__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(False)
-            self._PyLinXController__mainWindow.ui.actionNewElement.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionNewPlus.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionNewMinus.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionNewMultiplication.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionNewDivision.setEnabled(True)
-            self._PyLinXController__mainWindow.ui.actionStop.setEnabled(False)
+            self._BController__mainWindow.ui.drawWidget.setPalette(pal)
+            self._BController__mainWindow.ui.actionRun.setEnabled(False)
+            self._BController__mainWindow.ui.actionActivate_Simulation_Mode.setChecked(False)
+            self._BController__mainWindow.ui.actionNewElement.setEnabled(True)
+            self._BController__mainWindow.ui.actionNewPlus.setEnabled(True)
+            self._BController__mainWindow.ui.actionNewMinus.setEnabled(True)
+            self._BController__mainWindow.ui.actionNewMultiplication.setEnabled(True)
+            self._BController__mainWindow.ui.actionNewDivision.setEnabled(True)
+            self._BController__mainWindow.ui.actionStop.setEnabled(False)
             rootGraphics = self.getb(u"rootGraphics")
             rootGraphics.recur(PyLinXData.PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"widgetHide", ())
+        else:
+            raise Exception(u"Error PyLinXProjectController.set_bSimulationMode: value \"" + value +\
+                            u"\" is not allowed for attribute \"bSimulationMoe\"")
         self._BContainer__Attributes[u"bSimulationMode"] = value    
-        self._PyLinXController__mainWindow.emit(QtCore.SIGNAL("ctlChanged__simMode"))
+        self._BController__mainWindow.emit(QtCore.SIGNAL("ctlChanged__simMode"))
     _dictSetCallbacks.addCallback(u"bSimulationMode",  set_bSimulationMode )           
     bSimulationMode = property(lambda obj: PyLinXData.BContainer.BContainer.get(obj, u"bSimulationMode"), set_bSimulationMode)        
 

@@ -1,6 +1,6 @@
-import sys, os
+import sys #, os
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QTimer, pyqtSlot
+from PyQt4.QtCore import QTimer #, pyqtSlot
 
 import PyLinXData.PyLinXHelper as helper
 import PyLinXCtl.PyLinXProjectController as ctl
@@ -79,10 +79,10 @@ class PX_Tab_SignalSelect_TreeView(QtGui.QTreeView):
     def performDoubleClickAction(self):
 
         self.bDoubleClicked = True
-        indices = self.selectedIndexes()
-        if len(indices) > 0:
-            index = indices[0]            
-            labelName = self.model().item(index.row(),0).getFullSignalName()
+#       indices = self.selectedIndexes()
+#         if len(indices) > 0:
+#             index = indices[0]            
+#             labelName = self.model().item(index.row(),0).getFullSignalName()
         labelName = self.__getLabelName()
         if labelName:
             self.emit(QtCore.SIGNAL("guiAction__plotSignal"), labelName )

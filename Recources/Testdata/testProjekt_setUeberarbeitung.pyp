@@ -38,8 +38,8 @@ select
 @latent set 23_id23.connectInfo ("Variable_id23_id22",-1)
 @mainController set bSimulationMode True
 @signals new signalFile D:/Projekte/PyLinX/Aptana-Projekte/PyLinX2/Recources/Testdata/Testdata1.mf4
-@objects set ./variables/TestVar_0.signalMapped var5|Signal_id36
-@objects set ./variables/Variable_id4.signalMapped Variable_id4|Signal_id36
+#@objects set ./variables/TestVar_0.signalMapped var5|Signal_id36
+#@objects set ./variables/Variable_id4.signalMapped Variable_id4|Signal_id36
 
 #@mainController set bSimulationMode True
 #select TestVar_0

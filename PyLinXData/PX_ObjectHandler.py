@@ -252,7 +252,6 @@ class PX_ObjectVariable(PyLinXCoreDataObjects.PX_Object):
     _dictGetCallbacks.addCallback(u"signalMapped", get__signalMapped)
 
     def set__signalMapped(self, value, options = None):
-        print "set__signalMapped value", value
         if value == 0:
             self._BContainer__Attributes[u"StimulationFunction"] = None
             self.__projectController.mainWindow.emit(QtCore.SIGNAL(u"dataChanged__mapping"))

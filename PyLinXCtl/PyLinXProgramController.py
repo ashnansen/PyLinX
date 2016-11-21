@@ -5,11 +5,11 @@ Created on 29.08.2016
 '''
 import copy
 
-import PyLinXController
+import BController
 
-class PyLinXProgramController(PyLinXController. ):
+class PyLinXProgramController(BController.BController):
     
-    _dictSetCallbacks = copy.copy(PyLinXController.PyLinXController._dictSetCallbacks)
+    _dictSetCallbacks = copy.copy(BController.BController._dictSetCallbacks)
     
     def __init__(self, mainWindow = None, bListActions = False):
         

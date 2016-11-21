@@ -123,3 +123,37 @@ def loadAction(widget= None, \
     action.triggered.connect(Callback)
     ToolBar.addAction(action)
     return action
+
+# Low level method to do a proper split. String phrases like "test text" may contain white space but should result in one 
+# list entry
+def split(command):
+    command.strip()
+    commandList = []
+    word = u""
+    bStringPhrase = False
+    letterOld = None
+    for letter in command:
+        if letter == "\"":
+            word += letter
+            if not bStringPhrase:
+                if letterOld in (u" ", None):
+                    bStringPhrase = True
+            else:
+                commandList.append(word)
+                word = u""
+                bStringPhrase = False
+                continue
+        else:
+            if not bStringPhrase:
+                if letter != u" ":
+                    word += letter
+            else:
+                word += letter
+                continue
+        if letter == u" " and word != u"":
+            commandList.append(word)
+            word = u""
+        letterOld = letter
+    if word != u"":
+        commandList.append(word)
+    return commandList

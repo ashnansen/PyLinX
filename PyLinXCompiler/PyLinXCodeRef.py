@@ -74,11 +74,11 @@ class PX_CodableVarElement(PX_CodeRefObject):
         lenBody = len(self._BContainer__Body)
         name = self.ref.get(u"DisplayName") 
         if lenBody == 1:
-            input = self.getb(self.getChildKeys()[0])
+            _input = self.getb(self.getChildKeys()[0])
             if self.CodingVariant == PyLinXRunEngine.PX_CodeAnalyser.CodingVariant.ReadSingleVars: 
-                code_to_add = name + u" = " + input.getCode(Code)
+                code_to_add = name + u" = " + _input.getCode(Code)
             elif self.CodingVariant == PyLinXRunEngine.PX_CodeAnalyser.CodingVariant.ReadVarsFromDataDict:
-                code_to_add = u"DataDictionary[u\"" + name + u"\"]" + u" = " + input.getCode(Code)
+                code_to_add = u"DataDictionary[u\"" + name + u"\"]" + u" = " + _input.getCode(Code)
             Code.appendLine(code_to_add)
         if self.CodingVariant == PyLinXRunEngine.PX_CodeAnalyser.CodingVariant.ReadSingleVars: 
             return name

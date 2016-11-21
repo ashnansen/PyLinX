@@ -1,4 +1,4 @@
-import sys, os
+import sys #, os
 from PyQt4 import QtCore, QtGui
 
 import PyLinXData.PyLinXHelper as helper

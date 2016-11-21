@@ -34,8 +34,6 @@ import PyLinXGui.PX_Tab_ObjectHandlerList as PX_Tab_ObjectHandlerList
 
 
 class PyLinXMain(QtGui.QMainWindow):
-
-    #signal_dataChanged__signals = pyqtSignal(unicode, name='dataChanged__signals')
     
     def __init__(self):
  
@@ -56,18 +54,17 @@ class PyLinXMain(QtGui.QMainWindow):
         #QtGui.QApplication.setStyle( QtGui.QStyleFactory.create('cde') )
         
         
+        ######################
         # Main Data Structures
-
+        ######################
+        
         self.mainController = PyLinXProjectController.PyLinXProjectController(mainWindow = self )
-
         _rootGraphics = self.mainController.getb(u"rootGraphics")
 
         # run Engine
-        
         self.runEngine = None
 
         # Events
-        
         self.stopRunEvent = threading.Event()
         self.repaintEvent = threading.Event()
         
@@ -172,7 +169,6 @@ class PyLinXMain(QtGui.QMainWindow):
         self.ui.actionStop.triggered.connect(self.on_stop)
 
         # Configurations that require the GUI to exist
-        #self.mainController.set(u"bSimulationMode", False)
         self.mainController.bSimulationMode = False
 
         ################
@@ -323,7 +319,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
 
     
     def on_actionNewProject(self):
-        rootGraphicsNew = PyLinXCoreDataObjects.PX_PlottableObject(None, u"rootGraphics")
+        rootGraphicsNew = PyLinXData.PyLinXCoreDataObjects.PX_PlottableObject(None, u"rootGraphics")
         self.mainController.delete(u"rootGraphics")
         self.mainController.paste(rootGraphicsNew)
         self.mainController.bSimulationMode = False
@@ -353,7 +349,7 @@ new connector Operator_1 Variable_id4_2 idxInPin=-1"
 
 def run():
     app = QtGui.QApplication(sys.argv)
-    obj = PyLinXMain()   
+    PyLinXMain()   
     app.exec_()
     
     

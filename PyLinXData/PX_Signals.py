@@ -6,7 +6,7 @@ Created on 08.02.2016
 import copy
 import inspect
 from PyQt4 import QtCore
-from PyQt4.QtCore import QString
+#from PyQt4.QtCore import QString
 
 import PyLinXCoreDataObjects 
 import PyLinXData.PyLinXHelper as helper
@@ -103,7 +103,7 @@ class PX_SignalsFolder(PyLinXCoreDataObjects.PX_IdObject):
         types = inspect.getmro(type(obj))
         if PX_Signals in types:
             name = obj.get(u"Name")
-            listVirtualAttributes = []
+            #listVirtualAttributes = []
             for key in obj.get(u"signals"):
                 virtualAttribute =  key + u"|" + name
                 self._dictGetCallbacks.addCallback(virtualAttribute, lambda: self.get_signal(virtualAttribute))

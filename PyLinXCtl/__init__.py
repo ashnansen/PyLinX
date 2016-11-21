@@ -1,1 +1,1 @@
-__all__ = [ "PyLinXProjectController", "PyLinXController", "PyLinXProgramController"]
+__all__ = [ "PyLinXProjectController", "BController", "PyLinXProgramController"]

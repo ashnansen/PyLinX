@@ -3149,40 +3149,51 @@ CSV-Example
 # obj3.set("testattr", 4)
 # 
 # print "Ende"
-
-def _strip(command):
-    command.strip()
-    commandList = []
-    word = u""
-    bStringPhrase = False
-    letterOld = None
-    for letter in command:
-        if letter == "\"":
-            word += letter
-            if not bStringPhrase:
-                if letterOld == u" " or letterOld == None:
-                    bStringPhrase = True
-            else:
-                commandList.append(word)
-                word = u""
-                bStringPhrase = False
-                continue
-        else:
-            if not bStringPhrase:
-                if letter != u" ":
-                    word += letter
-            else:
-                word += letter
-                continue
-        if letter == u" " and word != u"":
-            commandList.append(word)
-            word = u""
-        letterOld = letter
-    if word != u"":
-        commandList.append(word)
-    return commandList
+'''strip'''
 
 
-command = u"Hallo \"String mit einem Pfad\""
+# def _strip(command):
+#     command.strip()
+#     commandList = []
+#     word = u""
+#     bStringPhrase = False
+#     letterOld = None
+#     for letter in command:
+#         if letter == "\"":
+#             word += letter
+#             if not bStringPhrase:
+#                 if letterOld == u" " or letterOld == None:
+#                     bStringPhrase = True
+#             else:
+#                 commandList.append(word)
+#                 word = u""
+#                 bStringPhrase = False
+#                 continue
+#         else:
+#             if not bStringPhrase:
+#                 if letter != u" ":
+#                     word += letter
+#             else:
+#                 word += letter
+#                 continue
+#         if letter == u" " and word != u"":
+#             commandList.append(word)
+#             word = u""
+#         letterOld = letter
+#     if word != u"":
+#         commandList.append(word)
+#     return commandList
+# 
+# 
+# command = u"Hallo \"String mit einem Pfad\""
+# print command
+# print _strip(command)
+import shlex
+import subprocess
+import PyLinXData.BContainer as BContainer   
+
+file_name = BContainer.__file__
+command = 'pyreverse -c Composite -mn -a1 -s1 -f ALL -o png {0}'.format(file_name)
 print command
-print _strip(command)
+#subprocess.call(shlex.split(command))
+#subprocess.call(command)
