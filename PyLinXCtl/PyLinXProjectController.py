@@ -164,7 +164,7 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
         return len(self.getb(u"DataDictionary"))
     _dictGetCallbacks.addCallback(u"lenDataDictionary", get__lenDataDictionary)
     
-    def set_lenDataDictionary(self, value, options=None):
+    def set__lenDataDictionary(self, value, options=None):
         if value == 0:
             DataDictionary = self.getb(u"DataDictionary")
             del DataDictionary
@@ -174,8 +174,8 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
             self._BContainer__Body[u"DataDictionary"] = DataDictionaryNew 
         else:
             raise Exception("Error PyLinXProjectController.__set_lenDataDictionary: set-values other then 0 are not accepted!")
-    _dictSetCallbacks.addCallback(u"lenDataDictionary",  set_lenDataDictionary )    
-    lenDataDictionary = property(get__lenDataDictionary, set_lenDataDictionary)
+    _dictSetCallbacks.addCallback(u"lenDataDictionary",  set__lenDataDictionary)    
+    lenDataDictionary = property(get__lenDataDictionary, set__lenDataDictionary)
 
     # Selection_bUnlock
     ###################
@@ -262,7 +262,7 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
             rootGraphics = self.getb(u"rootGraphics")
             rootGraphics.recur(PyLinXData.PyLinXCoreDataObjects.PX_PlottableVarDispElement, u"widgetHide", ())
         self._BContainer__Attributes[u"bSimulationMode"] = value    
-        self._PyLinXController__mainWindow.emit(QtCore.SIGNAL("updateTabs"))
+        self._PyLinXController__mainWindow.emit(QtCore.SIGNAL("ctlChanged__simMode"))
     _dictSetCallbacks.addCallback(u"bSimulationMode",  set_bSimulationMode )           
     bSimulationMode = property(lambda obj: PyLinXData.BContainer.BContainer.get(obj, u"bSimulationMode"), set_bSimulationMode)        
 
@@ -284,9 +284,9 @@ class PyLinXProjectController(PyLinXController.PyLinXController):
     
 
     
-    ########
-    # MISC
-    ########
+    ######################################
+    # Methods used for running simulations
+    ######################################
     
     ## TODO: The mechanism of recur has to be modified by the use of lambda expressions
     # Ggf. zu verallgemeinern. Auch andere GUI-Teile koennten bei einem Exberiment zu verallgemeinern sein.

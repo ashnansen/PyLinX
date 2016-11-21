@@ -7,7 +7,7 @@ import copy
 
 import PyLinXController
 
-class PyLinXProgramController(PyLinXController.PyLinXController):
+class PyLinXProgramController(PyLinXController. ):
     
     _dictSetCallbacks = copy.copy(PyLinXController.PyLinXController._dictSetCallbacks)
     

@@ -84,6 +84,41 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             
     def execCommand(self, command):
         
+        # Low level method to do a proper split. String phrases like "test text" mey contain white space but should result in one 
+        # list entry
+        def _split(command):
+            command.strip()
+            commandList = []
+            word = u""
+            bStringPhrase = False
+            letterOld = None
+            for letter in command:
+                if letter == "\"":
+                    word += letter
+                    if not bStringPhrase:
+                        if letterOld == u" " or letterOld == None:
+                            bStringPhrase = True
+                    else:
+                        commandList.append(word)
+                        word = u""
+                        bStringPhrase = False
+                        continue
+                else:
+                    if not bStringPhrase:
+                        if letter != u" ":
+                            word += letter
+                    else:
+                        word += letter
+                        continue
+                if letter == u" " and word != u"":
+                    commandList.append(word)
+                    word = u""
+                letterOld = letter
+            if word != u"":
+                commandList.append(word)
+            return commandList
+            
+        
         if self.get(u"LogLevel") > 0:
             print  self.activeFolder.get__path() + "> " +  command
         
@@ -94,9 +129,10 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             raise Exception(u"Error PyLinXController.execCommand: Wrong datatype for command!")
 
         command = unicode(command)
-        command = command.strip()
-        command = command.split(u" ")
-        strCommand = command[0].strip()
+        command = _split(command)
+        if len(command) == 0:
+            return
+        strCommand = command[0]
         
         # Comments or white space lines
         if strCommand == u"":
@@ -125,7 +161,8 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
             
             # lists, sets, dicts, numeric
             if      (command_i_0 in (u"[", u"(", u"{")) or command_i.isnumeric()\
-                    or (command_i   in (u"True", u"False")): 
+                    or (command_i   in (u"True", u"False"))\
+                    or (command_i_0 == u'\"' and command_i[-1] == u'\"'):   #NEW 
                 command[i] = eval(command[i]) 
             
             # other cases
@@ -215,7 +252,7 @@ class PyLinXController(PyLinXData.PyLinXCoreDataObjects.PX_IdObject):
                     listArgs.append(command)
             else:
                 listArgs.append(command)
-        new_object =  context.new(_type, * tuple(listArgs), **dictKWArgs)
+        new_object = context.new(_type, *tuple(listArgs), **dictKWArgs)
         return new_object
     
     
