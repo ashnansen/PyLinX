@@ -436,7 +436,9 @@ class BContainer(object):
     # function creating a new object and pasting it to the parent knot
     
     def new(self, _type, *args, **kwargs):
-        newObject = _type(*args , **kwargs)
+        
+        newObject = _type(*args,**kwargs)
+        
         return newObject
 
     ## This method pastes an object into another one.
