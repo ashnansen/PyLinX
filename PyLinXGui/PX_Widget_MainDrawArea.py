@@ -61,7 +61,7 @@ class DrawWidget (QtGui.QWidget):
         
         # Connecting signals       
         self.connect(self, QtCore.SIGNAL('customContextMenuRequested(const QPoint&)'), self.on_context_menu)
-        self.connect(self, QtCore.SIGNAL("signal_repaint"), self.repaint)
+        self.connect(self, QtCore.SIGNAL("dataChanged__coreDataObjects"), self.repaint)
         
     def sizeHint(self):
         maxXY = self.mainController.dimActiveGraphics
@@ -98,7 +98,7 @@ class DrawWidget (QtGui.QWidget):
             command = u"@objects set ./variables/"  + var.get(u"DisplayName") + u".signalMapped " + unicode(signal)
             self.mainController.execCommand(command)
             self.repaint()
-            self.emit(QtCore.SIGNAL(u"signal_repaint_Tab_SignalSelect"))
+            self.emit(QtCore.SIGNAL(u"guiAction__drawWidget_dropped"))
             
 
 
@@ -139,6 +139,7 @@ class DrawWidget (QtGui.QWidget):
         self.mainController = mainController
     
     def paintEvent(self, event = None):
+        #print "paintEvent"
         self.activeGraphics.write(self,PX_Templ.Plot_Target.Gui)
         self.latentGraphics.write(self,PX_Templ.Plot_Target.Gui)
         super(DrawWidget, self).paintEvent(event)
@@ -181,6 +182,8 @@ class DrawWidget (QtGui.QWidget):
         
         # Deleting Objects      
         if qKeyEvent.key() == QtCore.Qt.Key_Delete:
+            __keyPressEvent_delete()
+        if qKeyEvent.key() == QtCore.Qt.Key_Backspace:
             __keyPressEvent_delete()
         else:
             super(DrawWidget, self).keyPressEvent(qKeyEvent)

@@ -28,7 +28,6 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
             self.stimFunction  = u"Constant"
        
         #init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[StimulationFunction])
-        print "self.stimFunction",  self.stimFunction
         init_list = copy.deepcopy(PX_Templ.PX_DiagData.StimForm[ self.stimFunction ])
         # Get Data 
         for dictVar in init_list:
@@ -88,7 +87,6 @@ class PX_Dialogue_SimpleStimulate(QtGui.QDialog):
         #stimFunction = self.variable.get(u"StimulationFunction")
         print self.stimFunction
         attributeToSet =  PX_Templ.PX_DiagData.StimAttribute[self.stimFunction]
-        print "objPath", objPath
         ustrExec2 =  u"set " + objPath[:-1] + u"." + attributeToSet + u" " + unicode(strValues)
         self.mainController.execCommand(ustrExec2)
         self.hide()

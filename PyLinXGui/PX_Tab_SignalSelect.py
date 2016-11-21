@@ -85,7 +85,7 @@ class PX_Tab_SignalSelect_TreeView(QtGui.QTreeView):
             labelName = self.model().item(index.row(),0).getFullSignalName()
         labelName = self.__getLabelName()
         if labelName:
-            self.emit(QtCore.SIGNAL("plotSignal"), labelName )
+            self.emit(QtCore.SIGNAL("guiAction__plotSignal"), labelName )
                         
 
     def __getLabelName(self): 
@@ -115,16 +115,16 @@ class PX_Tab_SignalSelect_TreeView(QtGui.QTreeView):
         else:
             event.ignore()
  
-    def dropEvent(self, event):
-        if event.mimeData().hasUrls:
-            event.setDropAction(QtCore.Qt.CopyAction)
-            event.accept()
-            links = []
-            for url in event.mimeData().urls():
-                links.append(str(url.toLocalFile()))
-            self.emit(QtCore.SIGNAL("dropped"), links)
-        else:
-            event.ignore()
+#     def dropEvent(self, event):
+#         if event.mimeData().hasUrls:
+#             event.setDropAction(QtCore.Qt.CopyAction)
+#             event.accept()
+#             links = []
+#             for url in event.mimeData().urls():
+#                 links.append(str(url.toLocalFile()))
+#             self.emit(QtCore.SIGNAL("dropped"), links)
+#         else:
+#             event.ignore()
  
     def getSignal(self):
         indices = self.selectedIndexes()
@@ -280,9 +280,9 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
         # Signals
         #########
         
-        self.connect(self.myListWidget, QtCore.SIGNAL("plotSignal"), self.plotSignal)
-        self.connect(self.__projectController.mainWindow, QtCore.SIGNAL(u"dataChanged_signals"), self.updateSignalTab )
-        self.connect(self.__projectController.mainWindow, QtCore.SIGNAL(u"dataChanged_mapping"), self.repaint )
+        self.connect(self.myListWidget, QtCore.SIGNAL("guiAction__plotSignal"), self.plotSignal)
+        self.connect(self.__projectController.mainWindow, QtCore.SIGNAL(u"dataChanged__signals"), self.updateSignalTab )
+        self.connect(self.__projectController.mainWindow, QtCore.SIGNAL(u"dataChanged__mapping"), self.repaint )
         
         myBoxLayout.addWidget(self.toolbar)
         myBoxLayout.addWidget(self.myListWidget)
@@ -318,9 +318,9 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
         
     def repaint(self):
 
-        print "self.__signalsFolder", type(self.__signalsFolder)
-        import PyLinXData
-        print PyLinXData.PX_Signals.PX_SignalsFolder._dictGetCallbacks
+        #print "self.__signalsFolder", type(self.__signalsFolder)
+        #import PyLinXData
+        #print PyLinXData.PX_Signals.PX_SignalsFolder._dictGetCallbacks
         bSignalLoaded = self.__signalsFolder.get(u"bSignalLoaded")
         self.__actionMap.setEnabled(bSignalLoaded)
         self.__actionDelMap.setEnabled(bSignalLoaded)
@@ -353,11 +353,12 @@ class PX_Tab_SignalSelect(QtGui.QWidget):
                                        bFileObject = False )
         if not strPath:
             return
-        command = u"@signals new signalFile " + strPath 
+        #command = u"@signals new signalFile " + strPath 
+        command = u"@signals new signalFile \"" + strPath +u"\""
         self.mainController.execCommand(command)
   
         
-    #@pyqtSlot(unicode, name='dataChanged_signals')
+    #@pyqtSlot(unicode, name='dataChanged__signals')
     def updateSignalTab(self):
         print "updateSignalTab"
         # The exception which triggers the error message is caused in the subroutine
