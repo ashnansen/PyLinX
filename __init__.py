@@ -184,12 +184,12 @@ class PyLinXMain(QtGui.QMainWindow):
         self.__loadFile(_file)
 
         script = u"new varElement TestVar_0 150 90 15 refName=\"TestVar_0\"\n\
-new varElement Variable_id4 150 140 15 refName=\"Variable_id4_1\" \n\
-new varElement Variable_id4 400.0 100.0 15 refName=\"Variable_id4_2\"\n\
-new basicOperator + 300.0 100.0 name=u\"Operator_1\"\n\
-new connector TestVar_0 Operator_1 idxInPin=-1\n\
-new connector Variable_id4_1 Operator_1 idxInPin=-2\n\
-new connector Operator_1 Variable_id4_2 idxInPin=-1"
+                    new varElement Variable_id4 150 140 15 refName=\"Variable_id4_1\" \n\
+                    new varElement Variable_id4 400.0 100.0 15 refName=\"Variable_id4_2\"\n\
+                    new basicOperator + 300.0 100.0 name=u\"Operator_1\"\n\
+                    new connector TestVar_0 Operator_1 idxInPin=-1\n\
+                    new connector Variable_id4_1 Operator_1 idxInPin=-2\n\
+                    new connector Operator_1 Variable_id4_2 idxInPin=-1"
             
         #self.mainController.execScript(script)        
 
